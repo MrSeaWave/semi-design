@@ -1,26 +1,26 @@
 import React from 'react';
 import LocaleConsumer from '../locale/localeConsumer';
 import BaseTimePicker, { TimePickerProps as BasePickerProps, BaseValueType } from './TimePicker';
-import { ValidateStatus } from '../_base/baseComponent';
-import { ScrollItemProps } from '../scrollList/scrollItem';
 import ConfigContext from '../configProvider/context';
 import { get } from 'lodash';
 import { Locale } from '../locale/interface';
+import type { ValidateStatus } from '../_base/baseComponent';
+import type { ScrollItemProps } from '../scrollList/scrollItem';
+import { getDefaultPropsFromGlobalConfig } from "../_utils";
 
-export { TimeInputProps } from './TimeInput';
-export { TimePickerProps } from './TimePicker';
-
-export {
+export type { TimeInputProps } from './TimeInput';
+export type { TimePickerProps } from './TimePicker';
+export type {
     BaseValueType,
     ScrollItemProps,
     ValidateStatus
 };
-
 export type LocalePickerProps = BasePickerProps;
 
 export default class LocaleTimePicker extends React.PureComponent<LocalePickerProps> {
     static propTypes = BaseTimePicker.propTypes;
-    static defaultProps = BaseTimePicker.defaultProps;
+    static __SemiComponentName__ = "TimePicker";
+    static defaultProps = getDefaultPropsFromGlobalConfig(LocaleTimePicker.__SemiComponentName__, BaseTimePicker.defaultProps);
 
     render() {
         const { type } = this.props;

@@ -1,28 +1,24 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable max-lines-per-function */
 import React, { useState, useEffect, useMemo } from 'react';
 import { merge, get, find, noop } from 'lodash';
 
 import { addClass, removeClass } from '@douyinfe/semi-foundation/utils/classnames';
 import { strings, numbers } from '@douyinfe/semi-foundation/table/constants';
-import { mergeColumns, assignColumnKeys, findColumn, withResizeWidth } from '@douyinfe/semi-foundation/table/utils';
+import { assignColumnKeys, findColumn, withResizeWidth } from '@douyinfe/semi-foundation/table/utils';
 
 import Table from './Table';
-import { cloneDeep } from './utils';
+import { cloneDeep, mergeColumns } from './utils';
 import getColumns from './getColumns';
 import ResizableHeaderCell from './ResizableHeaderCell';
-import { TableProps, ColumnProps } from './interface';
+import type { ResizableProps, TableProps, ColumnProps } from './interface';
 
 const ResizableTable = (props: TableProps = {}, ref: React.MutableRefObject<Table<any>> | ((instance: Table<any>) => void)) => {
     const { components: propComponents, columns: propColumns, resizable, ...restProps } = props;
 
     const childrenColumnName = 'children';
-    const onResize = get(resizable, 'onResize', noop);
-    const onResizeStart = get(resizable, 'onResizeStart', noop);
-    const onResizeStop = get(resizable, 'onResizeStop', noop);
+    const onResize = get(resizable, 'onResize', noop) as ResizableProps<any>['onResize'];
+    const onResizeStart = get(resizable, 'onResizeStart', noop) as ResizableProps<any>['onResize'];
+    const onResizeStop = get(resizable, 'onResizeStop', noop) as ResizableProps<any>['onResize'];
 
     /**
      * 此处关于 columns 有三个存储
@@ -56,7 +52,7 @@ const ResizableTable = (props: TableProps = {}, ref: React.MutableRefObject<Tabl
         newColumns.unshift({ key: strings.DEFAULT_KEY_COLUMN_EXPAND, width: numbers.DEFAULT_WIDTH_COLUMN_EXPAND });
     }
 
-    if (props.rowSelection && !find(rawColumns, item => item.key === strings.DEFAULT_KEY_COLUMN_SELECTION)) {
+    if (props.rowSelection && !get(props.rowSelection, 'hidden') && !find(rawColumns, item => item.key === strings.DEFAULT_KEY_COLUMN_SELECTION)) {
         newColumns.unshift({
             width: get(props, 'rowSelection.width', numbers.DEFAULT_WIDTH_COLUMN_SELECTION),
             key: strings.DEFAULT_KEY_COLUMN_SELECTION,
@@ -145,19 +141,23 @@ const ResizableTable = (props: TableProps = {}, ref: React.MutableRefObject<Tabl
         setColumns(nextColumns);
     };
 
-    const resizableRender = (col: ColumnProps, index: number, level = 0) => ({
+    const resizableRender = (col: ColumnProps, index: number, level = 0, originalHeaderCellProps) => ({
         ...col,
-        onHeaderCell: (column: ColumnProps) => ({
-            width: column.width,
-            onResize: handleResize(column),
-            onResizeStart: handleResizeStart(column),
-            onResizeStop: handleResizeStop(column),
-        }),
+        onHeaderCell: (column: ColumnProps) => {
+            return {
+                ...originalHeaderCellProps,
+                width: column.width,
+                onResize: handleResize(column),
+                onResizeStart: handleResizeStart(column),
+                onResizeStop: handleResizeStop(column),
+            };
+        },
     });
 
     const assignResizableRender = (columns: ColumnProps[] = [], level = 0) => (Array.isArray(columns) && columns.length ?
         columns.map((col, index) => {
-            Object.assign(col, resizableRender(col, index, level));
+            const originalHeaderCellProps = col.onHeaderCell?.(col, index, level) ?? {};
+            Object.assign(col, resizableRender(col, index, level, originalHeaderCellProps));
             const children = col[childrenColumnName];
 
             if (Array.isArray(children) && children.length) {

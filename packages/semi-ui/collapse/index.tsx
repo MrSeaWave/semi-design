@@ -6,7 +6,7 @@ import CollapseFoundation, {
     ArgsType,
     CollapseAdapter,
     CollapseProps,
-    CollapseState
+    CollapseState,
 } from '@douyinfe/semi-foundation/collapse/foundation';
 import BaseComponent from '../_base/baseComponent';
 import CollapsePanel from './item';
@@ -14,19 +14,21 @@ import '@douyinfe/semi-foundation/collapse/collapse.scss';
 import { noop } from '@douyinfe/semi-foundation/utils/function';
 import { isEqual } from 'lodash';
 import CollapseContext from './collapse-context';
+import { getDefaultPropsFromGlobalConfig } from '../_utils';
 
-export { CollapsePanelProps } from './item';
+export type { CollapsePanelProps } from './item';
 
-export interface CollapseReactProps extends CollapseProps{
+export interface CollapseReactProps extends CollapseProps {
     expandIcon?: React.ReactNode;
     collapseIcon?: React.ReactNode;
     children?: React.ReactNode;
     style?: CSSProperties;
     onChange?: (activeKey: CollapseProps['activeKey'], e: React.MouseEvent) => void;
+    lazyRender?: boolean
 }
 
 
-export { CollapseState };
+export type { CollapseState };
 
 class Collapse extends BaseComponent<CollapseReactProps, CollapseState> {
     static Panel = CollapsePanel;
@@ -35,6 +37,7 @@ class Collapse extends BaseComponent<CollapseReactProps, CollapseState> {
         activeKey: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
         defaultActiveKey: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
         accordion: PropTypes.bool,
+        clickHeaderToExpand: PropTypes.bool,
         onChange: PropTypes.func,
         expandIcon: PropTypes.node,
         collapseIcon: PropTypes.node,
@@ -42,21 +45,26 @@ class Collapse extends BaseComponent<CollapseReactProps, CollapseState> {
         className: PropTypes.string,
         keepDOM: PropTypes.bool,
         motion: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.object]),
-        expandIconPosition: PropTypes.oneOf(strings.iconPosition)
+        expandIconPosition: PropTypes.oneOf(strings.iconPosition),
+        lazyRender: PropTypes.bool,
     };
 
-    static defaultProps = {
+    static __SemiComponentName__ = 'Collapse';
+
+    static defaultProps = getDefaultPropsFromGlobalConfig(Collapse.__SemiComponentName__, {
         defaultActiveKey: '',
+        clickHeaderToExpand: true,
         onChange: noop,
-        expandIconPosition: 'right'
-    };
+        expandIconPosition: 'right',
+        lazyRender: false,
+    });
 
     constructor(props: CollapseReactProps) {
         super(props);
         this.foundation = new CollapseFoundation(this.adapter);
         const initKeys = this.foundation.initActiveKey();
         this.state = {
-            activeSet: new Set(initKeys)
+            activeSet: new Set(initKeys),
         };
         this.onChange = this.onChange.bind(this);
     }
@@ -93,21 +101,36 @@ class Collapse extends BaseComponent<CollapseReactProps, CollapseState> {
     };
 
     render() {
-        // eslint-disable-next-line max-len
-        const { defaultActiveKey, accordion, style, motion, className, keepDOM, expandIconPosition, expandIcon, collapseIcon, children, ...rest } = this.props;
+        const {
+            defaultActiveKey,
+            lazyRender,
+            accordion,
+            style,
+            motion,
+            className,
+            keepDOM,
+            expandIconPosition,
+            expandIcon,
+            collapseIcon,
+            children,
+            clickHeaderToExpand,
+            ...rest
+        } = this.props;
         const clsPrefix = cls(cssClasses.PREFIX, className);
         const { activeSet } = this.state;
         return (
-            <div className={clsPrefix} style={style}>
+            <div className={clsPrefix} style={style} {...this.getDataAttr(this.props)}>
                 <CollapseContext.Provider
                     value={{
                         activeSet,
                         expandIcon,
                         collapseIcon,
+                        clickHeaderToExpand,
                         keepDOM,
                         expandIconPosition,
                         onClick: this.onChange,
-                        motion
+                        motion,
+                        lazyRender,
                     }}
                 >
                     {children}

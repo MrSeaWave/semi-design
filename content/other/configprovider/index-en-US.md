@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 71
+order: 88
 category: Other
 title: ConfigProvider
 icon: doc-configprovider
@@ -8,6 +8,15 @@ dir: column
 brief: Provide a unified global configuration for components.
 ---
 
+## Scenes to be used
+
+Coverage configuration is divided into two scenarios
+
+- When you need to override the public Props configuration of multiple components (such as `timezone`, `rtl`), use ConfigProvider
+- When the ConfigProvirder props are not met and you want to modify a certain type of Props of a certain component globally (for example, if you want to configure the `theme` of all `Buttons to `Solid` or the `zIndex` of all `Popover`), use semiGlobal
+
+
+## ConfigProvider
 
 ## Demos
 
@@ -65,13 +74,52 @@ function Demo(props = {}) {
 }
 ```
 
+### Manually obtain values
+Usually, the value of ConfigProvider is automatically obtained and consumed within the component, so you don't need to worry about it. However, in some special scenarios, you may need to manually obtain the value to perform other operations.
+
+Use ConfigConsumer to obtain the value of ConfigProvider
+
+```jsx live=true dir="column" hideInDSM
+import React, { useMemo, useState } from 'react';
+import { ConfigProvider, ConfigConsumer, Select, DatePicker, TimePicker, Typography } from '@douyinfe/semi-ui';
+
+function Demo(props = {}) {
+  const [timeZone, setTimeZone] = useState('GMT+08:00');
+  const defaultTimestamp = 1581599305265;
+  const gmtList = useMemo(() => {
+    const list = [];
+    for (let hourOffset = -11; hourOffset <= 14; hourOffset++) {
+      const prefix = hourOffset >= 0 ? '+' : '-';
+      const hOffset = Math.abs(parseInt(hourOffset, 10));
+      list.push(`GMT${prefix}${String(hOffset).padStart(2, '0')}:00`);
+    }
+    return list;
+  }, []);
+
+  return (
+          <ConfigProvider timeZone={timeZone}>
+            {/*...*/}
+            <ConfigConsumer>
+              {(value) => {
+                return <Typography.Text ellipsis={{ showTooltip: {opts:{style:{minWidth:"1200px"}} }}}  style={{ width: 600 }}>
+                  {JSON.stringify(value)}
+                </Typography.Text>
+              }}
+            </ConfigConsumer>
+            {/*...*/}
+          </ConfigProvider>
+  );
+}
+
+```
+
 ### RTL/LTR
 Global configuration `direction` can change the text direction of components。`rtl` means right to left (similar to Hebrew or Arabic), `ltr` means left to right (similar to most languages such as English)
 
 Special components:
 - Command call of Modal, Notification and Toast needs to be passed to 'direction' through prop.
 - If you want to internationalize the directional icon, you need to handle it on your own. We think RTL for icon will make it difficult to understand and maintain. Semi has adapted the icons in other components.
-- Table fixed columns or headers, tree data, and virtualized tables do not support RTL at the moment, Slider does not support RTL at the moment.
+- The tree data of Table does not support RTL ([Chrome, Safari have different behave with Firefox](https://codesandbox.io/s/table-rtl-treedata-uy7gzl?file=/src/App.jsx)), and fixed column supports RTL in v2.32 version, Slider does not support RTL yet.
 
 ```jsx live=true dir="column" hideInDSM
 import React, { useState } from 'react';
@@ -82,17 +130,17 @@ import en_GB from '@douyinfe/semi-ui/locale/source/en_GB';
 function Demo(props = {}) {
     const { Option } = Select;
     const [direction, setDirection] = useState();
-    const flexStyle = {display: 'flex', marginBottom: 32, flexWrap: 'wrap'};
-    const titleStyle = {margin: '50px 0 16px 0'};
-    const rowStyle = {margin: '16px 10px'};
+    const flexStyle = { display: 'flex', marginBottom: 32, flexWrap: 'wrap' };
+    const titleStyle = { margin: '50px 0 16px 0' };
+    const rowStyle = { margin: '16px 10px' };
     const badgeStyle = {
         width: '42px',
         height: '42px',
         borderRadius: '4px',
         display: 'inline-block',
     };
-    const tagStyle = {marginRight: 8, marginBottom: 8};
-    const buttonStyle = {...tagStyle};
+    const tagStyle = { marginRight: 8, marginBottom: 8 };
+    const buttonStyle = { ...tagStyle };
     const opts = {
         title: 'Hi,Bytedance',
         content: 'ies dance dance dance',
@@ -174,30 +222,30 @@ function Demo(props = {}) {
                         <br/><br/>
                         <Input prefix="Prefix" showClear></Input>
                         <br/><br/>
-                        <Input suffix={<Typography.Text strong type='secondary' style={{margin: '0 8px'}}>Suffix</Typography.Text>} showClear></Input>
+                        <Input suffix={<Typography.Text strong type='secondary' style={{ margin: '0 8px' }}>Suffix</Typography.Text>} showClear></Input>
                         <br/><br/>
                         <TextArea placeholder="Input something" maxCount={100} />
                         <br/><br/>
                         <div style={flexStyle}>
-                            <Switch style={{marginRight: 8}} defaultChecked={true}></Switch>
-                            <Switch style={{marginRight: 8}}></Switch>
-                            <Switch disabled defaultChecked={true} style={{marginRight: 8}}></Switch>
+                            <Switch style={{ marginRight: 8 }} defaultChecked={true}></Switch>
+                            <Switch style={{ marginRight: 8 }}></Switch>
+                            <Switch disabled defaultChecked={true} style={{ marginRight: 8 }}></Switch>
                         </div>
                         <div style={flexStyle}>
-                            <Checkbox style={{marginRight: 8}} defaultChecked>Checkbox</Checkbox>
-                            <Checkbox style={{marginRight: 8}} disabled defaultChecked>Disabled Checkbox</Checkbox>
-                            <Checkbox style={{marginRight: 8}} disabled>Disabled Checkbox</Checkbox>
+                            <Checkbox style={{ marginRight: 8 }} defaultChecked>Checkbox</Checkbox>
+                            <Checkbox style={{ marginRight: 8 }} disabled defaultChecked>Disabled Checkbox</Checkbox>
+                            <Checkbox style={{ marginRight: 8 }} disabled>Disabled Checkbox</Checkbox>
                         </div>
-                        <div style={{...flexStyle, marginBottom: 0}}>
-                            <Radio style={{marginRight: 8}} defaultChecked>Radio</Radio>
-                            <Radio style={{marginRight: 8}} disabled defaultChecked>Disabled Radio</Radio>
-                            <Radio style={{marginRight: 8}} disabled>Disabled Radio</Radio>
+                        <div style={{ ...flexStyle, marginBottom: 0 }}>
+                            <Radio style={{ marginRight: 8 }} defaultChecked>Radio</Radio>
+                            <Radio style={{ marginRight: 8 }} disabled defaultChecked>Disabled Radio</Radio>
+                            <Radio style={{ marginRight: 8 }} disabled>Disabled Radio</Radio>
                         </div>
                     </Col>
                     <Col span={12}>
-                        <DatePicker onChange={(date, dateString) => console.log(dateString)} style={{width: '100%'}}/>
+                        <DatePicker onChange={(date, dateString) => console.log(dateString)} style={{ width: '100%' }}/>
                         <br/><br/>
-                        <TimePicker style={{width: '100%'}} />
+                        <TimePicker style={{ width: '100%' }} />
                         <br/><br/>
                         <Select style={{ width: '100%' }} placeholder="Select-single">
                             <Option value='abc'>Semi</Option>
@@ -313,12 +361,12 @@ function Demo(props = {}) {
                         <Tag color='white' style={tagStyle}> white tag </Tag>
                     </div>
                     <br/>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Popover content={'hi semi-design'} style={{padding: 8}}><Tag style={{marginRight: 8}}>I am Popover</Tag></Popover>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Popover content={'hi semi-design'} style={{ padding: 8 }}><Tag style={{ marginRight: 8 }}>I am Popover</Tag></Popover>
                         <Tooltip content={'hi semi-design'}>
-                            <Tag style={{marginRight: 8}}>I am Tooltip</Tag>
+                            <Tag style={{ marginRight: 8 }}>I am Tooltip</Tag>
                         </Tooltip>
-                        <Rating defaultValue={3} size='small' style={{marginRight: 8}} />
+                        <Rating defaultValue={3} size='small' style={{ marginRight: 8 }} />
                     </div>
                     <br/>
                     <Timeline>
@@ -379,12 +427,12 @@ function Demo(props = {}) {
 
 ## API Reference
 
-| Properties | Instructions                                                                                                          | type           | Default |
-| ---------- | --------------------------------------------------------------------------------------------------------------------- | -------------- | ------- |
-| direction | Sets the direction of the text | `ltr`\| `rtl` | `ltr` | 
-| getPopupContainer | Specifies the parent DOM, and the bullet layer will be rendered to the DOM, you need to set 'position: relative` | function():HTMLElement | () => document.body    |
-| locale     | Multi-language configuration, same as the [usage](/en-US/other/locale) of `locale` parameter in `LocaleProvider` | object         |         |
-| timeZone   | [Time zone identifier](#Time_Zone_Identifier)                                                                         | string\|number |         |
+| Properties | Instructions                                                                                                      | type          | Default |
+|------------|-------------------------------------------------------------------------------------------------------------------|---------------|---------|
+| direction  | Sets the direction of the text                                                                                    | `ltr`\| `rtl` | `ltr`   |
+| getPopupContainer | Specifies the parent DOM, and the bullet layer will be rendered to the DOM, you need to set 'position: relative`  This will change the DOM tree position, but not the view's rendering position.  | function():HTMLElement | () => document.body    |
+| locale     | Multi-language configuration, same as the [usage](/en-US/other/locale) of `locale` parameter in `LocaleProvider`(If `locale` is configured in `ConfigProvider` and `LocaleProvider` at the same time, the former has higher priority than the latter)  | object         |         |
+| timeZone   | [Time zone identifier](#Time_Zone_Identifier)                                                                     | string\|number |         |
 
 
 ### Time Zone Identifier
@@ -409,8 +457,40 @@ If you want to accurately set the time zone of a region, it is recommended to us
 
 ```diff
 # webpack config example: webpack.config.js
-const SemiWebpackPlugin = require('@douyinfe/semi-webpack-plugin');
+const SemiWebpackPlugin = require('@douyinfe/semi-webpack-plugin').default;
 module.exports = {
 +    plugins: [new SemiWebpackPlugin({ prefixCls: 'imes' })],
 }
+```
+
+
+## semiGlobal
+
+You can override the default Props of global components
+
+In `semiGlobal.config.overrideDefaultProps` you can configure the component default Props. You need to put your configuration at the entrance of the entire site, that is, it will be executed before all semi components.
+
+<Notice title={"Notes"}>
+semiGlobal is a singleton mode that affects the entire site. If you only want to cover certain components in certain places, it is recommended not to use semiGlobal. Instead, encapsulate the corresponding components that need to be covered and pass in the modified default props.
+</Notice>
+
+For example, the configuration below sets all Buttons to warning by default, and the zIndex of Select to 2000 by default, etc.
+
+```js
+import { semiGlobal } from "@douiyinfe/semi-ui"
+
+semiGlobal.config.overrideDefaultProps = {
+   Button: {
+     type: 'warning',
+   },
+   Select: {
+     zIndex: 2000,
+   },
+   Tooltip: {
+     zIndex: 2001,
+     trigger:"click"
+   },
+};
+
+
 ```

@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 49
+order: 62
 category: Show
 title: Collapse
 subTitle: Collapse
@@ -172,30 +172,33 @@ import { IconCopy } from '@douyinfe/semi-icons';
 ### Collapse
 
 | Properties | Instructions | type | Default | version |
-| --- | --- | --- | --- | --- |
-| accordion | Accordion mode | boolean | `false` | - |
-| activeKey | Controlled property, key of the currently expanded panel | string \| string[] | - | - |
-| className | className of Collapse | string | '' | - |
-| collapseIcon | Custom collapsing icons | ReactNode | `<IconChevronDown />` | - |
-| defaultActiveKey | Key of the expanded panel when initialized | string \| string[] | - | - |
-| expandIcon | Custom expanding icon | ReactNode | `<IconChevronUp />` | - |
-| keepDOM | Whether to keep the hidden panel in DOM tree, destroyed by default | boolean | `false` | 0.25.0 |
-| motion | Toggle whether to have animation | object \| boolean | `true` | 1.4.0 |
-| expandIconPosition | Expand icon position | `left`, `right` | `right` | 1.12.0 |
-| style | Inline CSS style | CSSProperties | {} | - |
-| onChange | Callback function when switching panel | function(activeKey: string \| string[], e: event) | - | - |
+| --- | --- | --- | --- |---------|
+| accordion | Accordion mode | boolean | `false` | -       |
+| activeKey | Controlled property, key of the currently expanded panel | string \| string[] | - | -       |
+| className | className of Collapse | string | '' | -       |
+| clickHeaderToExpand | Click Header to expand and collapse, otherwise only respond to click arrow | boolean | true | 2.32.0  |
+| collapseIcon | Custom collapsing icons | ReactNode | `<IconChevronDown />` | -       |
+| defaultActiveKey | Key of the expanded panel when initialized | string \| string[] | - | -       |
+| expandIcon | Custom expanding icon | ReactNode | `<IconChevronUp />` | -       |
+| keepDOM | Whether to keep the hidden panel in DOM tree, destroyed by default | boolean | `false` | 0.25.0  |
+| motion | Toggle whether to have animation | boolean | `true` | 1.4.0   |
+| expandIconPosition | Expand icon position | `left`, `right` | `right` | 1.12.0  |
+| lazyRender | Used with keepDOM, when true, the component will not be rendered when mounting                                         | boolean | `false` | 2.54.1  |
+| style | Inline CSS style | CSSProperties | {} | -       |
+| onChange | Callback function when switching panel | function(activeKey: string \| string[], e: event) | - | -       |
 
 ### Collapse.Panel
-| Properties | Instructions | type | Default |version|
-| --- | --- | --- | --- | --- |
-| className | className of Panel | string | - ||
-| disabled  | If true, the panel is disabled | boolean     |  false  | v2.17.0   |
-| extra | Custom rendering of the auxiliary content in the upper right-hand corner of each panel(only work when header is string) | ReactNode | - ||
-| header | Panel head content | ReactNode | - | - ||
-| itemKey | Required and must be unique, used to match `activeKey`, `defaultActiveKey` | string | - ||
-| reCalcKey | When reCalcKey changes, the height of children will be reset. Used for optimize dynamic content rendering. | string \| number |-| 1.5.0 |
-| showArrow | whether to show arrows icon | boolean                 |  true  | v2.17.0   |
-| style | inline CSS style | CSSProperties | - ||
+| Properties | Instructions                                                                                                            | type | Default | version       |
+| --- |-------------------------------------------------------------------------------------------------------------------------| --- | --- |---------------|
+| className | className of Panel                                                                                                      | string | - |               |
+| disabled  | If true, the panel is disabled                                                                                          | boolean     |  false  | v2.17.0       |
+| extra | Custom rendering of the auxiliary content in the upper right-hand corner of each panel(only work when header is string) | ReactNode | - |               |
+| header | Panel head content                                                                                                      | ReactNode | - | -             ||
+| itemKey | Required and must be unique, used to match `activeKey`, `defaultActiveKey`                                              | string | - |               |
+| onMotionEnd | Animation end callback                                                                                                  | () => void | - | 2.47.0-beta.0 |
+| reCalcKey | When reCalcKey changes, the height of children will be reset. Used for optimize dynamic content rendering.              | string \| number |-| 1.5.0         |
+| showArrow | whether to show arrows icon                                                                                             | boolean                 |  true  | v2.17.0       |
+| style | inline CSS style                                                                                                        | CSSProperties | - |               |
 
 
 ## Accessibility

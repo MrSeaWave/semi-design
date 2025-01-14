@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'ms-MY',
     dateFnsLocale: ms,
     Pagination: {
-        item: 'item',
-        pageSize: ' items / halaman',
+        pageSize: 'Item setiap halaman: ${pageSize}',
+        total: 'Jumlah halaman: ${total}',
+        jumpTo: 'Lompat ke',
         page: ' halaman',
-        total: '',
-        jumpTo: 'Lompat ke'
     },
     Modal: {
         confirm: 'Sahkan',
         cancel: 'Batal',
+    },
+    Tabs: {
+        more: "Lagi"
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: 'Pilih tarikh dan masa',
             dateRange: ['Tarikh mula', 'Tarikh akhir'],
             dateTimeRange: ['Tarikh mula', 'Tarikh akhir'],
+            monthRange: ['Bulan mula', 'Bulan akhir'],
         },
+        presets: 'Pilihan Pantas',
         footer: {
             confirm: 'Sahkan',
             cancel: 'Batal',
@@ -74,13 +78,13 @@ const local: Locale = {
             12: 'Disember',
         },
         weeks: {
-            Mon: 'Isnin',
-            Tue: 'Selasa',
-            Wed: 'Rabu',
-            Thu: 'Khamis',
-            Fri: 'Jumaat',
-            Sat: 'Sabtu',
-            Sun: 'Ahad',
+            Mon: 'Isn',
+            Tue: 'Sel',
+            Wed: 'Rab',
+            Thu: 'Kha',
+            Fri: 'Jum',
+            Sat: 'Sab',
+            Sun: 'Aha',
         },
         localeFormatToken: {
             FORMAT_SWITCH_DATE: 'dd/MM/yyyy',
@@ -97,6 +101,9 @@ const local: Locale = {
     Table: {
         emptyText: 'Tiada kandungan',
         pageText: 'Papar halaman ${currentStart} hingga ${currentEnd} daripada ${total}',
+        descend: 'Klik untuk menurun',
+        ascend: 'Klik untuk menaik',
+        cancelSort: 'Batal mengurutkan',
     },
     Select: {
         emptyText: 'Tiada kandungan',
@@ -147,11 +154,33 @@ const local: Locale = {
         clear: 'Kosongkan',
         selectAll: 'Pilih Semua',
         clearSelectAll: 'Nyahpilih semua',
-        total: 'Jumlah ${total} item',
-        selected: '${total} projek dipilih',
+        total: 'Jumlah item: ${total}',
+        selected: 'Item dipilih: ${total}',
     },
     Form: {
         optional: '(pilihan)',
+    },
+    Image: {
+        preview: 'Pratonton',
+        loading: 'Memuatkan',
+        loadError: 'Gagal memuatkan',
+        prevTip: 'Sebelumnya',
+        nextTip: 'Seterusnya',
+        zoomInTip: 'Zum masuk',
+        zoomOutTip: 'zum keluar',
+        rotateTip: 'Putar',
+        downloadTip: 'muat turun',
+        adaptiveTip: 'Menyesuaikan diri dengan halaman',
+        originTip: 'Saiz asal',
+    },
+    Chat: {
+        deleteConfirm: 'Adakah anda pasti ingin memadam sesi ini?',
+        clearContext: 'Konteks telah dibersihkan',
+        copySuccess: 'Berjaya disalin',
+        stop: 'Berhenti',
+        copy: 'Samin',
+        copied: 'Disalin',
+        dropAreaText: 'Letakkan fail di sini',
     },
 };
 

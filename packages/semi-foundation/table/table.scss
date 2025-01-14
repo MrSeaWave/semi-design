@@ -1,7 +1,8 @@
+@import './animation.scss';
 @import './variables.scss';
 @import './mixin.scss';
 @import './operationPanel.scss';
-@import './animation.scss';
+
 
 $module: #{$prefix}-table;
 
@@ -26,6 +27,14 @@ $module: #{$prefix}-table;
 
         &[data-column-fixed='true'] {
             z-index: 1;
+        }
+
+        &-ltr {
+            direction: ltr;
+
+            .#{$prefix}-spin {
+                direction: ltr;
+            }
         }
     }
 
@@ -57,12 +66,42 @@ $module: #{$prefix}-table;
 
     &-header {
         overflow: hidden;
+        scrollbar-base-color: transparent;
 
         &::-webkit-scrollbar {
             background-color: transparent;
             border-bottom: $width-table_header_border $border-table_base-borderStyle $color-table_th-border-default;
         }
-        scrollbar-base-color: transparent;
+
+        &-sticky {
+            position: sticky;
+            z-index: $z-table_fixed_column + 1;
+
+            .semi-table-thead > .semi-table-row > .semi-table-row-head {
+                background-color: $color-table-bg-default;
+            }
+        }
+
+        &-hidden {
+            height: 0;
+        }
+    }
+
+    &-align-center {
+        .#{$module}-operate-wrapper {
+            justify-content: center;
+        }
+    }
+
+    &-align-right {
+        .#{$module}-operate-wrapper {
+            justify-content: flex-end;
+        }
+    }
+
+    &-operate-wrapper {
+        display: flex;
+        justify-content: flex-start;
     }
 
     &-body {
@@ -97,9 +136,28 @@ $module: #{$prefix}-table;
                 padding-top: $spacing-table_row_head-paddingY;
                 padding-bottom: $spacing-table_row_head-paddingY;
                 vertical-align: middle;
-                word-break: break-all;
-                word-wrap: break-word;
+                overflow-wrap: break-word;
+                // word-break: break-all;
+                // word-wrap: break-word;
                 position: relative;
+                transition: background-color $transition_duration-table_row-head-bg $transition_function-table_row-head-bg;
+
+                &.#{$module}-row-head-clickSort {
+                    cursor: pointer;
+                    &:hover {
+                        background-image: linear-gradient(0deg, $color-table_th-clickSort-bg-hover, $color-table_th-clickSort-bg-hover);
+                        background-color: $color-table_cell-bg-hover;
+                        
+                        &.#{$module}-cell-fixed {
+                            &-left,
+                            &-right {
+                                &::before {
+                                    background-color: transparent;
+                                }
+                            }
+                        }
+                    }
+                }
 
                 &.#{$module}-cell-fixed {
                     &-left,
@@ -159,6 +217,14 @@ $module: #{$prefix}-table;
                     display: inline-flex;
                     align-items: center;
                 }
+
+                &-ellipsis {
+                    @include text-overflow-hidden;
+
+                    .#{$module}-row-head-title {
+                        @include text-overflow-hidden;
+                    }
+                }
             }
 
             .react-resizable {
@@ -191,15 +257,19 @@ $module: #{$prefix}-table;
         display: table-row-group;
         & > .#{$module}-row {
             display: table-row;
+            background-color: $color-table_body-bg-default;
 
             &:hover {
                 & > .#{$module}-row-cell {
-                    background-color: $color-table_body-bg-hover;
+                    // $color-table_body-bg-hover has transparency，will reveal the background color $color-table_body-bg-default\
+                    // combine background-image and background-color to make the non-fixed column color does not show through the bottom color
+                    background-image: linear-gradient(0deg, $color-table_body-bg-hover, $color-table_body-bg-hover);
+                    background-color: $color-table_cell-bg-hover;
 
                     &.#{$module}-cell-fixed {
                         &-left,
                         &-right {
-                            background-color: $color-table_body-bg-default;
+                            background-image: linear-gradient(0deg, $color-table_body-bg-default, $color-table_body-bg-default);
 
                             &::before {
                                 background-color: $color-table_body-bg-hover;
@@ -219,8 +289,9 @@ $module: #{$prefix}-table;
 
             & > .#{$module}-row-cell {
                 display: table-cell;
-                word-wrap: break-word;
-                word-break: break-all;
+                overflow-wrap: break-word;
+                // word-wrap: break-word;
+                // word-break: break-all;
                 border-left: none;
                 border-right: none;
                 border-bottom: $width-table_base_border $border-table_base-borderStyle $color-table-border-default;
@@ -232,12 +303,19 @@ $module: #{$prefix}-table;
                 &.resizing {
                     border-right: $width-table_resizer_border solid $color-table_resizer-bg-default;
                 }
+
+                &-ellipsis {
+                    @include text-overflow-hidden;
+                }
             }
             &.#{$module}-row {
                 &-expand {
                     & > .#{$module}-row-cell {
                         background-color: $color-table_row_expanded-bg-default;
                     }
+                }
+                &-hidden {
+                    display: none;
                 }
             }
 
@@ -371,7 +449,6 @@ $module: #{$prefix}-table;
         }
 
         &-sorter {
-            margin-left: $spacing-table_column_sorter-marginLeft;
             display: inline-block;
             width: $width-table_column_sorter-icon;
             height: $height-table_column_sorter-icon;
@@ -379,9 +456,11 @@ $module: #{$prefix}-table;
             text-align: center;
 
             &-wrapper {
-                display: inline-flex;
+                display: flex;
+                gap: $spacing-table_column_sorter-marginLeft;
                 align-items: center;
                 cursor: pointer;
+                overflow: hidden;
             }
 
             &-up,
@@ -471,7 +550,8 @@ $module: #{$prefix}-table;
     }
 
     &-placeholder {
-        position: relative;
+        position: sticky;
+        left: 0px;
         z-index: 1;
         padding: #{$spacing-table-paddingY} #{$spacing-table-paddingX};
         color: $color-table_placeholder-text-default;
@@ -479,7 +559,6 @@ $module: #{$prefix}-table;
         text-align: center;
         background: $color-table_pl-bg-default;
         border-bottom: $width-table_base_border $border-table_base-borderStyle $color-table-border-default;
-        border-radius: 0 0 #{$radius-table_base} #{$radius-table_base};
     }
 
     &-fixed {
@@ -552,6 +631,23 @@ $module: #{$prefix}-table;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .#{$module}-expandedIcon-show{
+        transition: transform 150ms cubic-bezier(0.62, 0.05, 0.36, 0.95);
+        transform: rotate(90deg);
+    }
+
+    .#{$module}-expandedIcon-hide{
+        transition: transform 150ms cubic-bezier(0.62, 0.05, 0.36, 0.95);
+        transform: rotate(0deg);
+    }
+}
+
+.#{$module}-column-filter-dropdown {
+    .#{$prefix}-dropdown-menu {
+        max-height: $height-table_column_filter_dropdown;
+        overflow-y: auto;
     }
 }
 

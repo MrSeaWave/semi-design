@@ -1,7 +1,7 @@
 //@import '../theme/variables.scss';
 // @import '../theme/mixin.scss';
-@import "./variables.scss";
 @import "./animation.scss";
+@import "./variables.scss";
 @import "./mixin.scss";
 
 $module: #{$prefix}-checkbox;
@@ -12,7 +12,6 @@ $module: #{$prefix}-checkbox;
     position: relative;
     display: flex;
     align-items: flex-start;
-    flex-wrap: wrap;
     @include font-size-regular;
     cursor: pointer;
     transition: background-color $transition_duration-checkbox-bg $transition_function-checkbox-bg $transition_delay-checkbox-bg,
@@ -149,7 +148,7 @@ $module: #{$prefix}-checkbox;
             }
         }
 
-        &.#{$module}-cardType.#{$module}-unChecked.#{$module}-cardType_unDisabled {
+        &.#{$module}-cardType.#{$module}-unChecked.#{$module}-cardType_enable {
             .#{$module}-inner-display {
                 background: $color-checkbox_cardType_inner-bg-hover;
             }
@@ -176,7 +175,7 @@ $module: #{$prefix}-checkbox;
             }
         }
 
-        &.#{$module}-cardType.#{$module}-unChecked.#{$module}-cardType_unDisabled {
+        &.#{$module}-cardType.#{$module}-unChecked.#{$module}-cardType_enable {
             .#{$module}-inner-display {
                 background: $color-checkbox_cardType_inner-bg-active;
             }
@@ -189,17 +188,16 @@ $module: #{$prefix}-checkbox;
         border-radius: $radius-checkbox_cardType;
         padding: $spacing-checkbox_cardType-paddingY $spacing-checkbox_cardType-paddingX;
         background: transparent;
-        border: $width-checkbox_cardType_checked-border solid transparent;
+        border: $width-checkbox_cardType_checked-border solid $color-checkbox_cardType-border-default;
 
 
         .#{$module}-inner {
             position: relative;
+            flex-shrink: 0;
 
             &-display {
                 background: $color-checkbox_cardType_inner-bg-default;
             }
-
-            flex-shrink: 0;
         }
 
         .#{$module}-inner-pureCardType {

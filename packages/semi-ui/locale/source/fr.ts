@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'fr',
     dateFnsLocale: fr,
     Pagination: {
-        item: 'article',
-        pageSize: ' articles/page',
+        pageSize: 'Éléments par page : ${pageSize}',
+        total: 'Total des pages : ${total}',
+        jumpTo: 'Sauter à',
         page: ' pages',
-        total: '',
-        jumpTo: 'Sauter à'
     },
     Modal: {
         confirm: 'Confirmer',
         cancel: 'Annuler',
+    },
+    Tabs: {
+        more: "Plus",
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: 'Sélectionner date et temps',
             dateRange: ['Date de début', 'Date de fin'],
             dateTimeRange: ['Date de début', 'Date de fin'],
+            monthRange: ['Mois de début', 'Mois de fin'],
         },
+        presets: 'Préréglages',
         footer: {
             confirm: 'Confirmer',
             cancel: 'Annuler',
@@ -83,7 +87,7 @@ const local: Locale = {
             Sun: 'dim.',
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'yyyy-MM-dd',
+            FORMAT_SWITCH_DATE: 'dd/MM/yyyy',
         },
     },
     Popconfirm: {
@@ -97,6 +101,9 @@ const local: Locale = {
     Table: {
         emptyText: 'Aucun Résultat',
         pageText: 'Montrant ${currentStart} to ${currentEnd} of ${total}',
+        descend: 'Cliquez pour descendre',
+        ascend: 'Cliquez pour monter',
+        cancelSort: 'Annuler le tri',
     },
     Select: {
         emptyText: 'Aucun Résultat',
@@ -122,7 +129,7 @@ const local: Locale = {
     Upload: {
         mainText: 'Cliquez pour télécharger le fichier ou faites glisser le fichier vers ici',
         illegalTips: 'Ce type de fichier n\'est pas pris en charge',
-        legalTips: 'Libérer et commencer le téléchargement',
+        legalTips: 'Libérer et commencer le chargement',
         retry: 'Réessayer',
         replace: 'Remplacer le fichier',
         clear: 'Supprimer',
@@ -147,11 +154,33 @@ const local: Locale = {
         clear: 'Supprimer',
         selectAll: 'Sélectionner tout',
         clearSelectAll: 'Désélectionner tout',
-        total: 'Totale ${total} articles',
-        selected: '${total} articles sélectionnés',
+        total: 'Total des éléments : ${total}',
+        selected: 'Éléments sélectionnés : ${total}',
     },
     Form: {
         optional: '(optionnel)',
+    },
+    Image: {
+        preview: 'Aperçu',
+        loading: 'Chargement',
+        loadError: 'Échec du chargement',
+        prevTip: 'Précédent',
+        nextTip: 'Suivant',
+        zoomInTip: 'Zoom avant',
+        zoomOutTip: 'Zoom arrière',
+        rotateTip: 'Rotation',
+        downloadTip: 'Télécharger',
+        adaptiveTip: 'Adapter à la page',
+        originTip: 'Taille d\'origine',
+    },
+    Chat: {
+        deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette conversation ?',
+        clearContext: 'Le contexte a été effacé',
+        copySuccess: 'Copie réussie',
+        stop: 'Arrêter',
+        copy: 'Copier',
+        copied: 'Copié',
+        dropAreaText: 'Déposez le fichier ici',
     },
 };
 

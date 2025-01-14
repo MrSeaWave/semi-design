@@ -15,13 +15,15 @@ export interface CollapsePanelProps {
     children?: React.ReactNode;
     reCalcKey?: number | string;
     style?: CSSProperties;
-    showArrow?: boolean,
-    disabled?: boolean,
+    showArrow?: boolean;
+    disabled?: boolean;
+    onMotionEnd?: () => void
 }
 
 export default class CollapsePanel extends PureComponent<CollapsePanelProps> {
     static contextType: React.Context<CollapseContextType> = CollapseContext;
-
+    headerExpandIconTriggerRef = React.createRef<HTMLElement>()
+    private ariaID: string = ""
     static propTypes = {
         itemKey: PropTypes.string,
         extra: PropTypes.node,
@@ -43,9 +45,13 @@ export default class CollapsePanel extends PureComponent<CollapsePanelProps> {
         disabled: false,
     };
 
-    private ariaID = getUuidShort({});
 
     context: CollapseContextType;
+
+
+    componentDidMount() {
+        this.ariaID = getUuidShort({});
+    }
 
     renderHeader(active: boolean, expandIconEnable = true) {
         const {
@@ -65,9 +71,8 @@ export default class CollapsePanel extends PureComponent<CollapsePanelProps> {
             collapseIcon = (<IconChevronUp/>);
         }
         const icon = (
-            <span aria-hidden='true' className={cls([`${cssClasses.PREFIX}-header-icon`,
+            <span ref={this.headerExpandIconTriggerRef} aria-hidden='true' className={cls([`${cssClasses.PREFIX}-header-icon`,
                 { [`${cssClasses.PREFIX}-header-iconDisabled`]: !expandIconEnable }])}>
-                {/* eslint-disable-next-line no-nested-ternary */}
                 {expandIconEnable ? (active ? collapseIcon : expandIcon) : expandIcon}
             </span>
         );
@@ -93,6 +98,14 @@ export default class CollapsePanel extends PureComponent<CollapsePanelProps> {
         );
     }
 
+    handleClick = (itemKey: string, e: React.MouseEvent)=>{
+        // Judge user click Icon or Header
+        // Don't mount this func into icon span wrapper, or get triggered twice because of event propagation
+        if (this.context.clickHeaderToExpand || this.headerExpandIconTriggerRef.current?.contains(e.target as HTMLElement)) {
+            this.context.onClick(itemKey, e);
+        }
+    }
+
     render() {
         const {
             className,
@@ -109,8 +122,8 @@ export default class CollapsePanel extends PureComponent<CollapsePanelProps> {
             keepDOM,
             expandIconPosition,
             activeSet,
-            onClick,
             motion,
+            lazyRender
         } = this.context;
         const active = activeSet.has(itemKey);
         const itemCls = cls(className, {
@@ -136,14 +149,16 @@ export default class CollapsePanel extends PureComponent<CollapsePanelProps> {
                     aria-disabled={disabled}
                     aria-expanded={active ? 'true' : 'false'}
                     aria-owns={this.ariaID}
-                    onClick={e => !disabled && onClick(itemKey, e)}
+                    onClick={e => !disabled && this.handleClick(itemKey, e)}
                 >
                     {this.renderHeader(active, children !== undefined && !disabled)}
                 </div>
                 {
                     children && (
                         <Collapsible
+                            lazyRender={lazyRender}
                             isOpen={active} keepDOM={keepDOM} motion={motion}
+                            onMotionEnd={this.props.onMotionEnd}
                             reCalcKey={reCalcKey}>
                             <div
                                 className={contentCls}

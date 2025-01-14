@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 50
+order: 63
 category: Show
 title: Collapsible
 subTitle: Collapsible
@@ -30,7 +30,7 @@ import React, { useState } from 'react';
 import { Collapsible, Button } from '@douyinfe/semi-ui';
 
 () => {
-    const [isOpen ,setOpen] = useState();
+    const [isOpen, setOpen] = useState();
     const toggle = () => {
         setOpen(!isOpen);
     };
@@ -177,17 +177,19 @@ import { Collapsible, Button } from '@douyinfe/semi-ui';
 
 ## API reference
 
-| Properties | Instructions | type | Default | version |
-| --- | --- | --- | --- | --- |
-| className | Class name | string | - | 0.34.0 |
-| collapseHeight | Collapse height | number | 0 | 1.0.0 |
-| duration | Time of animation execution | number | 250 | - |
-| isOpen | Toggle whether to expand the content area | boolean | `false` | - |
-| keepDOM | Whether to keep the hidden panel in DOM tree, destroyed by default | boolean | `false` | 0.25.0 |
-| motion | Toggle whether to turn on animation | Motion | `true` | - |
-| reCalcKey | When reCalcKey changes, the height of children will be reset. Used for optimize dynamic content rendering. | number \| string | - | 1.5.0 |
-| style | Style object | CSSProperties | - | 0.34.0 |
-| aria-controls | [aria-controls](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls) | string |-| 2.3.0|
+| Properties | Instructions                                                                                               | type | Default | version |
+| --- |------------------------------------------------------------------------------------------------------------| --- |---------|---------|
+| className | Class name                                                                                                 | string | -       | 0.34.0  |
+| collapseHeight | Collapse height                                                                                            | number | 0       | 1.0.0   |
+| duration | Time of animation execution                                                                                | number | 250     | -       |
+| isOpen | Toggle whether to expand the content area                                                                  | boolean | `false` | -       |
+| keepDOM | Whether to keep the hidden panel in DOM tree, destroyed by default                                         | boolean | `false` | 0.25.0  |
+| lazyRender | Used with keepDOM, when true, the component will not be rendered when mounting                                         | boolean | `false` | 2.54    |
+| motion | Toggle whether to turn on animation                                                                        | Motion | `true`  | -       |
+| onMotionEnd | Animation end callback                                                                                     | () => void | -       | -       |
+| reCalcKey | When reCalcKey changes, the height of children will be reset. Used for optimize dynamic content rendering. | number \| string | -       | 1.5.0   |
+| style | Style object                                                                                               | CSSProperties | -       | 0.34.0  |
+| aria-controls | [aria-controls](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls)  | string | -       | 2.3.0   |
 
 ## Accessibility
 
@@ -201,14 +203,14 @@ import Collapsible from './index';
 
 ()=>{
     const collapseId = 'myCollapsible';
-    const [visible,setVisible]=useState(false);
+    const [visible, setVisible]=useState(false);
     return <>
         <Button onClick={()=>setVisible(!visible)} aria-controls={`${collapseId}`}>{visible?'hide':'show'}</Button>
         <Collapsible isOpen={visible} id={collapseId}>
             <div>hide content</div>
         </Collapsible>
-    </>
-}
+    </>;
+};
 
 ```
 

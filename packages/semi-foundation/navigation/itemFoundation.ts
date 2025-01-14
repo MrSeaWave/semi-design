@@ -1,4 +1,5 @@
 /* argus-disable unPkgSensitiveInfo */
+import { get } from 'lodash';
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import isEnterPress from '../utils/isEnterPress';
 
@@ -13,23 +14,25 @@ export interface ItemProps {
     link?: string;
     linkOptions?: Record<string, any>;
     disabled?: boolean;
-    children?: any;
+    children?: any
 }
 
+export type ItemKey = string | number;
+
 export interface SelectedItemProps<Props = ItemProps> {
-    itemKey: string | number;
+    itemKey: ItemKey;
     text?: any;
-    selectedKeys?: string | number[];
+    selectedKeys?: ItemKey[];
     selectedItems?: Props[];
-    domEvent?: any;
+    domEvent?: any
 }
 
 export interface ItemAdapter<P = Record<string, any>, S = Record<string, any>> extends DefaultAdapter<P, S> {
     cloneDeep(value: any, customizer?: (value: any) => void): any;
     updateTooltipShow(showTooltip: boolean): void;
     updateSelected(selected: boolean): void;
-    updateGlobalSelectedKeys(keys: string[]): void;
-    getSelectedKeys(): string[];
+    updateGlobalSelectedKeys(keys: ItemKey[]): void;
+    getSelectedKeys(): ItemKey[];
     getSelectedKeysIsControlled(): boolean;
     notifyGlobalOnSelect(item: SelectedItemProps): void;
     notifyGlobalOnClick(item: SelectedItemProps): void;
@@ -38,7 +41,7 @@ export interface ItemAdapter<P = Record<string, any>, S = Record<string, any>> e
     notifyMouseLeave(e: any): void;
     getIsCollapsed(): boolean;
     getSelected(): boolean;
-    getIsOpen(): boolean;
+    getIsOpen(): boolean
 }
 
 export default class ItemFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<ItemAdapter<P, S>, P, S> {
@@ -59,7 +62,6 @@ export default class ItemFoundation<P = Record<string, any>, S = Record<string, 
     }
 
     isValidKey(itemKey: string) {
-        // eslint-disable-next-line eqeqeq
         return itemKey != null && (typeof itemKey === 'string' || typeof itemKey === 'number');
     }
 
@@ -99,7 +101,12 @@ export default class ItemFoundation<P = Record<string, any>, S = Record<string, 
      */
     handleKeyPress(e: any) {
         if (isEnterPress(e)) {
+            const { link, linkOptions } = this.getProps();
+            const target = get(linkOptions, 'target', '_self');
             this.handleClick(e);
+            if (typeof link === 'string') {
+                target === '_blank' ? window.open(link) : window.location.href = link;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 48
+order: 61
 category: 展示类
 title: Carousel 轮播图
 icon: doc-carousel
@@ -43,7 +43,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }} />   
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }} />   
         );
     };
 
@@ -56,7 +56,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
     const textList = [
         ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
         ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-        ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+        ['Semi Template', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
     ];
 
     return (
@@ -64,7 +64,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
             {
                 imgList.map((src, index) => {
                     return (
-                        <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                        <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                             <Space vertical align='start' spacing='medium' style={titleStyle}>
                                 {renderLogo()}
                                 <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -111,7 +111,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -124,7 +124,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
     const textList = [
         ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
         ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-        ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+        ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
     ];
     
     return (
@@ -133,7 +133,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -150,7 +150,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
             <br/>
             <Space> 
                 <div>主题</div>
-                <RadioGroup onChange={e => setTheme(e.target.value)} value={theme}>
+                <RadioGroup onChange={e => setTheme(e.target.value)} value={theme} type="button">
                     <Radio value='primary'>primary</Radio>
                     <Radio value='light'>light</Radio>
                     <Radio value='dark'>dark</Radio>
@@ -195,7 +195,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -208,7 +208,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
     const textList = [
         ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
         ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-        ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+        ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma前端代码一键转'],
     ];
 
     return (
@@ -217,7 +217,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -235,7 +235,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
             <Space vertical align='start'>
                 <Space> 
                     <div>类型</div>
-                    <RadioGroup onChange={e => setType(e.target.value)} value={type}>
+                    <RadioGroup onChange={e => setType(e.target.value)} value={type} type="button">
                         <Radio value='dot'>dot</Radio>
                         <Radio value='line'>line</Radio>
                         <Radio value='columnar'>columnar</Radio>
@@ -243,7 +243,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 </Space>
                 <Space> 
                     <div>位置</div>
-                    <RadioGroup onChange={e => setPosition(e.target.value)} value={position}>
+                    <RadioGroup onChange={e => setPosition(e.target.value)} value={position} type="button">
                         <Radio value='left'>left</Radio>
                         <Radio value='center'>center</Radio>
                         <Radio value='right'>right</Radio>
@@ -251,7 +251,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 </Space>
                 <Space> 
                     <div>尺寸</div>
-                    <RadioGroup onChange={e => setSize(e.target.value)} value={size}>
+                    <RadioGroup onChange={e => setSize(e.target.value)} value={size} type="button">
                         <Radio value='small'>small</Radio>
                         <Radio value='medium'>medium</Radio>
                     </RadioGroup>
@@ -273,7 +273,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
 () => {
     const { Title, Paragraph } = Typography;
-    const [arrowType, setArrowTypew] = useState('always');
+    const [arrowType, setArrowType] = useState('always');
     const [show, setShow] = useState(true);
   
     const style = {
@@ -293,7 +293,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -306,7 +306,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
     const textList = [
         ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
         ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-        ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+        ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
     ];
 
     return (
@@ -315,7 +315,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -333,14 +333,14 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
             <Space vertical align='start'>
                 <Space> 
                     <div>展示箭头</div>
-                    <RadioGroup onChange={e => setShow(e.target.value)} value={show}>
+                    <RadioGroup onChange={e => setShow(e.target.value)} value={show} type="button">
                         <Radio value={true}>show</Radio>
                         <Radio value={false}>hide</Radio>
                     </RadioGroup>
                 </Space>
                 <Space> 
                     <div>展示时机</div>
-                    <RadioGroup onChange={e => setArrowTypew(e.target.value)} value={arrowType}>
+                    <RadioGroup onChange={e => setArrowType(e.target.value)} value={arrowType} type="button">
                         <Radio value='always'>always</Radio>
                         <Radio value='hover'>hover</Radio>
                     </RadioGroup>
@@ -370,7 +370,7 @@ class CarouselDemo extends React.Component {
         this.textList = [
             ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
             ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-            ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+            ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
         ];
         this.arrowProps = {
             leftArrow: { children: <IconArrowLeft size='large'/> },
@@ -380,7 +380,7 @@ class CarouselDemo extends React.Component {
 
     renderLogo() {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }} />
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }} />
         );
     };
 
@@ -411,7 +411,7 @@ class CarouselDemo extends React.Component {
                     {
                         this.imgList.map((src, index) => {
                             return (
-                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                     <Space vertical align='start' spacing='medium' style={titleStyle}>
                                         {this.renderLogo()}
                                         <Typography.Title heading={2} style={colorStyle}>{this.textList[index][0]}</Typography.Title>
@@ -458,7 +458,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -471,7 +471,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
     const textList = [
         ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
         ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-        ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+        ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
     ];
 
     return (
@@ -480,7 +480,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -527,7 +527,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -541,7 +541,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
     const textList = [
         ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
         ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-        ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+        ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
     ];
 
     return (
@@ -550,7 +550,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -586,7 +586,7 @@ class CarouselDemo extends React.Component {
         this.textList = [
             ['Semi 设计管理系统', '从 Semi Design，到 Any Design', '快速定制你的设计系统，并应用在设计稿和代码中'],
             ['Semi 物料市场', '面向业务场景的定制化组件，支持线上预览和调试', '内容由 Semi Design 用户共建'],
-            ['Semi Pro (开发中)', '基于 40+ 真实组件代码设计', '海量页面模板前端代码一键转'],
+            ['Semi 设计/代码模板', '高效的 Design2Code 设计稿转代码', '海量 Figma 设计模板一键转为真实前端代码'],
         ];
         this.state = {
             activeIndex: 0,
@@ -595,11 +595,11 @@ class CarouselDemo extends React.Component {
 
     renderLogo() {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }} />
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }} />
         );
     };
 
-    onChange(activeIndex){
+    onChange(activeIndex) {
         this.setState({ activeIndex });
     }
 
@@ -627,7 +627,7 @@ class CarouselDemo extends React.Component {
                     {
                         this.imgList.map((src, index) => {
                             return (
-                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                     <Space vertical align='start' spacing='medium' style={titleStyle}>
                                         {this.renderLogo()}
                                         <Typography.Title heading={2} style={colorStyle}>{this.textList[index][0]}</Typography.Title>
@@ -679,8 +679,9 @@ class CarouselDemo extends React.Component {
 |------------------|---------------------------------------------------------------|------------------|------|------|
 |props             |箭头div上的可传参数，包括style, onClick事件等                                                  | React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement\>, HTMLDivElement\>       |-     |2.10.0|
 |children          |箭头自定义Icon                                                   |React.ReactNode      |-     |2.10.0|
+## Methods
 
-**Method()**
+绑定在组件实例上的方法，可以通过 ref 调用实现某些特殊交互
 
 | 方法               | 说明                        | 版本    |
 | ----------------- | --------------------------  | ------ |

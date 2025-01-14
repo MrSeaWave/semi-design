@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 55
+order: 71
 category: Show
 title:  Modal
 subTitle: Modal
@@ -25,7 +25,7 @@ import { Modal, Button } from '@douyinfe/semi-ui';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -73,6 +73,52 @@ class modalDemo extends React.Component {
 
 ```
 
+### Bottom Button Fill up
+
+Set `footerFill` to true to make the bottom buttons of the Modal footer fill up the arrangement.
+
+```jsx live=true
+import React from 'react';
+import { Modal, Button } from '@douyinfe/semi-ui';
+
+() => {
+    const [visible, setVisible] = useState(false);
+    const showDialog = () => {
+        setVisible(true);
+    };
+    const handleOk = () => {
+        setVisible(false);
+        console.log('Ok button clicked');
+    };
+    const handleCancel = () => {
+        setVisible(false);
+        console.log('Cancel button clicked');
+    };
+    const handleAfterClose = () => {
+        console.log('After Close callback executed');
+    };
+
+    return (
+        <>
+            <Button onClick={showDialog}>Open Modal</Button>
+            <Modal
+                title="Basic Modal"
+                visible={visible}
+                onOk={handleOk}
+                afterClose={handleAfterClose} //>=1.16.0
+                onCancel={handleCancel}
+                closeOnEsc={true}
+                footerFill={true}
+            >
+                This is the content of a basic modal.
+                <br />
+                More content...
+            </Modal>
+        </>
+    );
+};
+```
+
 ### Mask Closable
 
 You can set `maskClosable={false}` to prevent modal from closing when clicking on the mask.
@@ -84,7 +130,7 @@ import { Modal, Button } from '@douyinfe/semi-ui';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -137,7 +183,7 @@ import { Modal, Button } from '@douyinfe/semi-ui';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -189,7 +235,7 @@ import { Modal, Button } from '@douyinfe/semi-ui';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -218,8 +264,8 @@ class modalDemo extends React.Component {
                     visible={this.state.visible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
-                    okButtonProps={{size: 'small', type: 'warning'}}
-                    cancelButtonProps={{size: 'small', disabled: true}}
+                    okButtonProps={{ size: 'small', type: 'warning' }}
+                    cancelButtonProps={{ size: 'small', disabled: true }}
                 >
                     <p>This is a modal with customized button props.</p>
                     <p>More content...</p>
@@ -241,7 +287,7 @@ import { Modal, Button } from '@douyinfe/semi-ui';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -296,7 +342,7 @@ import { Modal, Button } from '@douyinfe/semi-ui';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -326,10 +372,10 @@ class modalDemo extends React.Component {
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                     centered
-                    bodyStyle={{overflow: 'auto', height: 200}}
+                    bodyStyle={{ overflow: 'auto', height: 200 }}
                 >
-                    <p style={{lineHeight: 1.8}}>Semi Design is a design system developed and maintained by IES Front-end Team and UED Team</p>
-                    <p style={{lineHeight: 1.8}}>Semi Design create a consistent, good-looking, easy-to-use, and efficient user experience with a user-centric, content-first, and human-friendly design system.
+                    <p style={{ lineHeight: 1.8 }}>Semi Design is a design system developed and maintained by IES Front-end Team and UED Team</p>
+                    <p style={{ lineHeight: 1.8 }}>Semi Design create a consistent, good-looking, easy-to-use, and efficient user experience with a user-centric, content-first, and human-friendly design system.
                     </p>
                     <ul>
                         <li><p>Content-first</p></li>
@@ -356,7 +402,7 @@ import { IconVigoLogo, IconSemiLogo } from '@douyinfe/semi-icons';
 class modalDemo extends React.Component {
     constructor() {
         super();
-        this.state = {visible: false};
+        this.state = { visible: false };
         this.showDialog = this.showDialog.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -379,17 +425,17 @@ class modalDemo extends React.Component {
     render() {
         const data = [
             {
-                icon: <IconSemiLogo style={{fontSize: 48}} />,
+                icon: <IconSemiLogo style={{ fontSize: 48 }} />,
                 title: 'Boost new feature adoption with Integration',
                 content: 'Sample data is prepared for you to demostrate how Integration may be useful for your team'
             },
             {
-                icon: <IconVigoLogo style={{fontSize: 48}} />,
+                icon: <IconVigoLogo style={{ fontSize: 48 }} />,
                 title: 'Introducing Dark Mode',
                 content: 'Sample data is prepared for you to demostrate how Integration may be useful for your team'
             },
             {
-                icon: <IconSemiLogo style={{fontSize: 48}} />,
+                icon: <IconSemiLogo style={{ fontSize: 48 }} />,
                 title: 'New List Component',
                 content: 'Sample data is prepared for you to demostrate how Integration may be useful for your team'
             },
@@ -399,7 +445,7 @@ class modalDemo extends React.Component {
             margin: '4px 50px',
         };
         const footer = (
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: 'center' }}>
                 <Button type="primary" theme="solid" onClick={this.handleOk} style={btnStyle}>
                     Continue
                 </Button>
@@ -418,7 +464,7 @@ class modalDemo extends React.Component {
                     onCancel={this.handleCancel}
                     footer={footer}
                 >
-                    <h3 style={{textAlign: 'center', fontSize: 24, margin: 40}}>Semi Design New Features</h3>
+                    <h3 style={{ textAlign: 'center', fontSize: 24, margin: 40 }}>Semi Design New Features</h3>
                     <List
                         dataSource={data}
                         split={false}
@@ -427,8 +473,8 @@ class modalDemo extends React.Component {
                                 header={item.icon}
                                 main={
                                     <div>
-                                        <h6 style={{margin: 0, fontSize: 16}}>{item.title}</h6>
-                                        <p style={{marginTop: 4, color: 'var(--semi-color-text-1)'}}>{item.content}</p>
+                                        <h6 style={{ margin: 0, fontSize: 16 }}>{item.title}</h6>
+                                        <p style={{ marginTop: 4, color: 'var(--semi-color-text-1)' }}>{item.content}</p>
                                     </div>
                                 }
                             />)
@@ -483,7 +529,7 @@ import { IconSend } from '@douyinfe/semi-icons';
 
 ModalComponent = function(props) {
     function success() {
-        Modal.success({ 'title': 'This is a success message', 'content': 'bla bla bla...'});
+        Modal.success({ 'title': 'This is a success message', 'content': 'bla bla bla...' });
     }
 
     function info() {
@@ -561,43 +607,44 @@ function Demo(props = {}) {
 
 ### Modal
 
-| Properties        | Instructions                                       | type | Default |
-| ----------------- | -------------------------------------------------- | -- | ------- |
-| afterClose             | Callback function when modal closed completely   <br/>**>= v1.16.0**           | () => void | -    |
-| bodyStyle         | Content style                                      | CSSProperties | -       |
-| cancelButtonProps | Properties for cancel button                       | [ButtonProps](/en-US/input/button#API-reference) | -       |
-| cancelText        | Text for cancel button                             | string | -       |
-| centered          | Toggle whether to center modal                     | boolean | false   |
-| closable          | Toggle whether to show close button                | boolean | true    |
-| closeIcon         | Icon for close button  <br/>**>= v1.0.0** | ReactNode | <IconClose /\>    |
-| closeOnEsc        | Toggle whether to allow close modal by keyboard event Esc  <br/>**>= v1.0.0** | boolean | true       | 
-| confirmLoading    | Toggle loading state of confirm button             | boolean | false   |
-| content            | Content            | ReactNode  | -      |
-| footer            | Footer                                             | ReactNode | -       |
-| fullScreen        | Is modal FullScreen（will override width and height） <br/>**>= v1.18.0**      | boolean     | false      |
-| getPopupContainer | Specifies the parent DOM, and the bullet layer will be rendered to the DOM, you need to set 'position: relative` <br/>** >= v0.33.0 **  | () => HTMLElement |() => document.body |   
-| hasCancel        | Toggle whether to show cancal button               | boolean | true      |
-| header            | Header                                             | ReactNode | -       |
-| height            | Height                                             | number | -       |
-| icon              | Custom icon       <br/>**v1.1.0**                                          | ReactNode | -       |
-| keepDOM | Keep dom tree when close modal <br/>**>= v1.0.0**  | boolean | false |
-| lazyRender | Lazy render modal, used with `keepDOM` <br/>**>=v1.0.0**  | boolean | true |      
-| mask              | Toggle whether to show mask                        | boolean | true    |
-| maskClosable      | Toggle whether to allow closing when clicking mask | boolean | true    |
-| maskStyle         | Mask style                                         | CSSProperties | -       |
-| motion            | animation switch           | boolean | true    |
-| okButtonProps     | Properties for confirm button                      | [ButtonProps](/en-US/input/button#API-reference) | -       |
-| okText            | Text for confirm button                            | string | -       |
-| okType            | Type for confirm button, optional: 'primary'、'secondary'、'tertiary'、'warning'、'danger'                            | string | primary |
+| Properties        | Instructions                                                                                                                                                                                  | type | Default |
+| ----------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| -- | ------- |
+| afterClose             | Callback function when modal closed completely   <br/>**>= v1.16.0**                                                                                                                          | () => void | -    |
+| bodyStyle         | Content style                                                                                                                                                                                 | CSSProperties | -       |
+| cancelButtonProps | Properties for cancel button                                                                                                                                                                  | [ButtonProps](/en-US/input/button#API-reference) | -       |
+| cancelText        | Text for cancel button                                                                                                                                                                        | string | -       |
+| centered          | Toggle whether to center modal                                                                                                                                                                | boolean | false   |
+| closable          | Toggle whether to show close button                                                                                                                                                           | boolean | true    |
+| closeIcon         | Icon for close button  <br/>**>= v1.0.0**                                                                                                                                                     | ReactNode | <IconClose /\>    |
+| closeOnEsc        | Toggle whether to allow close modal by keyboard event Esc  <br/>**>= v1.0.0**                                                                                                                 | boolean | true       | 
+| confirmLoading    | Toggle loading state of confirm button                                                                                                                                                        | boolean | false   |
+| content            | Content                                                                                                                                                                                       | ReactNode  | -      |
+| footer            | Footer                                                                                                                                                                                        | ReactNode | -       |
+|footerFill| Is the bottom button full (>= 2.xx.0 ) | boolean | false | 
+| fullScreen        | Is modal FullScreen（will override width and height） <br/>**>= v1.18.0**                                                                                                                       | boolean     | false      |
+| getPopupContainer | Specifies the parent DOM, and the bullet layer will be rendered to the DOM, you need to set 'position: relative`  This will change the DOM tree position, but not the view's rendering position.  <br/>** >= v0.33.0 **                                                       | () => HTMLElement |() => document.body |   
+| hasCancel        | Toggle whether to show cancal button                                                                                                                                                          | boolean | true      |
+| header            | Header                                                                                                                                                                                        | ReactNode | -       |
+| height            | Height                                                                                                                                                                                        | number | -       |
+| icon              | Custom icon       <br/>**v1.1.0**                                                                                                                                                             | ReactNode | -       |
+| keepDOM | Keep dom tree when close modal <br/>**>= v1.0.0**                                                                                                                                             | boolean | false |
+| lazyRender | Lazy render modal, used with `keepDOM` <br/>**>=v1.0.0**                                                                                                                                      | boolean | true |      
+| mask              | Toggle whether to show mask                                                                                                                                                                   | boolean | true    |
+| maskClosable      | Toggle whether to allow closing when clicking mask                                                                                                                                            | boolean | true    |
+| maskStyle         | Mask style                                                                                                                                                                                    | CSSProperties | -       |
+| motion            | animation switch                                                                                                                                                                              | boolean | true    |
+| okButtonProps     | Properties for confirm button                                                                                                                                                                 | [ButtonProps](/en-US/input/button#API-reference) | -       |
+| okText            | Text for confirm button                                                                                                                                                                       | string | -       |
+| okType            | Type for confirm button, optional: 'primary'、'secondary'、'tertiary'、'warning'、'danger'                                                                                                        | string | primary |
 | preventScroll | Indicates whether the browser should scroll the document to display the newly focused element, acting on the focus method inside the component, excluding the component passed in by the user | boolean |  |  |
-| size | Size of modal, one of `small`(448px), `medium`(684px), `large`(920px), `full-width`(100vw - 64px) <br/>**>= v1.0.0**  | string | 'small' |
-| style             | Inline style                                       | CSSProperties | -       |
-| title             | Title                                              | ReactNode | -       |
-| visible           | Toggle visibility of the modal                     | boolean | false   |
-| width             | Width                                              | number | 448     |
-| zIndex            | Z-index value for mask                             | number | 1000    |
-| onCancel          | Callback function when clicking cancel button      | (e: any) => void \| Promise<any\>  | -       |
-| onOk              | Callback function when clicking confirm button     | (e: any) => void \| Promise<any\>  | -       |
+| size | Size of modal, one of `small`(448px), `medium`(684px), `large`(920px), `full-width`(100vw - 64px) <br/>**>= v1.0.0**                                                                          | string | 'small' |
+| style             | Inline style                                                                                                                                                                                  | CSSProperties | -       |
+| title             | Title                                                                                                                                                                                         | ReactNode | -       |
+| visible           | Toggle visibility of the modal                                                                                                                                                                | boolean | false   |
+| width             | Width                                                                                                                                                                                         | number | 448     |
+| zIndex            | Z-index value for mask                                                                                                                                                                        | number | 1000    |
+| onCancel          | Callback function when clicking cancel button                                                                                                                                                 | (e: any) => void \| Promise<any\>  | -       |
+| onOk              | Callback function when clicking confirm button                                                                                                                                                | (e: any) => void \| Promise<any\>  | -       |
 
 ### Static Method
 
@@ -696,12 +743,18 @@ WAI-ARIA: https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/
 
 ## FAQ
 
--   Why the button texts in Modal.confirm are not internationalized even when I use LocaleProvider? 
+- #### Why the button texts in Modal.confirm are not internationalized even when I use LocaleProvider? 
     In version >= 1.2.0, you could use `Modal.useModal` to create a `contextHolder` that is accessible to config from ConfigProvider or LocaleProvider.
 
     For version before 1.2 or if you don't want to use Hooks, you could also use `okText` and `cancelText` to set i18 texts at this moment.  
-    
+
+- #### Why is the spacing between title and content different under imperative and non-imperative calls?
+    In the imperative call scenario, the title and content are more closely related, so expressing this strong correlation with a closer distance is in line with expectations. If users don't want this effect, they can do their own style overrides.
+
+
 <!-- ## Related Material
 ```material
 1, 55
 ``` -->
+## Related Material
+<semi-material-list code="1"></semi-material-list>

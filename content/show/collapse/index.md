@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 49
+order: 62
 category: 展示类
 title: Collapse 折叠面板
 icon: doc-accordion
@@ -170,32 +170,35 @@ import { IconCopy } from '@douyinfe/semi-icons';
 
 ### Collapse
 
-| 属性 | 说明 | 类型 | 默认值 | 版本 |
-| --- | --- | --- | --- | --- |
-| accordion | 手风琴模式 | boolean | `false` | - |
-| activeKey | 受控属性, 当前展开的面板的 key | string \| string[] | 无 | - |
-| className | 样式类名 | string | '' | - |
-| collapseIcon | 自定义折叠图标 | ReactNode | `<IconChevronDown />` | - |
-| defaultActiveKey | 初始化选中面板的 key | string \| string[] | 无 | - |
-| expandIcon | 自定义展开图标 | ReactNode | `<IconChevronUp />` | - |
+| 属性 | 说明 | 类型 | 默认值 | 版本     |
+| --- | --- | --- | --- |--------|
+| accordion | 手风琴模式 | boolean | `false` | -      |
+| activeKey | 受控属性, 当前展开的面板的 key | string \| string[] | 无 | -      |
+| className | 样式类名 | string | '' | -      |
+| clickHeaderToExpand | 点击 Header 展开收起，否则只响应点击箭头 | boolean | true | 2.32.0 |
+| collapseIcon | 自定义折叠图标 | ReactNode | `<IconChevronDown />` | -      |
+| defaultActiveKey | 初始化选中面板的 key | string \| string[] | 无 | -      |
+| expandIcon | 自定义展开图标 | ReactNode | `<IconChevronUp />` | -      |
 | expandIconPosition | 展开图标位置 | `left`, `right` | `right` | 1.12.0 |
 | keepDOM | 是否保留隐藏的面板 DOM 树，默认销毁 | bool | `false` | 0.25.0 |
-| motion | 是否开启动画 | object \| boolean | `true` | 1.4.0 |
-| style | 内联 CSS 样式 | CSSProperties | {} | - |
-| onChange | 切换面板的回调 | function(activeKey: string \| string[], e: event) | 无 | - |
+| motion | 是否开启动画 | boolean | `true` | 1.4.0  |
+| lazyRender | 配合 keepDOM 使用，为 true 时挂载时不会渲染组件 | boolean | `false` | 2.54.1 |
+| style | 内联 CSS 样式 | CSSProperties | {} | -      |
+| onChange | 切换面板的回调 | function(activeKey: string \| string[], e: event) | 无 | -      |
 
 ### Collapse.Panel
 
-| 属性      | 说明                                                                  | 类型                   | 默认值 |版本|
-| --------- | --------------------------------------------------------------------- | ---------------------- | ------ |--- |
-| className | 样式类名                                                              | string                 |   无     ||
-| disabled  | 面板是否被禁用                                                         | boolean                 |  false  | v2.17.0   |
-| extra     | 自定义渲染每个面板右上角的辅助内容（仅当 header 为 string 时生效）    | ReactNode              | 无     ||
-| header    | 面板头内容                                                            | ReactNode      | 无     ||
-| itemKey   | 必填且唯一，选中状态匹配 `activeKey`，`defaultActiveKey`              | string                 | 无     ||
-| reCalcKey | 当 reCalcKey 改变时，将重新计算子节点的高度，用于优化动态渲染时的计算 | string \| number |无| 1.5.0  |
-| showArrow | 是否展示箭头                                                          | boolean                 |  true  | v2.17.0   |
-| style     | 内联 CSS 样式                                                         | CSSProperties                 |  无  |    |
+| 属性      | 说明                                                                  | 类型                   | 默认值 | 版本            |
+| --------- | --------------------------------------------------------------------- | ---------------------- | ------ |---------------|
+| className | 样式类名                                                              | string                 |   无     |               |
+| disabled  | 面板是否被禁用                                                         | boolean                 |  false  | v2.17.0       |
+| extra     | 自定义渲染每个面板右上角的辅助内容（仅当 header 为 string 时生效）    | ReactNode              | 无     |               |
+| header    | 面板头内容                                                            | ReactNode      | 无     |               |
+| itemKey   | 必填且唯一，选中状态匹配 `activeKey`，`defaultActiveKey`              | string                 | 无     |               |
+| onMotionEnd | 动画结束的回调 | () => void | - | 2.47.0-beta.0 |
+| reCalcKey | 当 reCalcKey 改变时，将重新计算子节点的高度，用于优化动态渲染时的计算 | string \| number |无| 1.5.0         |
+| showArrow | 是否展示箭头                                                          | boolean                 |  true  | v2.17.0       |
+| style     | 内联 CSS 样式                                                         | CSSProperties                 |  无  |               |
 
 ## Accessibility
 

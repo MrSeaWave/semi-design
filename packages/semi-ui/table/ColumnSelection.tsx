@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React from 'react';
 import BaseComponent from '../_base/baseComponent';
 import classnames from 'classnames';
@@ -14,13 +13,13 @@ export interface TableSelectionCellProps {
     columnTitle?: string; // TODO: future api
     getCheckboxProps?: () => CheckboxProps;
     type?: string; // TODO: future api
-    onChange?: (value: any, e: TableSelectionCellEvent) => void;
+    onChange?: (checked: boolean, e: TableSelectionCellEvent) => void;
     selected?: boolean;
     disabled?: boolean;
     indeterminate?: boolean; // Intermediate state, shown as a solid horizontal line
     prefixCls?: string;
     className?: string;
-    'aria-label'?: React.AriaAttributes['aria-label'];
+    'aria-label'?: React.AriaAttributes['aria-label']
 }
 
 /**
@@ -53,6 +52,7 @@ export default class TableSelectionCell extends BaseComponent<TableSelectionCell
         };
     }
 
+    foundation: TableSelectionCellFoundation;
     constructor(props: TableSelectionCellProps) {
         super(props);
         this.foundation = new TableSelectionCellFoundation(this.adapter);

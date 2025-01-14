@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
 import CalendarFoundation, { CalendarAdapter, EventObject, ParsedEvents, ParsedEventsType, ParsedRangeEvent, WeeklyData } from '@douyinfe/semi-foundation/calendar/foundation';
@@ -10,7 +10,7 @@ import DayCol from './dayCol';
 import TimeCol from './timeCol';
 import { isEqual } from 'lodash';
 import { calcRowHeight } from '@douyinfe/semi-foundation/calendar/eventUtil';
-import { WeekCalendarProps } from './interface';
+import type { WeekCalendarProps } from './interface';
 
 import '@douyinfe/semi-foundation/calendar/calendar.scss';
 import { Locale } from '../locale/interface';
@@ -26,7 +26,7 @@ const allDayCls = `${cssClasses.PREFIX}-all-day`;
 export interface WeekCalendarState {
     scrollHeight: number;
     parsedEvents: ParsedEvents;
-    cachedKeys: Array<string>;
+    cachedKeys: Array<string>
 }
 
 export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekCalendarState> {
@@ -39,7 +39,9 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
         markWeekend: PropTypes.bool,
         scrollTop: PropTypes.number,
         renderTimeDisplay: PropTypes.func,
+        renderDateDisplay: PropTypes.func,
         dateGridRender: PropTypes.func,
+        allDayEventsRender: PropTypes.func,
         width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         style: PropTypes.object,
@@ -108,7 +110,7 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
     componentDidUpdate(prevProps: WeekCalendarProps, prevState: WeekCalendarState) {
         const prevEventKeys = prevState.cachedKeys;
         const nowEventKeys = this.props.events.map(event => event.key);
-        if (!isEqual(prevEventKeys, nowEventKeys)) {
+        if (!isEqual(prevEventKeys, nowEventKeys) || !isEqual(prevProps.displayValue, this.props.displayValue)) {
             this.foundation.parseWeeklyEvents();
         }
     }
@@ -130,7 +132,7 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
         const { parsedEvents } = this.state;
         const events = parsedEvents.day;
         const { week } = this.weeklyData;
-        const { markWeekend, dateGridRender } = this.props;
+        const { markWeekend, dateGridRender, minEventHeight } = this.props;
         const inner = week.map(day => {
             const dateString = day.date.toString();
             const dayEvents = events.has(dateString) ? events.get(dateString) : [];
@@ -145,6 +147,7 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
                     showCurrTime={this.props.showCurrTime}
                     isWeekend={markWeekend && day.isWeekend}
                     dateGridRender={dateGridRender}
+                    minEventHeight={minEventHeight}
                 />
             );
         });
@@ -152,7 +155,7 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
     };
 
     renderHeader = (dateFnsLocale: any) => {
-        const { markWeekend, displayValue } = this.props;
+        const { markWeekend, displayValue, renderDateDisplay } = this.props;
         const { month, week } = this.foundation.getWeeklyData(displayValue, dateFnsLocale);
         return (
             <div className={`${prefixCls}-header`}>
@@ -167,10 +170,17 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
                                 [`${cssClasses.PREFIX}-today`]: isToday,
                                 [`${cssClasses.PREFIX}-weekend`]: markWeekend && day.isWeekend,
                             });
-                            return (
-                                <li key={`${date.toString()}-weekheader`} className={listCls}>
+                            const dateContent = renderDateDisplay ? (
+                                renderDateDisplay(date)
+                            ) : (
+                                <Fragment>
                                     <span className={`${cssClasses.PREFIX}-today-date`}>{dayString}</span>
                                     <span>{weekday}</span>
+                                </Fragment>
+                            );
+                            return (
+                                <li key={`${date.toString()}-weekheader`} className={listCls}>
+                                    {dateContent}
                                 </li>
                             );
                         })}
@@ -181,6 +191,9 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
     };
 
     renderAllDayEvents = (events: ParsedRangeEvent[]) => {
+        if (this.props.allDayEventsRender) {
+            return this.props.allDayEventsRender(this.props.events);
+        }
         const list = events.map((event, ind) => {
             const { leftPos, width, topInd, children, key } = event;
             const top = `${topInd}em`;
@@ -203,11 +216,11 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
     };
 
     renderAllDay = (locale: Locale['Calendar']) => {
+        const { allDayEventsRender } = this.props;
         const { allDay } = this.state.parsedEvents;
         const parsed = this.foundation.parseWeeklyAllDayEvents(allDay);
-        const maxRowHeight = calcRowHeight(parsed);
-        const style = {
-            height: `${maxRowHeight}em`
+        const style = allDayEventsRender ? null : {
+            height: `${calcRowHeight(parsed)}em`
         };
         const { markWeekend } = this.props;
         const { week } = this.weeklyData;
@@ -248,7 +261,7 @@ export default class WeekCalendar extends BaseComponent<WeekCalendarProps, WeekC
         return (
             <LocaleConsumer componentName="Calendar">
                 {(locale: Locale['Calendar'], localeCode: string, dateFnsLocale: any) => (
-                    <div className={weekCls} style={weekStyle} ref={this.dom}>
+                    <div className={weekCls} style={weekStyle} ref={this.dom} {...this.getDataAttr(this.props)}>
                         <div className={`${prefixCls}-sticky-top`}>
                             {header}
                             {this.renderHeader(dateFnsLocale)}

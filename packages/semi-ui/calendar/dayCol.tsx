@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
 import React from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
@@ -13,12 +13,12 @@ import '@douyinfe/semi-foundation/calendar/calendar.scss';
 const prefixCls = `${cssClasses.PREFIX}-grid`;
 
 function pad(d: number) {
-    return (d < 10) ? `0${ d.toString()}` : d.toString();
+    return (d < 10) ? `0${d.toString()}` : d.toString();
 }
 
 export interface DayColState {
     currPos: number;
-    showCurrTime: boolean;
+    showCurrTime: boolean
 }
 
 export default class DayCol extends BaseComponent<DayColProps, DayColState> {
@@ -30,6 +30,7 @@ export default class DayCol extends BaseComponent<DayColProps, DayColState> {
         currPos: PropTypes.number,
         handleClick: PropTypes.func,
         mode: PropTypes.string,
+        minEventHeight: PropTypes.number,
         isWeekend: PropTypes.bool,
         dateGridRender: PropTypes.func,
     };
@@ -39,7 +40,8 @@ export default class DayCol extends BaseComponent<DayColProps, DayColState> {
         showCurrTime: true,
         scrollHeight: 0,
         currPos: 0,
-        mode: 'dayCol'
+        mode: 'dayCol',
+        minEventHeight: Number.MIN_SAFE_INTEGER
     };
 
     static contextType = localeContext;
@@ -76,17 +78,15 @@ export default class DayCol extends BaseComponent<DayColProps, DayColState> {
     }
 
     renderEvents = () => {
-        const { events, scrollHeight } = this.props;
+        const { events, scrollHeight, minEventHeight } = this.props;
         const list = events.map((event, ind) => {
-            const { startPos, endPos, children, key } = event;
+            const { startPos, endPos, children, key, left = 0 } = event;
             const top = startPos * scrollHeight;
             const height = (endPos - startPos) * scrollHeight;
-            if (!height) {
-                return undefined;
-            }
             const style = {
                 top: `${top}px`,
-                height: `${height}px`,
+                height: `${Math.max(minEventHeight, height)}px`,
+                left: left
             };
             return (
                 <li className={`${cssClasses.PREFIX}-event-item ${cssClasses.PREFIX}-event-day`} style={style} key={key || `${top}-${ind}`}>

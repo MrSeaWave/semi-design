@@ -1,6 +1,5 @@
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import { isNumber, noop } from 'lodash';
-import { Motion } from '../utils/type';
 
 
 export type ToastType = 'success' | 'warning' | 'error' | 'info' | 'default';
@@ -14,7 +13,8 @@ export interface ConfigProps {
     right?: number | string;
     duration?: number;
     zIndex?: number;
-    getPopupContainer?: () => HTMLElement | null;
+    theme?: ToastTheme;
+    getPopupContainer?: () => HTMLElement | null
 }
 export interface ToastProps extends ConfigProps {
     onClose?: () => void;
@@ -25,26 +25,23 @@ export interface ToastProps extends ConfigProps {
     className?: string;
     showClose?: boolean;
     icon?: any;
-    theme?: ToastTheme;
     direction?: Directions;
     close?: (id: string) => void;
+    stack?: boolean
 }
 
 
 export interface ToastInstance extends ToastProps{
     id?: string;
-    motion?: Motion;
+    motion?: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ToastState{
-
-}
+export interface ToastState{}
 
 
 export interface ToastAdapter extends DefaultAdapter<ToastProps, ToastState>{
     notifyWrapperToRemove: (id: string) => void;
-    notifyClose: () => void;
+    notifyClose: () => void
 }
 
 export default class ToastFoundation extends BaseFoundation<ToastAdapter> {

@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 import React from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
@@ -24,7 +23,7 @@ export type RadioType =
 export type RadioProps = {
     autoFocus?: boolean;
     checked?: boolean;
-    children?: React.ReactNode | undefined;
+    children?: React.ReactNode;
     defaultChecked?: boolean;
     value?: string | number;
     disabled?: boolean;
@@ -44,7 +43,7 @@ export type RadioProps = {
     addonId?: string;
     extraId?: string;
     name?: string;
-    preventScroll?: boolean;
+    preventScroll?: boolean
 };
 
 export interface RadioState {
@@ -52,10 +51,10 @@ export interface RadioState {
     addonId?: string;
     extraId?: string;
     focusVisible?: boolean;
-    checked?: boolean;
+    checked?: boolean
 }
 
-export { RadioChangeEvent };
+export type { RadioChangeEvent };
 
 class Radio extends BaseComponent<RadioProps, RadioState> {
     static contextType = Context;
@@ -198,7 +197,8 @@ class Radio extends BaseComponent<RadioProps, RadioState> {
             mode,
             type,
             value: propValue,
-            name
+            name,
+            ...rest
         } = this.props;
 
         let realChecked,
@@ -295,6 +295,7 @@ class Radio extends BaseComponent<RadioProps, RadioState> {
                 className={wrapper}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
+                {...this.getDataAttr(rest)}
             >
                 <RadioInner
                     {...this.props}

@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'en-GB',
     dateFnsLocale: enGB,
     Pagination: {
-        item: 'item',
-        pageSize: ' items / page',
-        page: ' pages',
-        total: '',
-        jumpTo: 'Jump to'
+        pageSize: 'Items per page: ${pageSize}',
+        total: 'Total pages: ${total}',
+        jumpTo: 'Jump to',
+        page: ' page',
     },
     Modal: {
         confirm: 'Confirm',
         cancel: 'Cancel',
+    },
+    Tabs: {
+        more: "More"
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: 'Select date and time',
             dateRange: ['Start date', 'End date'],
             dateTimeRange: ['Start date', 'End date'],
+            monthRange: ['Start month', 'End month'],
         },
+        presets: 'Presets',
         footer: {
             confirm: 'Confirm',
             cancel: 'Cancel',
@@ -83,7 +87,7 @@ const local: Locale = {
             Sun: 'Sun',
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'yyyy-MM-dd',
+            FORMAT_SWITCH_DATE: 'MM/dd/yyyy',
         },
     },
     Popconfirm: {
@@ -97,6 +101,9 @@ const local: Locale = {
     Table: {
         emptyText: 'No Result',
         pageText: 'Showing ${currentStart} to ${currentEnd} of ${total}',
+        descend: 'Click to descend',
+        ascend: 'Click to ascend',
+        cancelSort: 'Cancel sorting',
     },
     Select: {
         emptyText: 'No Result',
@@ -147,12 +154,34 @@ const local: Locale = {
         clear: 'Clear',
         selectAll: 'Select all',
         clearSelectAll: 'Unselect all',
-        total: 'Total ${total} items',
-        selected: '${total} items selected',
+        total: 'Total items: ${total}',
+        selected: 'Items selected: ${total}',
     },
     Form: {
         optional: '(optional)',
     },
+    Image: {
+        preview: 'Preview',
+        loading: 'Loading',
+        loadError: 'Failed to load',
+        prevTip: 'Previous',
+        nextTip: 'Next',
+        zoomInTip: 'Zoom in',
+        zoomOutTip: 'Zoom out',
+        rotateTip: 'Rotate',
+        downloadTip: 'Download',
+        adaptiveTip: 'Adapt to the page',
+        originTip: 'Original size',
+    },
+    Chat: {
+        deleteConfirm: 'Are you sure you want to delete this session?',
+        clearContext: 'Context cleared',
+        copySuccess: 'Copy successful.',
+        stop: 'Stop',
+        copy: 'Copy',
+        copied: 'Copied',
+        dropAreaText: 'Put the file here',
+    }
 };
 
 // [i18n-English(GB)]

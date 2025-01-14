@@ -4,7 +4,7 @@ import { graphql, Link } from 'gatsby';
 import Blocks from '@douyinfe/semi-site-markdown-blocks';
 import '@douyinfe/semi-site-markdown-blocks/dist/index.css';
 import SearchAllInOne from '../components/SearchAllInOne';
-import { Icon, Row, Col, Tag, Tooltip, Popover, Checkbox, Button, Radio, Skeleton, Toast, Table, CheckboxGroup, Description, Dropdown, Form, Typography, Empty } from '@douyinfe/semi-ui';
+import { Icon, Row, Col, Tag, Tooltip, Popover, Checkbox, Button, Radio, Avatar,Skeleton, Toast, Table, CheckboxGroup, Descriptions, Dropdown, Form, Typography, Empty, Image, Card, Space } from '@douyinfe/semi-ui';
 import { IllustrationNoAccess, IllustrationNoAccessDark } from '@douyinfe/semi-illustrations';
 import NotificationCard from '../../packages/semi-ui/notification/notice';
 import ToastCard from '../../packages/semi-ui/toast/toast';
@@ -18,12 +18,15 @@ import PageAnchor from 'components/PageAnchor';
 import PrevAndNext from 'components/PrevAndNext';
 import SEO from 'components/seo';
 import DesignToken from 'components/DesignToken';
+import ChartContact from '../components/ChartContact';
 import { makeAnchorId } from '../utils';
 import ComponentOverview from 'components/ComponentOverview';
 import { get, isString, capitalize, noop } from 'lodash-es';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import ApiType from 'components/ApiType';
 import IconList from 'components/IconList';
+import FeatureCard from 'components/FeatureCard';
+import ClickOpen from 'components/ClickOpen';
 import { getLocale } from '../utils/locale';
 import ReactDOM from 'react-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -42,12 +45,16 @@ import '../styles/docDemo.scss';
 import '../styles/index.scss';
 import '../styles/doc.scss';
 import cls from 'classnames';
-import { IconLink, IconFile, IconHelpCircle } from '@douyinfe/semi-icons';
+import { IconLink, IconFile, IconHelpCircle,IconPlus } from '@douyinfe/semi-icons';
 import { Switch, TabPane, Tabs } from '../../packages/semi-ui';
 import DesignPageAnchor from 'components/DesignPageAnchor';
-import transContent, {getAnotherSideUrl, isHaveUedDocs, isJumpToDesignSite} from './toUEDUtils/toUED';
+import transContent, { getAnotherSideUrl, isHaveUedDocs, isJumpToDesignSite } from './toUEDUtils/toUED';
 import ImageBox from 'components/ImageBox';
 import './toUEDUtils/toUED.scss';
+import { debounce } from 'lodash';
+import StickyHeaderTable from '../demos/StickyHeaderTable';
+import { useIsIde } from '../components/useIde';
+
 const Text = ({ lang, letterSpacing, size, lineHeight, text }) => {
     letterSpacing = letterSpacing || 'auto';
     return (
@@ -88,7 +95,7 @@ const SemiComponents = {
         </Tooltip>
     ),
     Notice,
-    CustomH4, 
+    CustomH4,
     CustomH5,
     Checkbox,
     Radio,
@@ -96,7 +103,7 @@ const SemiComponents = {
     ImageBox,
     // content guideline demo 
     CheckboxGroup: CheckboxGroup,
-    Description: Description,
+    Descriptions: Descriptions,
     NotificationCard,
     ToastCard,
     Dropdown,
@@ -106,6 +113,12 @@ const SemiComponents = {
     IllustrationNoAccessDark,
     Empty,
     Button,
+    Image,
+    Card,
+    Space,
+    Avatar,
+    IconPlus,
+    ChartContact
 };
 
 const pre = ({ ...props }) => {
@@ -119,6 +132,14 @@ const pre = ({ ...props }) => {
 
     if (props.children.props.className === 'language-overview') {
         return <Blocks.pre className={'pre-overview gatsby-overview'} {...props} />;
+    }
+
+    if (props.children.props.className === 'language-chart') {
+        return <Blocks.pre className={'pre-chart gatsby-overview'} {...props} />;
+    }
+
+    if (props.children.props.className === 'language-chartcontact') {
+        return <Blocks.pre className={'pre-chartcontact gatsby-overview'} {...props} />;
     }
 
     return <Blocks.pre {...props} />;
@@ -155,18 +176,27 @@ const code = ({ ...props }) => {
 
     newProps.lineNumber = false;
 
+    if (props.half) {
+        newProps.width = '50%';
+    }
+
     const Placeholder = () => (
-        <Skeleton
-            active
-            placeholder={
-                <Skeleton.Image
-                    style={{
-                        width: '100%',
-                        height: 518,
-                    }}
-                />
-            }
-        />
+        <>
+            <Skeleton
+                active
+                placeholder={
+                    <Skeleton.Image
+                        style={{
+                            width: '100%',
+                            height: 518,
+                        }}
+                    />
+                }
+            />
+        <div className={"markdown-code-ssr"} style={{display:"none"}}>
+            {props.children}
+        </div>
+        </>
     );
 
     const [Component, _setComponent] = useState(() => Placeholder);
@@ -187,13 +217,16 @@ const code = ({ ...props }) => {
             delete lodashScope.default;
             newProps.scope = { ...newProps.scope, ...lodashScope, _: { ...lodash_es } };
             setComponent(() => content.default);
+            window.postMessage("oneCodeLoaded")
         }, 0);
         return () => {
             ref.current.mounted = false;
         };
     });
+    const isIde = useIsIde();
     return (
-        <div className={'gatsby-live-code'}>
+        <div className={'gatsby-live-code'} >
+            {isIde && <textarea {...{ value: ref.current.newProps.children }} className='gatsby-live-code-ide'/>}
             <Component {...ref.current.newProps} />
         </div>
     );
@@ -208,64 +241,87 @@ const components = {
     ...Blocks,
     code,
     pre,
-    hr: ({}) => <hr className={'gatsby-hr'} />,
+    hr: ({ }) => <hr className={'gatsby-hr'} />,
     h2: ({ children }) => {
         const intl = useIntl();
+        const onIconLinkClick = () => {
+            copy(`${window.location.href.replace(window.location.hash, '')}#${window.encodeURI(children)}`);
+            Toast.success({
+                content: intl.formatMessage({
+                    id: 'editor.copy.success',
+                }),
+                duration: 3,
+            });
+        }
+        const hideMaterialTitle = (children === '相关物料' || children === 'Related Material') && !MATERIAL_LIST_URL; // The external network does not display related materials
         return (
-            <h2 className="md markdown gatsby-h2" id={makeAnchorId(children)}>
-                {children}
+            <>
                 {
-                    children === '设计变量'?
-                        <Tooltip content={
-                            <span>
-                                如何使用可查阅：
-                                <a href='https://semi.design/dsm_manual/zh-CN/web/componentToken' target="_blank">Semi DSM 手册</a>
-                            </span>}
-                        >
-                            <IconHelpCircle size='large' type="help_circle" style={{ color: ' --semi-color-tertiary-light-default', marginLeft: 4 }}/>
-                        </Tooltip>
-                    : null
+                    hideMaterialTitle ? 
+                        null : 
+                        <h2 className="md markdown gatsby-h2" id={makeAnchorId(children)}>
+                            {children}
+                            {
+                                children === '设计变量' ?
+                                    <Tooltip content={
+                                        <span>
+                                            如何使用可查阅：
+                                            <a href='https://semi.design/dsm_manual/zh-CN/web/componentToken' target="_blank">Semi DSM 手册</a>
+                                        </span>}
+                                    >
+                                        <IconHelpCircle size='large' type="help_circle" style={{ color: ' --semi-color-tertiary-light-default', marginLeft: 4 }} />
+                                    </Tooltip>
+                                    : null
+                            }
+                            {
+                                children === 'Design Tokens' ? <Tooltip content={
+                                    <span>
+                                        How to use: Refer to
+                                        <a href='https://bytedance.feishu.cn/docx/doxcnVROZf61ey1zFzlErtJfL2d' target="_blank">DSM Playbook</a>
+                                    </span>}>
+                                    <IconHelpCircle size='large' type="help_circle" style={{ color: ' --semi-color-tertiary-light-default', marginLeft: 4 }} />
+                                </Tooltip> : null
+                            }
+                            <IconLink
+                                className={'anchor-link-button-icon'}
+                                tabIndex={0}
+                                role="button"
+                                onClick={onIconLinkClick}
+                                onKeyPress={(e) => {
+                                    if (['Enter', ' '].includes(e?.key)) {
+                                        onIconLinkClick(e);
+                                    }
+                                }}
+                            />
+                        </h2>
                 }
-                {
-                    children === 'Design Tokens' ? <Tooltip content={
-                        <span>
-                            How to use: Refer to
-                            <a href='https://bytedance.feishu.cn/docx/doxcnVROZf61ey1zFzlErtJfL2d' target="_blank">DSM Playbook</a>
-                        </span>}>
-                        <IconHelpCircle size='large' type="help_circle" style={{ color: ' --semi-color-tertiary-light-default', marginLeft: 4 }} />
-                    </Tooltip> : null
-                }
-                <IconLink
-                    className={'anchor-link-button-icon'}
-                    onClick={() => {
-                        copy(`${window.location.href.replace(window.location.hash, '')}#${window.encodeURI(children)}`);
-                        Toast.success({
-                            content: intl.formatMessage({
-                                id: 'editor.copy.success',
-                            }),
-                            duration: 3,
-                        });
-                    }}
-                />
-            </h2>
+            </>
         );
     },
     blockquote: ({ children }) => <blockquote className={'gatsby-blockquote'}>{children}</blockquote>,
     h3: ({ children }) => {
         const intl = useIntl();
+        const onIconLinkClick = () => {
+            copy(`${window.location.href.replace(window.location.hash, '')}#${window.encodeURI(children)}`);
+            Toast.success({
+                content: intl.formatMessage({
+                    id: 'editor.copy.success',
+                }),
+                duration: 3,
+            });
+        }
         return (
             <h3 className="md markdown gatsby-h3" id={makeAnchorId(children)}>
                 {children}
                 <IconLink
+                    tabIndex={0}
+                    role="button"
                     className={'anchor-link-button-icon'}
-                    onClick={() => {
-                        copy(`${window.location.href.replace(window.location.hash, '')}#${window.encodeURI(children)}`);
-                        Toast.success({
-                            content: intl.formatMessage({
-                                id: 'editor.copy.success',
-                            }),
-                            duration: 3,
-                        });
+                    onClick={onIconLinkClick}
+                    onKeyPress={(e) => {
+                        if (['Enter', ' '].includes(e?.key)) {
+                            onIconLinkClick(e);
+                        }
                     }}
                 />
             </h3>
@@ -276,7 +332,7 @@ const components = {
         return (
             <h4 className="md markdown gatsby-h4" id={makeAnchorId(children)}>
                 {children}
-                { version && <SemiSiteChangeLogDiff style={{ marginLeft: 16 }} hoverContent={children} /> }
+                {version && <SemiSiteChangeLogDiff style={{ marginLeft: 16 }} hoverContent={children} />}
             </h4>
         );
     },
@@ -307,9 +363,9 @@ const components = {
     li: ({ children }) => {
         if (Array.isArray(children)) {
             children = [...children];
-            
+
             // For convience of adding new feature in different type, we use "if else" group instead of object or map.
-            
+
             if (children[0] === '【Feature】' || children[0] === '【Feat】') {
                 children[0] = <div className={'changelog-title'}>🎁【Feature】</div>;
             }
@@ -388,13 +444,21 @@ const components = {
                         duration: 3,
                         textMaxWidth: 300
                     })) : noop}
-                    >
+                >
                     {props.children}
                 </a>
             );
         } else {
+            const assetPrefix = ASSET_PREFIX.replace("//","/")
+            const assetPrefixStart = props.href.indexOf(assetPrefix)
+            let href = props.href;
+            if(assetPrefixStart!==-1){
+                const assetPrefixEnd = assetPrefixStart + assetPrefix.length
+                href = props.href.slice(assetPrefixEnd)
+            }
+
             return (
-                <Link className="md markdown gatsby-a" to={props.href} target={props.target}>
+                <Link className="md markdown gatsby-a" to={href} target={props.target}>
                     {props.children}
                 </Link>
             );
@@ -422,14 +486,14 @@ const components = {
             })
             return dataSource;
         }
-        
+
         let tableCls = 'md markdown gatsby-table';
-        
+
         try {
             const columns = getColumnsFromFiber(columnsFiber);
             const dataSource = getDataFromFiber(dataFiber);
             let firstColumnTitle = columns[0].title;
-            if (firstColumnTitle.includes('推荐用法') || firstColumnTitle.includes('Recommended usage')) {
+            if (['推荐用法', 'Recommended usage', '20 色色板对应 Token', 'Tokens for 20-color palette' ].includes(firstColumnTitle)) {
                 tableCls = 'md markdown gatsby-table same-every-column';
             }
         } catch (error) {
@@ -448,14 +512,17 @@ const components = {
         //         </div>
         //     );
         // } catch {
-            return (
-                <div className='table-container gatsby-table-container'>
-                    <table className={tableCls}>{children}</table>
-                </div>
-            );
+        return (
+            <div className='table-container gatsby-table-container'>
+                <table className={tableCls}>{children}</table>
+            </div>
+        );
         // }
     },
     ApiType,
+    StickyHeaderTable,
+    FeatureCard,
+    ClickOpen
 };
 
 const getPrevAndNext = pageContext => {
@@ -510,21 +577,38 @@ const getCNtype = type => {
 };
 
 export default function Template(args) {
-    const { pageContext, data,location }=args
+    const { pageContext, data, location } = args
     useEffect(() => {
         const { hash } = window.location;
 
         try {
             if (hash === '') {
-                window.scrollTo({
-                    top: 0,
-                });
+                // window.scrollTo({
+                //     top: 0,
+                // });
             } else {
                 const id = `#${makeAnchorId(window.decodeURI(hash.slice(1)))}`; // console.log('id', id);
 
                 const dom = document.querySelector(id);
                 if (dom) {
-                    setTimeout(()=>dom.scrollIntoView());
+                    let timer = null;
+                    const scrollIntoView = debounce(()=>{
+                        window.scroll(0, dom.offsetTop);
+                    },100)
+                    const messageHandle = (e) => {
+                        if (e.data === "oneCodeLoaded") {
+                            // dom.scrollIntoView();
+                            setTimeout(() => {
+                                scrollIntoView();
+                                clearTimeout(timer);
+                                timer = setTimeout(() => {
+                                    window.removeEventListener('message', messageHandle);
+                                }, 5000)
+                            },100)
+                        }
+                    }
+                    window.addEventListener('message', messageHandle);
+
                 }
             }
         } catch (e) {
@@ -591,39 +675,48 @@ export default function Template(args) {
         window.EvaluateSDK && window.EvaluateSDK(appKey, email, options);
     };
 
-    const [iframeAnchorData,setIframeAnchorData]=useState(null);
+    const [iframeAnchorData, setIframeAnchorData] = useState(null);
 
-    useEffect(()=>{
-        const handleMessage=(e)=>{
-            if(e.data==='toRD'){
+    useEffect(() => {
+        const handleMessage = (e) => {
+            if (e.data === 'toRD') {
                 transContent('main');
                 return;
             }
 
             let data;
-            try{
-                data=JSON.parse(e.data);
-            }catch (e){
+            try {
+                data = JSON.parse(e.data);
+            } catch (e) {
                 return;
             }
-            if(data.type==='anchorData'){
+            if (data.type === 'anchorData') {
                 setIframeAnchorData(data.value);
             }
 
         }
-        window.addEventListener('message',handleMessage);
-        return ()=>window.removeEventListener('message',handleMessage);
-    },[]);
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
 
 
     const isComponentPage = COMPONENT_LIST.some(item => item.toLowerCase() === enTitle.toLowerCase());
-    const haveUedDoc=isHaveUedDocs(location?.pathname || window.location.pathname);
-    const jumpToDesignSite=isJumpToDesignSite(location?.pathname || window.location.pathname);
-    const [tabValue,setTabValue]=useState('rd');
+    const haveUedDoc = isHaveUedDocs(location?.pathname || window.location.pathname);
+    const jumpToDesignSite = isJumpToDesignSite(location?.pathname || window.location.pathname);
+    const [tabValue, setTabValue] = useState('rd');
     return (
         <div className={calcClassName()}>
             <SEO lang="zh-CN" title={`${current.frontmatter.title} - Semi Design`} />
-            <div className="title-area" style={haveUedDoc?{}:{borderBottom:`1px solid var(--semi-color-border)`}}>
+            <div className={'pageAnchor'}>
+                {(tabValue === 'rd' || (["Accessibility "].includes(enTitle))) && (
+                    //  The external network does not display related materials
+                    <PageAnchor slug={pageContext.slug} data={MATERIAL_LIST_URL ? current.tableOfContents.items : current.tableOfContents.items.filter(item => !(item.title === '相关物料' || item.title === 'Related Material'))} />
+                )}
+                {
+                    iframeAnchorData && tabValue === 'ued' && <DesignPageAnchor data={iframeAnchorData} />
+                }
+            </div>
+            <div className="title-area" style={haveUedDoc ? {} : { borderBottom: `1px solid var(--semi-color-border)` }}>
                 <div>
                     {current.frontmatter.draft ? (
                         <Tag className="article-tag" color="orange">
@@ -635,9 +728,8 @@ export default function Template(args) {
                     <div className="header-tinyTitle">
                         {intl.locale === 'zh-CN'
                             ? `${getCNtype(current.fields.type)} · ${enTitle}`
-                            : `${current.fields.type[0].toUpperCase() + current.fields.type.slice(1)} · ${
-                                  current.frontmatter.title
-                              }`}
+                            : `${current.fields.type[0].toUpperCase() + current.fields.type.slice(1)} · ${current.frontmatter.title
+                            }`}
                     </div>
                     <div className="header-title">{intl.locale === 'zh-CN' ? cnTitle : current.frontmatter.title}</div>
                     <div className="article-brief">{current.frontmatter.brief}</div>
@@ -650,34 +742,25 @@ export default function Template(args) {
                         />
                     )}
                 </div>
-
-                {current.fields.type !== 'start' && haveUedDoc  &&  (
-                    <Tabs activeKey={tabValue} onTabClick={(key)=>{
-                        if(key==='ued'){
-                            if(jumpToDesignSite){
+                {current.fields.type !== 'start' && haveUedDoc && (
+                    <Tabs activeKey={tabValue} onTabClick={(key) => {
+                        if (key === 'ued') {
+                            if (jumpToDesignSite) {
                                 window.open(getAnotherSideUrl('design'));
-                            }else{
+                            } else {
                                 transContent('design');
                                 setTabValue('ued');
                             }
 
-                        }else{
+                        } else {
                             transContent('rd');
                             setTabValue('rd');
                         }
                     }}>
-                        <TabPane tab={intl.formatMessage({id:'apiDoc'})} itemKey={'rd'}/>
-                        <TabPane tab={intl.formatMessage({id:'designDoc'})} itemKey={'ued'}/>
+                        <TabPane tab={intl.formatMessage({ id: 'apiDoc' })} itemKey={'rd'} tabIndex={-1}/>
+                        <TabPane tab={intl.formatMessage({ id: 'designDoc' })} itemKey={'ued'} tabIndex={-1} />
                     </Tabs>
                 )}
-            </div>
-            <div className={'pageAnchor'}>
-                {(tabValue==='rd' || (["Accessibility "].includes(enTitle))) && (
-                    <PageAnchor slug={pageContext.slug} data={current.tableOfContents.items} />
-                )}
-                {
-                    iframeAnchorData && tabValue==='ued' && <DesignPageAnchor data={iframeAnchorData}/>
-                }
             </div>
             <div className="main-article">
                 <MDXProvider components={components}>

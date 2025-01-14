@@ -16,15 +16,15 @@ const removeKeys = function removeKeys(originKeys: (string | number)[] = [], ...
 export interface OnOpenChangeData {
     itemKey: string | number;
     openKeys: (string | number)[];
-    isOpen: boolean;
+    isOpen: boolean
 }
 
 export interface OnClickData extends OnOpenChangeData {
-    domEvent: any;
+    domEvent: any
 }
 
 export interface OnSelectData extends OnOpenChangeData {
-    domEvent: any;
+    domEvent: any
 }
 
 export interface SubNavAdapter<P = Record<string, any>, S = Record<string, any>> extends DefaultAdapter<P, S> {
@@ -37,7 +37,7 @@ export interface SubNavAdapter<P = Record<string, any>, S = Record<string, any>>
     notifyGlobalOnSelect(data: OnSelectData): void;
     notifyGlobalOnClick(data: OnClickData): void;
     getIsSelected(itemKey: string | number): boolean;
-    getIsOpen(): boolean;
+    getIsOpen(): boolean
 }
 
 export default class SubNavFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<SubNavAdapter<P, S>, P, S> {
@@ -52,7 +52,9 @@ export default class SubNavFoundation<P = Record<string, any>, S = Record<string
         this._timer = null;
     }
 
-    destroy() {} // eslint-disable-line
+    destroy() {
+        this.clearDelayTimer();
+    }
 
     clearDelayTimer() {
         if (this._timer) {
@@ -62,7 +64,6 @@ export default class SubNavFoundation<P = Record<string, any>, S = Record<string
     }
 
     isValidKey(itemKey: string | number) {
-        // eslint-disable-next-line eqeqeq
         return itemKey != null && (typeof itemKey === 'number' || typeof itemKey === 'string');
     }
 

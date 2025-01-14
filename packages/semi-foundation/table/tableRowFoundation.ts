@@ -5,10 +5,9 @@ export interface TableRowAdapter<P = Record<string, any>, S = Record<string, any
     notifyClick: (rowKey: BaseRowKeyType, e: any, expand: boolean) => void;
     notifyDoubleClick: (record: Record<string, any>, e: any) => void;
     notifyMouseEnter: (record: Record<string, any>, e: any) => void;
-    notifyMouseLeave: (record: Record<string, any>, e: any) => void;
+    notifyMouseLeave: (record: Record<string, any>, e: any) => void
 }
 
-// eslint-disable-next-line max-len
 export default class TableRowFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<TableRowAdapter<P, S>, P, S> {
     handleClick(e: any) {
         const { expanded, rowKey } = this.getProps();

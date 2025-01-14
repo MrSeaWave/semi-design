@@ -29,7 +29,9 @@ class Calendar extends BaseComponent<CalendarProps, {}> {
         scrollTop: PropTypes.number,
         onClick: PropTypes.func,
         renderTimeDisplay: PropTypes.func,
+        renderDateDisplay: PropTypes.func,
         markWeekend: PropTypes.bool,
+        minEventHeight: PropTypes.number,
         width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         style: PropTypes.object,
@@ -59,5 +61,5 @@ class Calendar extends BaseComponent<CalendarProps, {}> {
     }
 }
 
-export { EventObject };
+export type { EventObject };
 export default Calendar;

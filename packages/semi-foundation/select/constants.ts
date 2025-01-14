@@ -14,8 +14,10 @@ const strings = {
     MODE_AUTOCOMPLETE: 'autoComplete',
     // MODE_TAGS: 'tags',
     STATUS: VALIDATE_STATUS,
+    SEARCH_POSITION_TRIGGER: 'trigger',
+    SEARCH_POSITION_DROPDOWN: 'dropdown'
 } as const;
 
-const numbers = { LIST_HEIGHT: 300 };
+const numbers = { LIST_HEIGHT: 270 };
 
 export { cssClasses, strings, numbers };

@@ -3,7 +3,7 @@
  * https://github.com/react-component/tree
  */
 
-import { isUndefined, difference, pick, cloneDeep, get } from 'lodash';
+import { isUndefined, difference, pick, get } from 'lodash';
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import {
     flattenTreeData,
@@ -21,6 +21,10 @@ import {
     calcDropRelativePosition,
     calcDropActualPosition
 } from './treeUtil';
+
+import type { KeyMapProps } from './treeUtil';
+import { strings } from './constants';
+export type { KeyMapProps };
 
 export interface BasicTreeNodeProps {
     [x: string]: any;
@@ -40,21 +44,22 @@ export interface BasicTreeNodeProps {
     selectedKey?: string;
     motionKey?: string[] | string;
     eventKey?: string;
+    showLine?: boolean
 }
 
 export interface BasicTreeNodeData {
     [x: string]: any;
-    key: string;
+    key?: string;
     value?: number | string;
     label?: any;
     icon?: any;
     disabled?: boolean;
     isLeaf?: boolean;
-    children?: BasicTreeNodeData[];
+    children?: BasicTreeNodeData[]
 }
 
 export interface BasicKeyEntities {
-    [key: string]: BasicKeyEntity;
+    [key: string]: BasicKeyEntity
 }
 
 export interface BasicKeyEntity {
@@ -65,7 +70,7 @@ export interface BasicKeyEntity {
     level?: number;
     parent?: undefined | BasicKeyEntity;
     parentPos?: null | string;
-    pos?: string;
+    pos?: string
 }
 
 export interface BasicDragTreeNode extends BasicTreeNodeData {
@@ -75,7 +80,7 @@ export interface BasicDragTreeNode extends BasicTreeNodeData {
      * treeData, such as the 0th node of the 2nd node of the 1st node
      * of the 0th layer: '0-1-2-0'
      */
-    pos: string;
+    pos: string
 }
 
 export interface BasicFlattenNode {
@@ -86,16 +91,16 @@ export interface BasicFlattenNode {
     label?: any;
     parent?: null | BasicFlattenNode;
     pos?: string;
-    value?: string;
+    value?: string
 }
 
 export interface BasicDragProps {
     event: any;
-    node: BasicDragTreeNode;
+    node: BasicDragTreeNode
 }
 
 export interface BasicDragEnterProps extends BasicDragProps {
-    expandedKeys?: string[];
+    expandedKeys?: string[]
 }
 
 export type ExpandAction = false | 'click' | 'doubleClick';
@@ -119,7 +124,7 @@ export interface BasicOnDragProps {
      * Indicates whether the dragged node is dropped between nodes, if
      *  it is false, it is dropped above a node
      */
-    dropToGap: boolean;
+    dropToGap: boolean
 }
 
 export interface BasicRenderFullLabelProps {
@@ -148,15 +153,19 @@ export interface BasicRenderFullLabelProps {
         /* Whether to select in the multi-select state */
         checked: boolean;
         /* Whether to half-select in the multi-select state */
-        halfChecked: boolean;
+        halfChecked: boolean
     };
     /* Expand status */
     expandStatus: {
         /* Has it been expanded */
         expanded: boolean;
         /* Is it unfolding */
-        loading: boolean;
+        loading: boolean
     };
+    /* Whether the node meets the search conditions */
+    filtered: boolean | undefined;
+    /* Current search box input */
+    searchWord: string | undefined
 }
 
 export interface BasicSearchRenderProps {
@@ -165,17 +174,17 @@ export interface BasicSearchRenderProps {
     prefix: any;
     showClear?: boolean;
     value: string;
-    onChange: (value: string) => void;
+    onChange: (value: string) => void
 }
 
 export interface TreeDataSimpleJson {
-    [x: string]: string | TreeDataSimpleJson;
+    [x: string]: string | TreeDataSimpleJson
 }
 
 export interface Virtualize {
     itemSize: number;
     height?: number | string;
-    width?: number | string;
+    width?: number | string
 }
 
 export type CheckRelation = 'related' | 'unRelated';
@@ -197,7 +206,7 @@ export interface BasicTreeProps {
     emptyContent?: any;
     expandAction?: ExpandAction;
     expandedKeys?: string[];
-    filterTreeNode?: boolean | ((inputValue: string, treeNodeString: string) => boolean);
+    filterTreeNode?: boolean | ((inputValue: string, treeNodeString: string, data?: BasicTreeNodeData) => boolean);
     hideDraggingNode?: boolean;
     labelEllipsis?: boolean;
     leafOnly?: boolean;
@@ -217,8 +226,8 @@ export interface BasicTreeProps {
     onExpand?: (expandedKeys: string[], expandedOtherProps: BasicExpandedOtherProps) => void;
     onLoad?: (loadedKeys?: Set<string>, treeNode?: BasicTreeNodeData) => void;
     onContextMenu?: (e: any, node: BasicTreeNodeData) => void;
-    onSearch?: (sunInput: string) => void;
-    onSelect?: (selectedKeys: string, selected: boolean, selectedNode: BasicTreeNodeData) => void;
+    onSearch?: (sunInput: string, filteredExpandedKeys: string[]) => void;
+    onSelect?: (selectedKey: string, selected: boolean, selectedNode: BasicTreeNodeData) => void;
     preventScroll?: boolean;
     renderDraggingNode?: (nodeInstance: HTMLElement, node: BasicTreeNodeData) => HTMLElement;
     renderFullLabel?: (renderFullLabelProps: BasicRenderFullLabelProps) => any;
@@ -229,6 +238,7 @@ export interface BasicTreeProps {
     searchStyle?: any;
     showClear?: boolean;
     showFilteredOnly?: boolean;
+    showLine?: boolean;
     style?: any;
     treeData?: BasicTreeNodeData[];
     treeDataSimpleJson?: TreeDataSimpleJson;
@@ -237,7 +247,7 @@ export interface BasicTreeProps {
     virtualize?: Virtualize;
     icon?: any;
     checkRelation?: CheckRelation;
-    'aria-label'?: string;
+    'aria-label'?: string
 }
 
 /* Data maintained internally. At the React framework level, corresponding to state */
@@ -288,26 +298,26 @@ export interface BasicTreeInnerData {
     /* DragOver node */
     dragOverNodeKey: string[] | string | null;
     /* Drag position */
-    dropPosition: number | null;
+    dropPosition: number | null
 }
 
 export interface BasicExpandedOtherProps {
     expanded: boolean;
-    node: BasicTreeNodeData;
+    node: BasicTreeNodeData
 }
 
 export interface TreeAdapter extends DefaultAdapter<BasicTreeProps, BasicTreeInnerData> {
     updateInputValue: (value: string) => void;
     focusInput: () => void;
     updateState: (states: Partial<BasicTreeInnerData>) => void;
-    notifyExpand: (expandedKeys: Set<string>, { expanded: bool, node }: BasicExpandedOtherProps) => void;
+    notifyExpand: (expandedKeys: Set<string>, { expanded, node }: BasicExpandedOtherProps) => void;
     notifySelect: (selectKey: string, bool: boolean, node: BasicTreeNodeData) => void;
     notifyChange: (value: BasicValue) => void;
-    notifySearch: (input: string) => void;
+    notifySearch: (input: string, filteredExpandedKeys: string[]) => void;
     notifyRightClick: (e: any, node: BasicTreeNodeData) => void;
     notifyDoubleClick: (e: any, node: BasicTreeNodeData) => void;
     cacheFlattenNodes: (bool: boolean) => void;
-    setDragNode: (treeNode: any) => void;
+    setDragNode: (treeNode: any) => void
 }
 
 export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTreeProps, BasicTreeInnerData> {
@@ -348,14 +358,6 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
         const { inputValue } = this.getStates();
         const { showFilteredOnly } = this.getProps();
         return Boolean(inputValue) && showFilteredOnly;
-    }
-
-    getCopyFromState(items: string[] | string) {
-        const res: Partial<BasicTreeInnerData> = {};
-        normalizedArr(items).forEach(key => {
-            res[key] = cloneDeep(this.getState(key));
-        });
-        return res;
     }
 
     getTreeNodeProps(key: string) {
@@ -414,31 +416,67 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
 
     notifyJsonChange(key: string[] | string, e: any) {
         const data = this.getProp('treeDataSimpleJson');
-        const selectedPath = normalizedArr(key).map(i => i.replace('-', '.'));
+        const selectedPath = normalizedArr(key).map(i => i.replaceAll(strings.JSON_KEY_SPLIT, '.'));
         const value = pick(data, selectedPath);
         this._adapter.notifyChange(value as BasicValue);
     }
 
+    constructDataForValue(value: string) {
+        const { keyMaps } = this.getProps();
+        const keyName = get(keyMaps, 'key', 'key');
+        const labelName = get(keyMaps, 'label', 'label');
+        return {
+            [keyName]: value,
+            [labelName]: value
+        };    
+    }
+
+    findDataForValue(findValue: string) {
+        const { value, defaultValue, keyMaps } = this.getProps();
+        const realValueName = get(keyMaps, 'value', 'value');
+        const realKeyName = get(keyMaps, 'key', 'key');
+        let valueArr = [];
+        if (value) {
+            valueArr = Array.isArray(value) ? value : [value];
+        } else if (defaultValue) {
+            valueArr = Array.isArray(defaultValue) ? defaultValue : [defaultValue];
+        }
+        return valueArr.find(item => {
+            return item[realValueName] === findValue || item[realKeyName] === findValue;
+        });
+    }
+
+    getDataForKeyNotInKeyEntities(value: string) {
+        const { onChangeWithObject } = this.getProps();
+        if (onChangeWithObject) {
+            return this.findDataForValue(value);
+        } else {
+            return this.constructDataForValue(value);
+        }
+    }
+
     notifyMultipleChange(key: string[], e: any) {
         const { keyEntities } = this.getStates();
-        const { leafOnly, checkRelation } = this.getProps();
+        const { leafOnly, checkRelation, keyMaps, autoMergeValue } = this.getProps();
         let value;
         let keyList = [];
         if (checkRelation === 'related') {
-            keyList = normalizeKeyList(key, keyEntities, leafOnly);
+            keyList = autoMergeValue ? normalizeKeyList(key, keyEntities, leafOnly, true) : key;
         } else if (checkRelation === 'unRelated') {
             keyList = key;
         }
+        const nodes = keyList.map(key => keyEntities[key] ? keyEntities[key].data : this.getDataForKeyNotInKeyEntities(key));
         if (this.getProp('onChangeWithObject')) {
-            value = keyList.map((itemKey: string) => keyEntities[itemKey].data);
+            value = nodes;
         } else {
-            value = getValueOrKey(keyList.map((itemKey: string) => keyEntities[itemKey].data));
+            value = getValueOrKey(nodes, keyMaps);
         }
         this._adapter.notifyChange(value);
     }
 
     notifyChange(key: string[] | string, e: any) {
         const isMultiple = this._isMultiple();
+        const { keyMaps } = this.getProps();
         const { keyEntities } = this.getStates();
         if (this.getProp('treeDataSimpleJson')) {
             this.notifyJsonChange(key, e);
@@ -450,7 +488,7 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
                 value = get(keyEntities, key).data;
             } else {
                 const { data } = get(keyEntities, key);
-                value = getValueOrKey(data);
+                value = getValueOrKey(data, keyMaps);
             }
             this._adapter.notifyChange(value);
         }
@@ -460,7 +498,8 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
         // Input is a controlled component, so the value value needs to be updated
         this._adapter.updateInputValue(sugInput);
         const { expandedKeys, selectedKeys, keyEntities, treeData } = this.getStates();
-        const { showFilteredOnly, filterTreeNode, treeNodeFilterProp } = this.getProps();
+        const { showFilteredOnly, filterTreeNode, treeNodeFilterProp, keyMaps } = this.getProps();
+        const realFilterProp = treeNodeFilterProp !== 'label' ? treeNodeFilterProp : get(keyMaps, 'label', 'label');
         let filteredOptsKeys: string[] = [];
         let expandedOptsKeys: string[] = [];
         let flattenNodes: BasicFlattenNode[] = [];
@@ -469,10 +508,10 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
         if (!sugInput) {
             expandedOptsKeys = findAncestorKeys(selectedKeys, keyEntities);
             expandedOptsKeys.forEach(item => expandedKeys.add(item));
-            flattenNodes = flattenTreeData(treeData, expandedKeys);
+            flattenNodes = flattenTreeData(treeData, expandedKeys, keyMaps);
         } else {
             filteredOptsKeys = Object.values(keyEntities)
-                .filter((item: BasicKeyEntity) => filter(sugInput, item.data, filterTreeNode, treeNodeFilterProp))
+                .filter((item: BasicKeyEntity) => filter(sugInput, item.data, filterTreeNode, realFilterProp))
                 .map((item: BasicKeyEntity) => item.key);
             expandedOptsKeys = findAncestorKeys(filteredOptsKeys, keyEntities, false);
             const shownChildKeys = findDescendantKeys(filteredOptsKeys, keyEntities, true);
@@ -480,16 +519,18 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
             flattenNodes = flattenTreeData(
                 treeData,
                 new Set(expandedOptsKeys),
+                keyMaps,
                 showFilteredOnly && filteredShownKeys
             );
         }
-        this._adapter.notifySearch(sugInput);
+        const newFilteredExpandedKeys = new Set(expandedOptsKeys);
+        this._adapter.notifySearch(sugInput, Array.from(newFilteredExpandedKeys));
         this._adapter.updateState({
             expandedKeys,
             flattenNodes,
             motionKeys: new Set([]),
             filteredKeys: new Set(filteredOptsKeys),
-            filteredExpandedKeys: new Set(expandedOptsKeys),
+            filteredExpandedKeys: newFilteredExpandedKeys,
             filteredShownKeys,
         });
     }
@@ -515,7 +556,7 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
     }
 
     handleSingleSelect(e: any, treeNode: BasicTreeNodeProps) {
-        let { selectedKeys } = this.getCopyFromState('selectedKeys');
+        let selectedKeys = [...this.getState('selectedKeys')];
         const { selected, eventKey, data } = treeNode;
         const targetSelected = !selected;
 
@@ -536,7 +577,8 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
 
     calcCheckedKeys(eventKey: string, targetStatus: boolean) {
         const { keyEntities } = this.getStates();
-        const { checkedKeys, halfCheckedKeys } = this.getCopyFromState(['checkedKeys', 'halfCheckedKeys']);
+        const checkedKeys = new Set(this.getState('checkedKeys')) as Set<string>;
+        const halfCheckedKeys = new Set(this.getState('halfCheckedKeys')) as Set<string>;
         return targetStatus ?
             calcCheckedKeysForChecked(eventKey, keyEntities, checkedKeys, halfCheckedKeys) :
             calcCheckedKeysForUnchecked(eventKey, keyEntities, checkedKeys, halfCheckedKeys);
@@ -569,7 +611,7 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
     */
     calcNonDisabledCheckedKeys(eventKey: string, targetStatus: boolean) {
         const { keyEntities, disabledKeys } = this.getStates();
-        const { checkedKeys } = this.getCopyFromState(['checkedKeys']);
+        const checkedKeys = new Set(this.getState('checkedKeys'));
         const descendantKeys = normalizeKeyList(findDescendantKeys([eventKey], keyEntities, false), keyEntities, true);
         const hasDisabled = descendantKeys.some((key: string) => disabledKeys.has(key));
         // If none of the descendant nodes are disabled, follow the normal logic
@@ -579,7 +621,7 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
         const nonDisabled = descendantKeys.filter((key: string) => !disabledKeys.has(key));
         const newCheckedKeys = targetStatus ?
             [...nonDisabled, ...checkedKeys] :
-            difference(normalizeKeyList([...checkedKeys], keyEntities, true), nonDisabled);
+            difference(normalizeKeyList([...checkedKeys], keyEntities, true, true), nonDisabled);
         return calcCheckedKeys(newCheckedKeys, keyEntities);
     }
 
@@ -622,10 +664,11 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
 
     setExpandedStatus(treeNode: BasicTreeNodeProps) {
         const { inputValue, treeData, filteredShownKeys, keyEntities } = this.getStates();
+        const { keyMaps } = this.getProps();
         const isSearching = Boolean(inputValue);
         const showFilteredOnly = this._showFilteredOnly();
         const expandedStateKey = isSearching ? 'filteredExpandedKeys' : 'expandedKeys';
-        const expandedKeys = this.getCopyFromState(expandedStateKey)[expandedStateKey];
+        const expandedKeys = new Set(this.getState(expandedStateKey)) as Set<string>;
 
         let motionType = 'show';
         const { eventKey, expanded, data } = treeNode;
@@ -641,6 +684,7 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
             const flattenNodes = flattenTreeData(
                 treeData,
                 expandedKeys,
+                keyMaps,
                 isSearching && showFilteredOnly && filteredShownKeys
             );
             const motionKeys = this._isAnimated() ? getMotionKeys(eventKey, expandedKeys, keyEntities) : [];
@@ -673,7 +717,6 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
         });
     }
 
-    // eslint-disable-next-line max-len
     handleNodeLoad(loadedKeys: Set<string>, loadingKeys: Set<string>, data: BasicTreeNodeData, resolve: (value?: any) => void) {
         const { loadData, onLoad } = this.getProps();
         const { key } = data;
@@ -683,10 +726,8 @@ export default class TreeFoundation extends BaseFoundation<TreeAdapter, BasicTre
 
         // Process the loaded data
         loadData(data).then(() => {
-            const {
-                loadedKeys: prevLoadedKeys,
-                loadingKeys: prevLoadingKeys
-            } = this.getCopyFromState(['loadedKeys', 'loadingKeys']);
+            const prevLoadedKeys = new Set(this.getState('loadedKeys')) as Set<string>;
+            const prevLoadingKeys = new Set(this.getState('loadingKeys')) as Set<string>;
             const newLoadedKeys = prevLoadedKeys.add(key);
             const newLoadingKeys = new Set([...prevLoadingKeys]);
             newLoadingKeys.delete(key);

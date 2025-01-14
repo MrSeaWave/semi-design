@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -9,6 +8,7 @@ import { TagProps, TagSize, TagColor, TagType } from './interface';
 import { handlePrevent } from '@douyinfe/semi-foundation/utils/a11y';
 import '@douyinfe/semi-foundation/tag/tag.scss';
 import { isString } from 'lodash';
+import cls from 'classnames';
 
 export * from './interface';
 
@@ -21,7 +21,7 @@ const tagType = strings.TAG_TYPE;
 const avatarShapeSet = strings.AVATAR_SHAPE;
 
 export interface TagState {
-    visible: boolean;
+    visible: boolean
 }
 
 export default class Tag extends Component<TagProps, TagState> {
@@ -33,9 +33,13 @@ export default class Tag extends Component<TagProps, TagState> {
         type: tagType[0] as TagType,
         onClose: () => undefined,
         onClick: () => undefined,
+        onMouseEnter: () => undefined,
         style: {},
         className: '',
+        shape: 'square',
         avatarShape: 'square',
+        prefixIcon: null,
+        suffixIcon: null
     };
 
     static propTypes = {
@@ -48,6 +52,8 @@ export default class Tag extends Component<TagProps, TagState> {
         visible: PropTypes.bool,
         onClose: PropTypes.func,
         onClick: PropTypes.func,
+        prefixIcon: PropTypes.node,
+        suffixIcon: PropTypes.node,
         style: PropTypes.object,
         className: PropTypes.string,
         avatarSrc: PropTypes.string,
@@ -120,20 +126,23 @@ export default class Tag extends Component<TagProps, TagState> {
     }
 
     render() {
-        const { tagKey, children, size, color, closable, visible, onClose, onClick, className, type, avatarSrc, avatarShape, tabIndex, ...attr } = this.props;
+        const { tagKey, children, size, color, closable, visible, onClose, onClick, className, type, shape, avatarSrc, avatarShape, tabIndex, prefixIcon, suffixIcon, ...attr } = this.props;
         const { visible: isVisible } = this.state;
         const clickable = onClick !== Tag.defaultProps.onClick || closable;
         // only when the Tag is clickable or closable, the value of tabIndex is allowed to be passed in. 
-        const a11yProps = { role: 'button', tabIndex: tabIndex | 0, onKeyDown: this.handleKeyDown };
+        const a11yProps = { role: 'button', tabIndex: tabIndex || 0, onKeyDown: this.handleKeyDown };
         const baseProps = {
             ...attr,
             onClick,
+            tabIndex: tabIndex,
             className: classNames(
                 prefixCls,
                 {
                     [`${prefixCls}-default`]: size === 'default',
                     [`${prefixCls}-small`]: size === 'small',
                     [`${prefixCls}-large`]: size === 'large',
+                    [`${prefixCls}-square`]: shape === 'square',
+                    [`${prefixCls}-circle`]: shape === 'circle',
                     [`${prefixCls}-${type}`]: type,
                     [`${prefixCls}-${color}-${type}`]: color && type,
                     [`${prefixCls}-closable`]: closable,
@@ -145,18 +154,23 @@ export default class Tag extends Component<TagProps, TagState> {
         };
         const wrapProps = clickable ? ({ ...baseProps, ...a11yProps }) : baseProps;
         const closeIcon = closable ? (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div className={`${prefixCls}-close`} onClick={e => this.close(e, children, tagKey)}>
                 <IconClose size="small" />
             </div>
         ) : null;
+        const stringChild = isString(children);
+        const contentCls = cls(`${prefixCls}-content`, `${prefixCls}-content-${stringChild ? 'ellipsis' : 'center' }`);
+
         return (
-            <div aria-label={this.props['aria-label'] || isString(children) ? `${closable ? 'Closable ' : ''}Tag: ${children}` : '' } {...wrapProps}>
-                <div className={`${prefixCls}-content`}>
-                    {avatarSrc ? this.renderAvatar() : null}
+            <div aria-label={this.props['aria-label'] || stringChild ? `${closable ? 'Closable ' : ''}Tag: ${children}` : '' } {...wrapProps}>
+                {prefixIcon ? <div className={`${prefixCls}-prefix-icon`}>{prefixIcon}</div> : null}
+                {avatarSrc ? this.renderAvatar() : null}
+                <div className={contentCls}>
                     {children}
-                    {closeIcon}
                 </div>
+                {suffixIcon ? <div className={`${prefixCls}-suffix-icon`}>{suffixIcon}</div> : null}
+                {closeIcon}
             </div>
         );
     }

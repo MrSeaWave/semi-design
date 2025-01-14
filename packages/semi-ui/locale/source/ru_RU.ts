@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'ru-RU',
     dateFnsLocale: ru,
     Pagination: {
-        item: 'элемент',
-        pageSize: 'элементов / страницы',
-        page: ' страницы',
-        total: 'общее',
-        jumpTo: 'Прыгать в'
+        pageSize: 'Позиции на странице: ${pageSize}',
+        total: 'Всего страниц: ${total}',
+        jumpTo: 'Прыгать в',
+        page: ' страницы'
     },
     Modal: {
         confirm: 'подтвердить',
         cancel: 'отмена',
+    },
+    Tabs: {
+        more: "Более"
     },
     TimePicker: {
         placeholder: {
@@ -37,7 +39,9 @@ const local: Locale = {
             dateTime: 'Выбрать дату и время',
             dateRange: ['Дата начала', 'Дата окончания'],
             dateTimeRange: ['Дата начала', 'Дата окончания'],
+            monthRange: ['Начальный месяц', 'Конечный месяц'],
         },
+        presets: 'Быстрый выбор',
         footer: {
             confirm: 'подтвердить',
             cancel: 'отмена',
@@ -79,14 +83,14 @@ const local: Locale = {
         weeks: {
             Mon: 'Пн',
             Tue: 'Вт',
-            Wed: 'среда',
+            Wed: 'Ср',
             Thu: 'Чт',
             Fri: 'Пт',
             Sat: 'Сб',
-            Sun: 'Солнце',
+            Sun: 'Вс',
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'yyyy-MM-dd',
+            FORMAT_SWITCH_DATE: 'dd.MM.yyyy',
         },
     },
     Popconfirm: {
@@ -100,6 +104,9 @@ const local: Locale = {
     Table: {
         emptyText: 'Нет результата',
         pageText: 'Отображение ${currentStart} до ${currentEnd} из ${total}',
+        descend: 'Щелкните, чтобы упорядочить по убыванию',
+        ascend: 'Щелкните, чтобы упорядочить по возрастанию',
+        cancelSort: 'Отменить сортировку',
     },
     Select: {
         emptyText: 'Нет результата',
@@ -120,7 +127,7 @@ const local: Locale = {
         AM: '${time} утро',
         PM: '${time} после',
         datestring: '',
-        remaining: '${remained} еще',
+        remaining: 'ставшееся количество: ${remained} ',
     },
     Upload: {
         mainText: 'Нажмите, чтобы загрузить файл или перетащите файл сюда',
@@ -150,11 +157,33 @@ const local: Locale = {
         clear: 'Очистить',
         selectAll: 'Выбрать все',
         clearSelectAll: 'Снять выделение',
-        total: 'Всего ${total} элементов',
-        selected: 'Выбрано ${total} элементов',
+        total: 'Всего позиций: ${total}',
+        selected: 'Выбранные позиции: ${total}',
     },
     Form: {
         optional: '(по желанию)',
+    },
+    Image: {
+        preview: 'предварительный просмотр',
+        loading: 'Загрузка',
+        loadError: 'Ошибка загрузки',
+        prevTip: 'Предыдущий',
+        nextTip: 'Далее',
+        zoomInTip: 'Увеличить',
+        zoomOutTip: 'уменьшить масштаб',
+        rotateTip: 'Повернуть',
+        downloadTip: 'скачать',
+        adaptiveTip: 'Адаптировать к странице',
+        originTip: 'Исходный размер',
+    },
+    Chat: {
+        deleteConfirm: 'Вы уверены, что хотите удалить эту сессию?',
+        clearContext: 'Контекст очищен',
+        copySuccess: 'Скопировано успешно',
+        stop: 'остановить',
+        copy: 'Копировать',
+        copied: 'Скопировано',
+        dropAreaText: 'Положите файл здесь',
     },
 };
 

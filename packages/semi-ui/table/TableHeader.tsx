@@ -1,16 +1,16 @@
-/* eslint-disable max-len */
 import React, { ReactNode } from 'react';
-import BaseComponent, { BaseProps } from '../_base/baseComponent';
+import { noop, isFunction, get } from 'lodash';
 import PropTypes from 'prop-types';
+
+import BaseComponent, { BaseProps } from '../_base/baseComponent';
 import { strings, cssClasses } from '@douyinfe/semi-foundation/table/constants';
-import { noop, isFunction } from 'lodash';
+import { shouldShowEllipsisTitle } from '@douyinfe/semi-foundation/table/utils';
 import TableHeaderRow from './TableHeaderRow';
-import { Fixed, TableComponents, OnHeaderRow } from './interface';
+import { Fixed, TableComponents, OnHeaderRow, ColumnProps } from './interface';
 
 function parseHeaderRows(columns: any[]) {
     const rows: any[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     function fillRowCells(columns: any[], colIndex: number, parents: any[] = [], rowIndex = 0, level = 0) {
         // Init rows
         rows[rowIndex] = rows[rowIndex] || [];
@@ -61,6 +61,12 @@ function parseHeaderRows(columns: any[]) {
 
             currentColIndex += colSpan;
 
+            const ellipsis = column?.ellipsis;
+            const shouldShowTitle = shouldShowEllipsisTitle(ellipsis);
+            if (shouldShowTitle && typeof cell.children === 'string') {
+                cell.title = cell.children;
+            }
+
             return colSpan;
         });
 
@@ -83,7 +89,6 @@ function parseHeaderRows(columns: any[]) {
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
         rows[rowIndex].forEach((cell: TableHeaderCell) => {
             if (!('rowSpan' in cell) && !cell.hasSubColumns) {
-                // eslint-disable-next-line no-param-reassign
                 cell.rowSpan = rowCount - rowIndex;
             }
         });
@@ -100,7 +105,7 @@ export interface TableHeaderProps extends BaseProps {
     onDidUpdate?: (ref: React.MutableRefObject<any>) => void;
     onHeaderRow?: OnHeaderRow<any>;
     prefixCls?: string;
-    selectedRowKeysSet: Set<any>;
+    selectedRowKeysSet: Set<any>
 }
 
 
@@ -144,7 +149,7 @@ class TableHeader extends BaseComponent<TableHeaderProps, Record<string, any>> {
 
         const rows = parseHeaderRows(columns);
 
-        const HeaderWrapper: any = components.header.wrapper;
+        const HeaderWrapper = components.header.wrapper;
 
         return (
             <HeaderWrapper className={`${prefixCls}-thead`} ref={forwardedRef}>
@@ -170,7 +175,7 @@ export interface TableHeaderCell {
     key: string | number;
     className: string;
     children: ReactNode;
-    column: any[];
+    column: ColumnProps;
     colStart: number;
     level: number;
     parents: any[];
@@ -178,6 +183,7 @@ export interface TableHeaderCell {
     rowSpan?: number;
     colSpan?: number;
     colEnd?: number;
+    title?: string
 }
 
 export default React.forwardRef<HTMLDivElement, Omit<TableHeaderProps, 'forwardedRef'>>((props, ref) => <TableHeader {...props} forwardedRef={ref} />);

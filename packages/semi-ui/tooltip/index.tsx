@@ -1,50 +1,58 @@
-/* eslint-disable prefer-destructuring, max-lines-per-function, react/no-find-dom-node, max-len, @typescript-eslint/no-empty-function */
-import React, { isValidElement, cloneElement } from 'react';
-import ReactDOM from 'react-dom';
+import React, { isValidElement, cloneElement, CSSProperties, ReactInstance } from 'react';
+import ReactDOM, { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { throttle, noop, get, omit, each, isEmpty, isFunction } from 'lodash';
+import { throttle, noop, get, omit, each, isEmpty, isFunction, isEqual } from 'lodash';
 
 import { BASE_CLASS_PREFIX } from '@douyinfe/semi-foundation/base/constants';
 import warning from '@douyinfe/semi-foundation/utils/warning';
 import Event from '@douyinfe/semi-foundation/utils/Event';
 import { ArrayElement } from '@douyinfe/semi-foundation/utils/type';
 import { convertDOMRectToObject, DOMRectLikeType } from '@douyinfe/semi-foundation/utils/dom';
-import TooltipFoundation, { TooltipAdapter, Position, PopupContainerDOMRect } from '@douyinfe/semi-foundation/tooltip/foundation';
+import TooltipFoundation, {
+    TooltipAdapter,
+    Position,
+    PopupContainerDOMRect
+} from '@douyinfe/semi-foundation/tooltip/foundation';
 import { strings, cssClasses, numbers } from '@douyinfe/semi-foundation/tooltip/constants';
 import { getUuidShort } from '@douyinfe/semi-foundation/utils/uuid';
 import '@douyinfe/semi-foundation/tooltip/tooltip.scss';
 
 import BaseComponent, { BaseProps } from '../_base/baseComponent';
 import { isHTMLElement } from '../_base/reactUtils';
-import { getActiveElement, getFocusableElements, stopPropagation } from '../_utils';
+import {
+    getActiveElement,
+    getDefaultPropsFromGlobalConfig,
+    getFocusableElements,
+    runAfterTicks,
+    stopPropagation,
+} from '../_utils';
 import Portal from '../_portal/index';
 import ConfigContext, { ContextValue } from '../configProvider/context';
 import TriangleArrow from './TriangleArrow';
 import TriangleArrowVertical from './TriangleArrowVertical';
-import TooltipTransition from './TooltipStyledTransition';
 import ArrowBoundingShape from './ArrowBoundingShape';
-import { Motion } from '../_base/base';
+import CSSAnimation from "../_cssAnimation";
 
-export { TooltipTransitionProps } from './TooltipStyledTransition';
 export type Trigger = ArrayElement<typeof strings.TRIGGER_SET>;
+export type { Position };
 
 export interface ArrowBounding {
     offsetX?: number;
     offsetY?: number;
     width?: number;
-    height?: number;
+    height?: number
 }
 
-export interface RenderContentProps {
-    initialFocusRef?: React.RefObject<HTMLElement>;
+export interface RenderContentProps<T = HTMLElement> {
+    initialFocusRef?: React.RefObject<T>
 }
 
-export type RenderContent = (props: RenderContentProps) => React.ReactNode;
+export type RenderContent<T = HTMLElement> = (props: RenderContentProps<T>) => React.ReactNode;
 
 export interface TooltipProps extends BaseProps {
     children?: React.ReactNode;
-    motion?: Motion;
+    motion?: boolean;
     autoAdjustOverflow?: boolean;
     position?: Position;
     getPopupContainer?: () => HTMLElement;
@@ -59,7 +67,8 @@ export interface TooltipProps extends BaseProps {
     prefixCls?: string;
     onVisibleChange?: (visible: boolean) => void;
     onClickOutSide?: (e: React.MouseEvent) => void;
-    spacing?: number;
+    spacing?: number | { x: number; y: number };
+    margin?: number | { marginLeft: number; marginTop: number; marginRight: number; marginBottom: number };
     showArrow?: boolean | React.ReactNode;
     zIndex?: number;
     rePosKey?: string | number;
@@ -75,19 +84,22 @@ export interface TooltipProps extends BaseProps {
     guardFocus?: boolean;
     returnFocusOnClose?: boolean;
     onEscKeyDown?: (e: React.KeyboardEvent) => void;
-    disableArrowKeyDown?: boolean; 
+    disableArrowKeyDown?: boolean;
     wrapperId?: string;
     preventScroll?: boolean;
     disableFocusListener?: boolean;
+    afterClose?: () => void;
+    keepDOM?: boolean
 }
+
 interface TooltipState {
     visible: boolean;
     transitionState: string;
     triggerEventSet: {
-        [key: string]: any;
+        [key: string]: any
     };
     portalEventSet: {
-        [key: string]: any;
+        [key: string]: any
     };
     containerStyle: React.CSSProperties;
     isInsert: boolean;
@@ -95,6 +107,7 @@ interface TooltipState {
     transitionStyle: Record<string, any>;
     isPositionUpdated: boolean;
     id: string;
+    displayNone: boolean
 }
 
 const prefix = cssClasses.PREFIX;
@@ -108,7 +121,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
 
     static propTypes = {
         children: PropTypes.node,
-        motion: PropTypes.oneOfType([PropTypes.bool, PropTypes.object, PropTypes.func]),
+        motion: PropTypes.bool,
         autoAdjustOverflow: PropTypes.bool,
         position: PropTypes.oneOf(positionSet),
         getPopupContainer: PropTypes.func,
@@ -126,7 +139,8 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         prefixCls: PropTypes.string,
         onVisibleChange: PropTypes.func,
         onClickOutSide: PropTypes.func,
-        spacing: PropTypes.number,
+        spacing: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
+        margin: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
         showArrow: PropTypes.oneOfType([PropTypes.bool, PropTypes.node]),
         zIndex: PropTypes.number,
         rePosKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -140,9 +154,10 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         guardFocus: PropTypes.bool,
         returnFocusOnClose: PropTypes.bool,
         preventScroll: PropTypes.bool,
+        keepDOM: PropTypes.bool,
     };
-
-    static defaultProps = {
+    static __SemiComponentName__ = "Tooltip";
+    static defaultProps = getDefaultPropsFromGlobalConfig(Tooltip.__SemiComponentName__, {
         arrowBounding: numbers.ARROW_BOUNDING,
         autoAdjustOverflow: true,
         arrowPointAtCenter: true,
@@ -157,6 +172,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         onVisibleChange: noop,
         onClickOutSide: noop,
         spacing: numbers.SPACING,
+        margin: numbers.MARGIN,
         showArrow: true,
         wrapWhenSpecial: true,
         zIndex: numbers.DEFAULT_Z_INDEX,
@@ -166,7 +182,8 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         onEscKeyDown: noop,
         disableFocusListener: false,
         disableArrowKeyDown: false,
-    };
+        keepDOM: false
+    });
 
     eventManager: Event;
     triggerEl: React.RefObject<unknown>;
@@ -181,7 +198,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
     containerPosition: string;
     foundation: TooltipFoundation;
     context: ContextValue;
-
+    isAnimating: boolean = false;
     constructor(props: TooltipProps) {
         super(props);
         this.state = {
@@ -200,7 +217,8 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
             placement: props.position || 'top',
             transitionStyle: {},
             isPositionUpdated: false,
-            id: props.wrapperId, // auto generate id, will be used by children.aria-describedby & content.id, improve a11y
+            id: props.wrapperId, // auto generate id, will be used by children.aria-describedby & content.id, improve a11y,
+            displayNone: false
         };
         this.foundation = new TooltipFoundation(this.adapter);
         this.eventManager = new Event();
@@ -218,12 +236,11 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
     get adapter(): TooltipAdapter<TooltipProps, TooltipState> {
         return {
             ...super.adapter,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             on: (...args: any[]) => this.eventManager.on(...args),
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             off: (...args: any[]) => this.eventManager.off(...args),
+            getAnimatingState: () => this.isAnimating,
             insertPortal: (content: TooltipProps['content'], { position, ...containerStyle }: { position: Position }) => {
                 this.setState(
                     {
@@ -233,8 +250,14 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
                     },
                     () => {
                         setTimeout(() => {
+                            this.setState((oldState) => {
+                                if ( oldState.transitionState === 'enter' ) {
+                                    this.eventManager.emit('portalInserted');
+                                }
+                                return {};
+                            });
                             // waiting child component mounted
-                            this.eventManager.emit('portalInserted');
+
                         }, 0);
                     }
                 );
@@ -250,18 +273,16 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
                 click: 'onClick',
                 focus: 'onFocus',
                 blur: 'onBlur',
-                keydown: 'onKeyDown'
+                keydown: 'onKeyDown',
+                contextMenu: 'onContextMenu',
             }),
             registerTriggerEvent: (triggerEventSet: Record<string, any>) => {
                 this.setState({ triggerEventSet });
             },
-            unregisterTriggerEvent: () => {},
             registerPortalEvent: (portalEventSet: Record<string, any>) => {
                 this.setState({ portalEventSet });
             },
-            unregisterPortalEvent: () => {},
             getTriggerBounding: () => {
-                // eslint-disable-next-line
                 // It may be a React component or an html element
                 // There is no guarantee that triggerE l.current can get the real dom, so call findDOMNode to ensure that you can get the real dom
                 const triggerDOM = this.adapter.getTriggerNode();
@@ -314,18 +335,17 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
                     }
                 );
             },
+            setDisplayNone: (displayNone: boolean, cb: () => void) => {
+                this.setState({ displayNone }, cb);
+            },
             updatePlacementAttr: (placement: Position) => {
                 this.setState({ placement });
             },
             togglePortalVisible: (visible: boolean, cb: () => void) => {
                 const willUpdateStates: Partial<TooltipState> = {};
 
-                if (this.adapter.canMotion()) {
-                    willUpdateStates.transitionState = visible ? 'enter' : 'leave';
-                    willUpdateStates.visible = visible;
-                } else {
-                    willUpdateStates.visible = visible;
-                }
+                willUpdateStates.transitionState = visible ? 'enter' : 'leave';
+                willUpdateStates.visible = visible;
                 this.mounted && this.setState(willUpdateStates as TooltipState, () => {
                     cb();
                 });
@@ -342,9 +362,14 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
                     let popupEl = this.containerEl && this.containerEl.current;
                     el = ReactDOM.findDOMNode(el as React.ReactInstance);
                     popupEl = ReactDOM.findDOMNode(popupEl as React.ReactInstance) as HTMLDivElement;
+                    const target = e.target as Element;
+                    const path = (e as any).composedPath && (e as any).composedPath() || [target];
+                    const isClickTriggerToHide = this.props.clickTriggerToHide ? el && (el as any).contains(target) || path.includes(el) : false;
                     if (
-                        (el && !(el as any).contains(e.target) && popupEl && !(popupEl as any).contains(e.target)) ||
-                        this.props.clickTriggerToHide
+                        el && !(el as any).contains(target) && 
+                        popupEl && !(popupEl as any).contains(target) && 
+                        !(path.includes(popupEl) || path.includes(el)) ||
+                        isClickTriggerToHide
                     ) {
                         this.props.onClickOutSide(e);
                         cb();
@@ -429,16 +454,24 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
             },
             setInitialFocus: () => {
                 const { preventScroll } = this.props;
-                const focusRefNode = get(this, 'initialFocusRef.current');
+                const focusRefNode = get(this, 'initialFocusRef.current') as HTMLElement;
                 if (focusRefNode && 'focus' in focusRefNode) {
                     focusRefNode.focus({ preventScroll });
-                } 
+                }
             },
             notifyEscKeydown: (event: React.KeyboardEvent) => {
                 this.props.onEscKeyDown(event);
             },
             setId: () => {
                 this.setState({ id: getUuidShort() });
+            },
+            getTriggerDOM: () => {
+                if (this.triggerEl.current) {
+                    return ReactDOM.findDOMNode(this.triggerEl.current as ReactInstance) as HTMLElement;
+                } else {
+                    return null;
+                }
+
             }
         };
     }
@@ -447,11 +480,28 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         this.mounted = true;
         this.getPopupContainer = this.props.getPopupContainer || this.context.getPopupContainer || defaultGetContainer;
         this.foundation.init();
+        runAfterTicks(() => {
+            let triggerEle = this.triggerEl.current;
+            if (triggerEle) {
+                if (!(triggerEle instanceof HTMLElement)) {
+                    triggerEle = findDOMNode(triggerEle as ReactInstance);
+                }
+            }
+            this.foundation.updateStateIfCursorOnTrigger(triggerEle as HTMLElement);
+        }, 1);
+
     }
 
     componentWillUnmount() {
         this.mounted = false;
         this.foundation.destroy();
+    }
+
+    /**
+     * focus on tooltip trigger
+     */
+    public focusTrigger() {
+        this.foundation.focusTrigger();
     }
 
     isSpecial = (elem: React.ReactNode | HTMLElement | any) => {
@@ -469,8 +519,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
             /* Only judge the loading state of the Button, and no longer judge other components */
             const isButton = !isEmpty(elem)
                 && !isEmpty(elem.type)
-                && (elem.type as any).name === 'Button'
-                || (elem.type as any).name === 'IconButton';
+                && (get(elem, 'type.elementType') === 'Button' || get(elem, 'type.elementType') === 'IconButton');
             if (loading && isButton) {
                 return strings.STATUS_LOADING;
             }
@@ -485,11 +534,14 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
     // };
 
     didLeave = () => {
-        this.adapter.unregisterClickOutsideHandler();
-        this.adapter.unregisterScrollHandler();
-        this.adapter.unregisterResizeHandler();
-        this.adapter.removePortal();
+        if (this.props.keepDOM) {
+            this.foundation.setDisplayNone(true);
+        } else {
+            this.foundation.removePortal();
+        }
+        this.foundation.unBindEvent();
     };
+
     /** for transition - end */
 
     rePosition() {
@@ -502,9 +554,13 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
             "[Semi Tooltip] 'mouseLeaveDelay' cannot be less than 'mouseEnterDelay', which may cause the dropdown layer to not be hidden."
         );
         if (prevProps.visible !== this.props.visible) {
-            this.props.visible ? this.foundation.delayShow() : this.foundation.delayHide();
+            if (['hover', 'focus'].includes(this.props.trigger)) {
+                this.props.visible ? this.foundation.delayShow() : this.foundation.delayHide();
+            } else {
+                this.props.visible ? this.foundation.show() : this.foundation.hide();
+            }
         }
-        if (prevProps.rePosKey !== this.props.rePosKey) {
+        if (!isEqual(prevProps.rePosKey, this.props.rePosKey)) {
             this.rePosition();
         }
     }
@@ -516,14 +572,17 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         const triangleCls = classNames([`${prefixCls}-icon-arrow`]);
         const bgColor = get(style, 'backgroundColor');
 
-        const iconComponent = placement.includes('left') || placement.includes('right') ?
+        const iconComponent = placement?.includes('left') || placement?.includes('right') ?
             <TriangleArrowVertical /> :
             <TriangleArrow />;
         if (showArrow) {
             if (isValidElement(showArrow)) {
                 icon = showArrow;
             } else {
-                icon = React.cloneElement(iconComponent, { className: triangleCls, style: { color: bgColor, fill: 'currentColor' } });
+                icon = React.cloneElement(iconComponent, {
+                    className: triangleCls,
+                    style: { color: bgColor, fill: 'currentColor' }
+                });
             }
         }
 
@@ -545,6 +604,18 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         }
     }
 
+    handlePortalFocus = (e: React.FocusEvent<HTMLElement>) => {
+        if (this.props.stopPropagation) {
+            stopPropagation(e);
+        }
+    }
+
+    handlePortalBlur = (e: React.FocusEvent<HTMLElement>) => {
+        if (this.props.stopPropagation) {
+            stopPropagation(e);
+        }
+    }
+
     handlePortalInnerKeyDown = (e: React.KeyboardEvent) => {
         this.foundation.handleContainerKeydown(e);
     }
@@ -557,7 +628,16 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
     };
 
     renderPortal = () => {
-        const { containerStyle = {}, visible, portalEventSet, placement, transitionState, id, isPositionUpdated } = this.state;
+        const {
+            containerStyle = {},
+            visible,
+            portalEventSet,
+            placement,
+            displayNone,
+            transitionState,
+            id,
+            isPositionUpdated
+        } = this.state;
         const { prefixCls, content, showArrow, style, motion, role, zIndex } = this.props;
         const contentNode = this.renderContentNode(content);
         const { className: propClassName } = this.props;
@@ -571,47 +651,59 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         const icon = this.renderIcon();
         const portalInnerStyle = omit(containerStyle, motion ? ['transformOrigin'] : undefined);
         const transformOrigin = get(containerStyle, 'transformOrigin');
-        const inner = motion && isPositionUpdated ? (
-            <TooltipTransition position={placement} didLeave={this.didLeave} motion={motion}>
+        const userOpacity: CSSProperties['opacity'] | null = get(style, 'opacity', null);
+        const opacity = userOpacity ? userOpacity : 1;
+        const inner =
+            <CSSAnimation
+                fillMode="forwards"
+                animationState={transitionState as "enter" | "leave"}
+                motion={motion && isPositionUpdated}
+                startClassName={transitionState === 'enter' ? `${prefix}-animation-show` : `${prefix}-animation-hide`}
+                onAnimationStart={() => this.isAnimating = true}
+                onAnimationEnd={() => {
+                    if (transitionState === 'leave') {
+                        this.didLeave();
+                        this.props.afterClose?.();
+                    }
+                    this.isAnimating = false;
+                }}>
                 {
-                    transitionState === 'enter' ?
-                        ({ animateCls, animateStyle, animateEvents }) => (
-                            <div
-                                className={classNames(className, animateCls)}
-                                style={{
-                                    visibility: 'visible',
-                                    ...animateStyle,
-                                    transformOrigin,
-                                    ...style,
-                                }}
-                                {...portalEventSet}
-                                {...animateEvents}
-                                role={role}
-                                x-placement={placement}
-                                id={id}
-                            >
-                                {contentNode}
-                                {icon}
-                            </div>
-                        ) :
-                        null
+                    ({ animationStyle, animationClassName, animationEventsNeedBind }) => {
+                        return <div
+                            className={classNames(className, animationClassName)}
+                            style={{
+                                ...animationStyle,
+                                ...(displayNone ? { display: "none" } : {}),
+                                transformOrigin,
+                                ...style,
+                                ...(userOpacity ? { opacity: isPositionUpdated ? opacity : "0" } : {})
+                            }}
+                            {...portalEventSet}
+                            {...animationEventsNeedBind}
+                            role={role}
+                            x-placement={placement}
+                            id={id}
+                        >
+                            <div className={`${prefix}-content`} >{contentNode}</div>
+                            {icon}
+                        </div>;
+                    }
                 }
-            </TooltipTransition>
-        ) : (
-            <div className={className} {...portalEventSet} x-placement={placement} style={{ visibility: motion ? 'hidden' : 'visible', ...style }}>
-                {contentNode}
-                {icon}
-            </div>
-        );
+            </CSSAnimation>;
+
 
         return (
             <Portal getPopupContainer={this.props.getPopupContainer} style={{ zIndex }}>
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
                 <div
+                    // listen keyboard event, don't move tabIndex -1
+                    tabIndex={-1}
                     className={`${BASE_CLASS_PREFIX}-portal-inner`}
                     style={portalInnerStyle}
                     ref={this.setContainerEl}
                     onClick={this.handlePortalInnerClick}
+                    onFocus={this.handlePortalFocus}
+                    onBlur={this.handlePortalBlur}
                     onMouseDown={this.handlePortalMouseDown}
                     onKeyDown={this.handlePortalInnerKeyDown}
                 >
@@ -625,10 +717,13 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         const { wrapperClassName } = this.props;
         const display = get(elem, 'props.style.display');
         const block = get(elem, 'props.block');
+        const isStringElem = typeof elem == 'string';
 
-        const style: React.CSSProperties = {
-            display: 'inline-block',
-        };
+        const style: React.CSSProperties = {};
+
+        if (!isStringElem) {
+            style.display = 'inline-block';
+        }
 
         if (block || blockDisplays.includes(display)) {
             style.width = '100%';
@@ -654,11 +749,15 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         return mergedEvents;
     };
 
+    getPopupId = () => {
+        return this.state.id;
+    }
+
     render() {
         const { isInsert, triggerEventSet, visible, id } = this.state;
         const { wrapWhenSpecial, role, trigger } = this.props;
         let { children } = this.props;
-        const childrenStyle = { ...get(children, 'props.style') };
+        const childrenStyle = { ...get(children, 'props.style') as React.CSSProperties };
         const extraStyle: React.CSSProperties = {};
 
         if (wrapWhenSpecial) {
@@ -683,7 +782,6 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
             }
         }
 
-        // eslint-disable-next-line prefer-const
         let ariaAttribute = {};
 
         // Take effect when used by Popover component
@@ -701,7 +799,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
             ...(children as React.ReactElement).props,
             ...this.mergeEvents((children as React.ReactElement).props, triggerEventSet),
             style: {
-                ...get(children, 'props.style'),
+                ...get(children, 'props.style') as React.CSSProperties,
                 ...extraStyle,
             },
             className: classNames(
@@ -720,7 +818,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
                     ref.current = node;
                 }
             },
-            tabIndex: (children as React.ReactElement).props.tabIndex || 0, // a11y keyboard, in some condition select's tabindex need to -1 or 0 
+            tabIndex: (children as React.ReactElement).props.tabIndex || 0, // a11y keyboard, in some condition select's tabindex need to -1 or 0
             'data-popupid': id
         });
 
@@ -734,5 +832,3 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
         );
     }
 }
-
-export { Position };

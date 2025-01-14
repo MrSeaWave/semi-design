@@ -1,3 +1,4 @@
+import React from 'react';
 import { PopoverProps } from '../popover/index';
 
 export type TagColor =
@@ -21,6 +22,7 @@ export type TagColor =
 export type TagType = 'ghost' | 'solid' | 'light';
 export type TagSize = 'default' | 'small' | 'large';
 export type AvatarShape = 'circle' | 'square';
+export type TagShape = 'circle' | 'square';
 
 export interface TagProps {
     children?: React.ReactNode;
@@ -32,13 +34,17 @@ export interface TagProps {
     visible?: boolean;
     onClose?: (tagChildren: React.ReactNode, event: React.MouseEvent<HTMLElement>, tagKey: string | number) => void;
     onClick?: React.MouseEventHandler<HTMLDivElement>;
+    prefixIcon?: React.ReactNode;
+    suffixIcon?: React.ReactNode;
     style?: React.CSSProperties;
     className?: string;
     avatarSrc?: string;
     avatarShape?: AvatarShape;
+    shape?: TagShape;
     onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
     'aria-label'?: React.AriaAttributes['aria-label'];
     tabIndex?: number; // use internal, when tag in taInput, we want to use left arrow and right arrow to control the tag focus, so the tabIndex need to be -1. 
+    onMouseEnter?: () => void
 }
 
 export interface TagGroupProps<T> {
@@ -52,5 +58,6 @@ export interface TagGroupProps<T> {
     popoverProps?: PopoverProps;
     avatarShape?: AvatarShape;
     mode?: string;
-    onTagClose: (tagChildren: React.ReactNode, event: React.MouseEvent<HTMLElement>, tagKey: string | number) => void;
+    onTagClose?: (tagChildren: React.ReactNode, event: React.MouseEvent<HTMLElement>, tagKey: string | number) => void;
+    onPlusNMouseEnter?: () => void
 }

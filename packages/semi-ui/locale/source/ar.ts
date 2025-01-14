@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'ar',
     dateFnsLocale: arSA,
     Pagination: {
-        item: 'بند',
-        pageSize: ' العناصر / الصفحة',
+        pageSize: 'العناصر في كل صفحة: ${pageSize}',
+        total: 'إجمالي الصفحات: ${total}',
+        jumpTo: 'اقفز إلى',
         page: ' الصفحات',
-        total: '',
-        jumpTo: 'اقفز إلى'
     },
     Modal: {
         confirm: 'تؤكد',
         cancel: 'إلغاء',
+    },
+    Tabs: {
+        more: "أكثر"
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: 'حدد التاريخ والوقت',
             dateRange: ['تاريخ البدء', 'تاريخ النهاية'],
             dateTimeRange: ['تاريخ البدء', 'تاريخ النهاية'],
+            monthRange: ['الشهر الأول', 'الشهر الأخير'],
         },
+        presets: 'اختيار سريع',
         footer: {
             confirm: 'تؤكد',
             cancel: 'إلغاء',
@@ -74,16 +78,16 @@ const local: Locale = {
             12: 'ديسمبر',
         },
         weeks: {
-            Mon: 'الاثنين‬',
-            Tue: 'الثلاثاء‬',
-            Wed: 'الأربعاء‬',
-            Thu: 'الخميس‬',
-            Fri: 'الجمعة‬',
-            Sat: 'السبت‬',
-            Sun: 'الأحد‬',
+            Mon: 'اثنين',
+            Tue: 'ثلاثاء',
+            Wed: 'أربعاء',
+            Thu: 'خميس',
+            Fri: 'جمعة',
+            Sat: 'سبت',
+            Sun: 'أحد',
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'dd-MM-yyyy',
+            FORMAT_SWITCH_DATE: 'yyyy/MM/dd',
         },
     },
     Popconfirm: {
@@ -97,6 +101,9 @@ const local: Locale = {
     Table: {
         emptyText: 'لا نتيجة',
         pageText: 'عرض ${currentStart} إلى ${currentEnd} من ${total}',
+        descend: 'انقر للهبوط',
+        ascend: 'انقر للصعود',
+        cancelSort: 'إلغاء الترتيب',
     },
     Select: {
         emptyText: 'لا نتيجة',
@@ -117,7 +124,7 @@ const local: Locale = {
         AM: '${time} صباح',
         PM: '${time} في الظهيرة',
         datestring: '',
-        remaining: '${remained} أكثر',
+        remaining: 'الكمية المتبقية: ${remained}',
     },
     Upload: {
         mainText: 'انقر لتحميل الملف أو اسحب الملف إلى هنا',
@@ -147,11 +154,33 @@ const local: Locale = {
         clear: 'واضح',
         selectAll: 'اختر الكل',
         clearSelectAll: 'إلغاء تحديد الكل',
-        total: 'مجموع ${total} العناصر',
-        selected: '${total} العناصر المحدد',
+        total: "إجمالي العناصر: ${total}",
+        selected: "العناصر المحددة: ${total}"
     },
     Form: {
         optional: '(اختياري)',
+    },
+    Image: {
+        preview: 'معاينة',
+        loading: 'جار التحميل',
+        loadError: 'فشل في التحميل',
+        prevTip: "السابق",
+        nextTip: "التالي",
+        zoomInTip: "تكبير",
+        zoomOutTip: "تصغير",
+        rotateTip: "استدارة",
+        downloadTip: "تنزيل",
+        adaptiveTip: "التكيف مع الصفحة",
+        originTip: "الحجم الأصلي",
+    },
+    Chat: {
+        deleteConfirm: 'هل ترغب في حذف هذه الجلسة؟',
+        clearContext: 'تم مسح السياق',
+        copySuccess: 'تم النسخ بنجاح',
+        stop: 'توقف',
+        copy: 'نسخ',
+        copied: 'نسخ',
+        dropAreaText: 'ضع الملف هنا',
     },
 };
 

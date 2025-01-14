@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
-module.exports = function getWebpackConfig({ minimize }){
+module.exports = function getWebpackConfig({ minimize }) {
     return {
         mode: 'production',
         bail: true,
@@ -27,7 +27,7 @@ module.exports = function getWebpackConfig({ minimize }){
                 'process.env': { NODE_ENV: '"production"' }
             }),
             new CaseSensitivePathsPlugin(),
-            new webpack.HashedModuleIdsPlugin(),
+            new webpack.ids.HashedModuleIdsPlugin(),
         ],
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']

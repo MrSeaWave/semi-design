@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const, max-len */
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import { isString, isNumber, isUndefined, isObject } from 'lodash';
 import warning from '../utils/warning';
@@ -8,17 +7,18 @@ interface KeyboardAdapter<P = Record<string, any>, S = Record<string, any>> exte
     registerKeyDown: (callback: (event: any) => void) => void;
     unregisterKeyDown: (callback: (event: any) => void) => void;
     updateFocusIndex: (focusIndex: number) => void;
+    notifyKeyDown: (e: any) => void
 }
 
 export interface DataItem {
     [x: string]: any;
     value?: string | number;
-    label?: any; // reactNode
+    label?: any // reactNode
 }
 
 export interface StateOptionItem extends DataItem {
     show?: boolean;
-    key?: string | number;
+    key?: string | number
 }
 
 export type AutoCompleteData = Array<DataItem | string>;
@@ -29,6 +29,7 @@ export interface AutoCompleteAdapter<P = Record<string, any>, S = Record<string,
     updateInputValue: (inputValue: string | number) => void;
     toggleListVisible: (isShow: boolean) => void;
     updateOptionList: (optionList: Array<StateOptionItem>) => void;
+    updateScrollTop: (index: number) => void;
     updateSelection: (selection: Map<any, any>) => void;
     notifySearch: (inputValue: string) => void;
     notifyChange: (value: string | number) => void;
@@ -38,6 +39,9 @@ export interface AutoCompleteAdapter<P = Record<string, any>, S = Record<string,
     notifyFocus: (event?: any) => void;
     notifyBlur: (event?: any) => void;
     rePositionDropdown: () => void;
+    persistEvent: (event: any) => void;
+    registerClickOutsideHandler: (cb: (e: any) => void) => void;
+    unregisterClickOutsideHandler: () => void
 }
 
 class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<AutoCompleteAdapter<P, S>, P, S> {
@@ -77,7 +81,7 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
     }
 
     destroy(): void {
-        // this._adapter.unregisterClickOutsideHandler();
+        this._adapter.unregisterClickOutsideHandler();
         // this.unBindKeyBoardEvent();
     }
 
@@ -112,7 +116,7 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
         this.isPanelOpen = true;
         this._adapter.toggleListVisible(true);
         this._setDropdownWidth();
-        // this._adapter.registerClickOutsideHandler(e => this.closeDropdown(e));
+        this._adapter.registerClickOutsideHandler(e => this.closeDropdown(e));
         this._adapter.notifyDropdownVisibleChange(true);
         this._modifyFocusIndexOnPanelOpen();
     }
@@ -120,7 +124,7 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
     closeDropdown(e?: any): void {
         this.isPanelOpen = false;
         this._adapter.toggleListVisible(false);
-        // this._adapter.unregisterClickOutsideHandler();
+        this._adapter.unregisterClickOutsideHandler();
         this._adapter.notifyDropdownVisibleChange(false);
         // After closing the panel, you can still open the panel by pressing the enter key
         // this.unBindKeyBoardEvent();
@@ -153,7 +157,7 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
         this._adapter.notifySearch(inputValue);
         this._adapter.notifyChange(inputValue);
         this._modifyFocusIndex(inputValue);
-        if (!this.isPanelOpen){
+        if (!this.isPanelOpen) {
             this.openDropdown();
         }
     }
@@ -232,7 +236,7 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
 
         const options = this._generateList(data);
         // Get the option whose value match from options
-        let selectedOption: StateOptionItem | Array<StateOptionItem> = options.filter(option => renderSelectedItem(option) === selectedValue);
+        let selectedOption: StateOptionItem | Array<StateOptionItem> = options.length ? options.filter(option => renderSelectedItem(option) === selectedValue) : [];
         const canMatchInData = selectedOption.length;
 
         const selectedOptionIndex = options.findIndex(option => renderSelectedItem(option) === selectedValue);
@@ -259,11 +263,13 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
 
         let { data, defaultActiveFirstOption } = this.getProps();
 
-        let renderSelectedItem = this._getRenderSelectedItem();
+        let selectedOptionIndex = -1;
 
-        const options = this._generateList(data);
-
-        const selectedOptionIndex = options.findIndex(option => renderSelectedItem(option) === searchValue);
+        if (searchValue) {
+            let renderSelectedItem = this._getRenderSelectedItem();
+            const options = this._generateList(data);
+            selectedOptionIndex = options.findIndex(option => renderSelectedItem(option) === searchValue);
+        }
 
         if (selectedOptionIndex === -1 && defaultActiveFirstOption) {
             if (focusIndex !== 0) {
@@ -285,7 +291,9 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
         let { renderSelectedItem } = this.getProps();
 
         if (typeof renderSelectedItem === 'undefined') {
-            renderSelectedItem = (option: any) => option.value;
+            renderSelectedItem = (option: any) => {
+                return option?.value;
+            };
         } else if (renderSelectedItem && typeof renderSelectedItem === 'function') {
             // do nothing
         }
@@ -333,9 +341,13 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
             case KeyCode.ESC:
                 this.closeDropdown();
                 break;
+            case KeyCode.TAB:
+                this.closeDropdown();
+                break;
             default:
                 break;
         }
+        this._adapter.notifyKeyDown(event);
     }
 
     _getEnableFocusIndex(offset: number) {
@@ -376,11 +388,12 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
             index = nearestActiveOption;
         }
         this._adapter.updateFocusIndex(index);
+        this._adapter.updateScrollTop(index);
     }
 
     _handleArrowKeyDown(offset: number): void {
         const { visible } = this.getStates();
-        if (!visible){
+        if (!visible) {
             this.openDropdown();
         } else {
             this._getEnableFocusIndex(offset);  
@@ -389,7 +402,7 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
 
     _handleEnterKeyDown() {
         const { visible, options, focusIndex } = this.getStates();
-        if (!visible){
+        if (!visible) {
             this.openDropdown();
         } else {
             if (focusIndex !== undefined && focusIndex !== -1 && options.length !== 0) {
@@ -413,13 +426,11 @@ class AutoCompleteFoundation<P = Record<string, any>, S = Record<string, any>> e
         this._adapter.notifyFocus(e);
     }
 
-    handleBlur(e: FocusEvent) {
-        // In order to handle the problem of losing onClick binding when clicking on the padding area, the onBlur event is triggered first to cause the react view to be updated
-        // internal-issues:1231
-        setTimeout(() => {
-            this._adapter.notifyBlur(e);
-            this.closeDropdown();
-        }, 100);
+    handleBlur(e: any) {
+        // only need persist on react adapter
+        // https://reactjs.org/docs/legacy-event-pooling.html
+        this._persistEvent(e);
+        this._adapter.notifyBlur(e);
     }
 }
 

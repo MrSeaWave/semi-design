@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StyledAnimation, { StyledAnimationProps, StyledAnimateStyleType } from './StyledAnimation';
@@ -7,7 +6,7 @@ import noop from './utils/noop';
 export interface ChildFCType {
     animateCls?: string;
     animateStyle?: StyledAnimateStyleType;
-    animateEvents?: (eventProps?: any) => void;
+    animateEvents?: (eventProps?: any) => void
 }
 
 export interface StyledTransitionProps extends StyledAnimationProps {
@@ -20,13 +19,13 @@ export interface StyledTransitionProps extends StyledAnimationProps {
     willLeave?: (value: any) => void;
     didLeave?: (value: any) => void;
     onStart?: (value: any) => void;
-    onRest?: (value: any) => void;
+    onRest?: (value: any) => void
 }
 
 export interface StyledTransitionState {
     state: string | boolean;
-    lastChildren:  React.ReactNode | ((TransitionProps: ChildFCType) => React.ReactNode | any);
-    currentChildren: React.ReactNode | ((TransitionProps: ChildFCType) => React.ReactNode | any);
+    lastChildren: React.ReactNode | ((TransitionProps: ChildFCType) => React.ReactNode | any);
+    currentChildren: React.ReactNode | ((TransitionProps: ChildFCType) => React.ReactNode | any)
 }
 
 export default class StyledTransition extends Component<StyledTransitionProps, StyledTransitionState> {

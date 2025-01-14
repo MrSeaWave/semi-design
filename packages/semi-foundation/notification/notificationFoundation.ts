@@ -1,7 +1,6 @@
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import { isNumber } from 'lodash';
 import { strings } from '../notification/constants';
-import { Motion } from '../utils/type';
 
 
 export type NoticePosition = 'top' | 'bottom' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
@@ -11,16 +10,16 @@ export type NoticeTheme = 'light' | 'normal';
 
 export interface NoticeProps {
     duration?: number;
-    id?: string | number;
+    id?: string;
     title?: any;
     content?: any;
     position?: NoticePosition;
     type?: NoticeType;
     onClick?: (e: any) => void;
     onClose?: () => void;
-    onCloseClick?: (id: string | number) => void;
+    onCloseClick?: (id: string) => void;
     showClose?: boolean;
-    close?: (id: string | number) => void;
+    close?: (id: string) => void;
     zIndex?: number;
     icon?: any;
     getPopupContainer?: () => HTMLElement;
@@ -28,20 +27,20 @@ export interface NoticeProps {
     onHookClose?: () => void;
     direction?: typeof strings.directions[number];
     className?: string;
-    style?: any;
+    style?: any
 }
 
 export interface NoticeState{
-    visible: boolean;
+    visible: boolean
 }
 
 export interface NoticeInstance extends NoticeProps{
-    motion?: Motion;
+    motion?: boolean
 }
 
 export interface NoticeAdapter extends DefaultAdapter<NoticeProps, NoticeState>{
     notifyWrapperToRemove: (id: string) => void;
-    notifyClose: () => void;
+    notifyClose: () => void
 }
 
 

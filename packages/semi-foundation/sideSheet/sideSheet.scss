@@ -1,5 +1,6 @@
-@import './variables.scss';
 @import './animation.scss';
+@import './variables.scss';
+
 
 $module: #{$prefix}-sidesheet;
 
@@ -75,6 +76,7 @@ $module: #{$prefix}-sidesheet;
         margin: $spacing-sideSheet_title-margin;
         @include font-size-header-5;
         font-weight: $font-sideSheet_title-fontWeight;
+        font-size: $font-sideSheet_title-fontSize;
         color: $color-sideSheet_main-text;
         text-align: left;
     }
@@ -86,8 +88,6 @@ $module: #{$prefix}-sidesheet;
         background-color: $color-sideSheet-bg;
         // background-clip: padding-box;
         border: 0;
-        transition: $transition_duration-sideSheet_inner $transition_function-sideSheet_inner
-            $transition_delay-sideSheet_inner;
     }
 
     &-header {
@@ -95,6 +95,7 @@ $module: #{$prefix}-sidesheet;
         align-items: flex-start;
         padding: $spacing-sideSheet_header-padding;
         padding-bottom: $spacing-sideSheet_header-paddingBottom;
+        border-bottom: $width-sideSheet_header-borderBottom solid $color-sideSheet_header-borderBottom;
     }
 
     &-body {
@@ -102,6 +103,32 @@ $module: #{$prefix}-sidesheet;
         flex: 1;
         overflow: auto;
     }
+
+    &-size-small {
+        width: $width-sideSheet_size-small;
+    }
+
+    &-size-medium {
+        width: $width-sideSheet_size-medium;
+    }
+
+    &-size-large {
+        width: $width-sideSheet_size-large;
+    }
+
+    &-size-small.#{$module} {
+        width: $width-sideSheet_size-small;
+    }
+
+    &-size-medium.#{$module} {
+        width: $width-sideSheet_size-medium;
+    }
+
+    &-size-large.#{$module} {
+        width: $width-sideSheet_size-large;
+    }
+
+
 
     &-content {
         height: 100%;
@@ -120,9 +147,6 @@ $module: #{$prefix}-sidesheet;
         height: 100%;
         background-color: $color-sideSheet_mask-bg;
         opacity: 1;
-        transition: opacity $transition_duration-sideSheet_mask-bg $transition_function-sideSheet_mask-bg
-            $transition_delay-sideSheet_mask-bg;
-
         &-hidden {
             opacity: 0;
             display: none;
@@ -132,6 +156,150 @@ $module: #{$prefix}-sidesheet;
     &-footer {
         padding: $spacing-sideSheet_footer-padding;
     }
+
+    @keyframes #{$module}-slideShow_top {
+        from {
+            transform: translateY(-100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes #{$module}-slideHide_top {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(-100%);
+        }
+    }
+
+    @keyframes #{$module}-slideShow_bottom {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes #{$module}-slideHide_bottom {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(100%);
+        }
+    }
+
+    @keyframes #{$module}-slideShow_left {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes #{$module}-slideHide_left {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }
+
+    @keyframes #{$module}-slideShow_right {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes #{$module}-slideHide_right {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(100%);
+        }
+    }
+
+    @keyframes #{$module}-opacityShow {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes #{$module}-opacityHide {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+
+    &-animation-content_show_top{
+        animation: #{$module}-slideShow_top $animation_duration-sideSheet_inner-show $animation_function-sideSheet_inner-show $animation_delay-sideSheet_inner-show;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_hide_top{
+        animation: #{$module}-slideHide_top $animation_duration-sideSheet_inner-hide $animation_function-sideSheet_inner-hide $animation_delay-sideSheet_inner-hide;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_show_bottom{
+        animation: #{$module}-slideShow_bottom $animation_duration-sideSheet_inner-show $animation_function-sideSheet_inner-show $animation_delay-sideSheet_inner-show;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_hide_bottom{
+        animation: #{$module}-slideHide_bottom $animation_duration-sideSheet_inner-hide $animation_function-sideSheet_inner-hide $animation_delay-sideSheet_inner-hide;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_show_left{
+        animation: #{$module}-slideShow_left $animation_duration-sideSheet_inner-show $animation_function-sideSheet_inner-show $animation_delay-sideSheet_inner-show;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_hide_left{
+        animation: #{$module}-slideHide_left $animation_duration-sideSheet_inner-hide $animation_function-sideSheet_inner-hide $animation_delay-sideSheet_inner-hide;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_show_right{
+        animation: #{$module}-slideShow_right $animation_duration-sideSheet_inner-show $animation_function-sideSheet_inner-show $animation_delay-sideSheet_inner-show;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-content_hide_right{
+        animation: #{$module}-slideHide_right $animation_duration-sideSheet_inner-hide $animation_function-sideSheet_inner-hide $animation_delay-sideSheet_inner-hide;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-mask_show{
+        animation: #{$module}-opacityShow $animation_duration-sideSheet_mask-show $animation_function-sideSheet_mask-show $animation_delay-sideSheet_mask-show;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-mask_hide{
+        animation: #{$module}-opacityHide $animation_duration-sideSheet_mask-hide $animation_function-sideSheet_mask-hide $animation_delay-sideSheet_mask-hide;
+        animation-fill-mode: forwards;
+    }
+
 }
 
 .#{$module}-fixed {
@@ -167,6 +335,7 @@ $module: #{$prefix}-sidesheet;
             bottom: 0;
         }
     }
+
 }
 
 .#{$module}.#{$module}-popup {
@@ -175,5 +344,10 @@ $module: #{$prefix}-sidesheet;
 .#{$module}-hidden {
     display: none;
 }
+
+
+
+
+
 
 @import './rtl.scss';

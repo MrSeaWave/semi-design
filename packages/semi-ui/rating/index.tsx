@@ -12,7 +12,7 @@ import RatingFoundation, { RatingAdapter } from '@douyinfe/semi-foundation/ratin
 
 import '@douyinfe/semi-foundation/rating/rating.scss';
 
-export { RatingItemProps } from './item';
+export type { RatingItemProps } from './item';
 export interface RatingProps {
     'aria-describedby'?: string;
     'aria-errormessage'?: string;
@@ -41,7 +41,7 @@ export interface RatingProps {
     size?: 'small' | 'default' | number;
     tooltips?: string[];
     id?: string;
-    preventScroll?: boolean;
+    preventScroll?: boolean
 }
 
 export interface RatingState {
@@ -49,7 +49,7 @@ export interface RatingState {
     hoverValue: number;
     focused: boolean;
     clearedValue: number;
-    emptyStarFocusVisible: boolean;
+    emptyStarFocusVisible: boolean
 }
 
 export default class Rating extends BaseComponent<RatingProps, RatingState> {
@@ -140,7 +140,6 @@ export default class Rating extends BaseComponent<RatingProps, RatingState> {
             },
             getStarDOM: (index: number) => {
                 const instance = this.stars && this.stars[index];
-                // eslint-disable-next-line react/no-find-dom-node
                 return ReactDOM.findDOMNode(instance) as Element;
             },
             notifyHoverChange: (hoverValue: number, clearedValue: number) => {
@@ -270,7 +269,7 @@ export default class Rating extends BaseComponent<RatingProps, RatingState> {
     }
 
     getItemList = (ariaLabelPrefix: string) => {
-        const { count, allowHalf, prefixCls, disabled,  character, size, tooltips } =this.props;
+        const { count, allowHalf, prefixCls, disabled, character, size, tooltips } =this.props;
         const { value, hoverValue, focused } = this.state;
         // index == count is for Empty rating
         const itemList = [...Array(count + 1).keys()].map(ind => {
@@ -309,7 +308,7 @@ export default class Rating extends BaseComponent<RatingProps, RatingState> {
     }
 
     render() {
-        const { style, prefixCls, disabled, className, id, count, tabIndex } = this.props;
+        const { style, prefixCls, disabled, className, id, count, tabIndex, ...rest } = this.props;
         const { value, emptyStarFocusVisible } = this.state;
         const ariaLabelPrefix = this.getAriaLabelPrefix();
         const ariaLabel = `Rating: ${value} of ${count} ${ariaLabelPrefix}${value === 1 ? '' : 's'},`;
@@ -337,6 +336,7 @@ export default class Rating extends BaseComponent<RatingProps, RatingState> {
                 onKeyDown={disabled ? noop : this.onKeyDown}
                 ref={this.saveRate as any}
                 id={id}
+                {...this.getDataAttr(rest)}
             >
                 {itemList}
             </ul>

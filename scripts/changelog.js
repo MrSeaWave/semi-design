@@ -5,69 +5,7 @@ const marked = require('marked');
 const get = require('lodash/get');
 const isString = require('lodash/isString');
 const capitalize = require('lodash/capitalize');
-
-const COMPONENT_LIST = [
-    'anchor',
-    'autoComplete',
-    'avatar',
-    'backtop',
-    'badge',
-    'banner',
-    'breadcrumb',
-    'button',
-    'calendar',
-    'card',
-    'cascader',
-    'checkbox',
-    'collapse',
-    'collapsible',
-    'configProvider',
-    'datePicker',
-    'descriptions',
-    'dropdown',
-    'empty',
-    'form',
-    'grid',
-    'iconButton',
-    'icon',
-    'input',
-    'inputNumber',
-    'layout',
-    'list',
-    'localeProvider',
-    'modal',
-    'navigation',
-    'notification',
-    'overflowList',
-    'pagination',
-    'popconfirm',
-    'popover',
-    'progress',
-    'radio',
-    'rating',
-    'scrollList',
-    'select',
-    'sideSheet',
-    'skeleton',
-    'slider',
-    'space',
-    'spin',
-    'steps',
-    'switch',
-    'table',
-    'tabs',
-    'tag',
-    'tagInput',
-    'timePicker',
-    'timeline',
-    'toast',
-    'tooltip',
-    'transfer',
-    'tree',
-    'treeSelect',
-    'typography',
-    'upload'
-];
+const { COMPONENT_LIST } = require('./componentList'); 
 
 const TYPE_MAP = {
     feat: 'feature',
@@ -76,7 +14,7 @@ const TYPE_MAP = {
     styles: 'style',
 };
 
-const SUPPORT_TYPES = new Set(['feature', 'performance', 'style', 'new component', 'chore', 'docs', 'fix', 'refactor', 'breaking change', 'design token']);
+const SUPPORT_TYPES = new Set(['feat', 'feature', 'performance', 'style', 'new component', 'chore', 'docs', 'fix', 'refactor', 'breaking change', 'design token']);
 
 const UNKNOWN_COMPONENT_NAME = 'Other';
 const UNKNOWN_TYPE_NAME = 'chore';

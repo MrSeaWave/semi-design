@@ -1,5 +1,5 @@
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
-import { Motion } from '../utils/type';
+import isPromise from "../utils/isPromise";
 
 export type OKType = 'primary' | 'secondary' | 'tertiary' | 'warning' | 'danger';
 export type Size = 'small' | 'medium' | 'large' | 'full-width';
@@ -7,12 +7,12 @@ export type Size = 'small' | 'medium' | 'large' | 'full-width';
 export interface ModalAdapter extends DefaultAdapter<ModalProps, ModalState> {
     disabledBodyScroll: () => void;
     enabledBodyScroll: () => void;
-    notifyCancel: (e: any) => void;
-    notifyOk: (e: any) => void;
+    notifyCancel: (e: any) => void | Promise<any>;
+    notifyOk: (e: any) => void | Promise<any>;
     notifyClose: () => void;
-    toggleHidden: (hidden: boolean, callback?: (hidden: boolean) => void) => void;
+    toggleDisplayNone: (displayNone: boolean, callback?: (displayNone: boolean) => void) => void;
     notifyFullScreen: (isFullScreen: boolean) => void;
-    getProps: () => ModalProps;
+    getProps: () => ModalProps
 }
 
 export interface ModalProps {
@@ -22,6 +22,7 @@ export interface ModalProps {
     cancelText?: string;
     centered?: boolean;
     className?: string;
+    modalContentClass?: string;
     closable?: boolean;
     confirmLoading?: boolean;
     cancelLoading?: boolean;
@@ -34,7 +35,7 @@ export interface ModalProps {
     maskClosable?: boolean;
     maskStyle?: Record<string, any>;
     maskFixed?: boolean;
-    motion?: Motion;
+    motion?: boolean;
     okButtonProps?: any;
     okText?: string;
     okType?: OKType;
@@ -55,11 +56,14 @@ export interface ModalProps {
     direction?: any;
     fullScreen?: boolean;
     preventScroll?: boolean;
+    footerFill?: boolean
 }
 
 export interface ModalState {
-    hidden: boolean;
+    displayNone: boolean;
     isFullScreen: boolean;
+    onOKReturnPromiseStatus?: "pending"|"fulfilled"|"rejected";
+    onCancelReturnPromiseStatus?: "pending"|"fulfilled"|"rejected"
 }
 
 export default class ModalFoundation extends BaseFoundation<ModalAdapter> {
@@ -75,11 +79,29 @@ export default class ModalFoundation extends BaseFoundation<ModalAdapter> {
     }
 
     handleCancel(e: any) {
-        this._adapter.notifyCancel(e);
+        const result = this._adapter.notifyCancel(e);
+        if (isPromise(result)) {
+            this._adapter.setState({ onCancelReturnPromiseStatus: "pending" });
+            (result as Promise<any>)?.then(()=>{
+                this._adapter.setState({ onCancelReturnPromiseStatus: "fulfilled" });
+            })?.catch(e=>{
+                this._adapter.setState({ onCancelReturnPromiseStatus: "rejected" });
+                throw e;
+            });
+        }
     }
 
     handleOk(e: any) {
-        this._adapter.notifyOk(e);
+        const result = this._adapter.notifyOk(e);
+        if (isPromise(result)) {
+            this._adapter.setState({ onOKReturnPromiseStatus: "pending" });
+            (result as Promise<any>)?.then(()=>{
+                this._adapter.setState({ onOKReturnPromiseStatus: "fulfilled" });
+            })?.catch(e=>{
+                this._adapter.setState({ onOKReturnPromiseStatus: "rejected" });
+                throw e;
+            });
+        }
     }
 
     beforeShow() {
@@ -88,18 +110,23 @@ export default class ModalFoundation extends BaseFoundation<ModalAdapter> {
 
     afterHide() {
         this._adapter.enabledBodyScroll();
-    }
-
-    afterClose() {
         this._adapter.notifyClose();
     }
 
+    enabledBodyScroll() {
+        this._adapter.enabledBodyScroll();
+    }
 
-    toggleHidden = (hidden: boolean, callback?: (hidden: boolean) => void) => {
-        this._adapter.toggleHidden(hidden, callback);
+    // afterClose() {
+    //     this._adapter.notifyClose();
+    // }
+
+
+    toggleDisplayNone = (displayNone: boolean, callback?: (displayNone: boolean) => void) => {
+        this._adapter.toggleDisplayNone(displayNone, callback);
     };
 
-    // // eslint-disable-next-line max-len
+
     // mergeMotionProp = (motion: Motion, prop: string, cb: () => void) => {
     //     const mergedMotion = typeof (motion) === 'undefined' || motion ? {
     //         ...(motion as { [key: string]: (() => void) | boolean }),

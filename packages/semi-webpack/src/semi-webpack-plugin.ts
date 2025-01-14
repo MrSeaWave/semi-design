@@ -1,27 +1,32 @@
 import path from 'path';
+import { Compiler as LegacyCompiler } from 'webpack';
+import { Compiler } from 'webpack';
 import { transformPath } from './utils';
-const _NormalModule_ = require('webpack/lib/NormalModule');
 
 export interface WebpackContext {
-    NormalModule?: any;
+    NormalModule?: any
 }
 
 export interface ExtractCssOptions {
     loader: string;
-    loaderOptions?: any;
+    loaderOptions?: any
 }
 export interface SemiWebpackPluginOptions {
     theme?: string | SemiThemeOptions;
+    cssLayer?: boolean;
     prefixCls?: string;
     variables?: {[key: string]: string | number};
     include?: string;
     omitCss?: boolean;
+    /** @deprecated SemiWebpackPlugin will get webpack context from compiler instance. */
     webpackContext?: WebpackContext;
     extractCssOptions?: ExtractCssOptions;
+    overrideStylesheetLoaders?: (loaders: any[]) => any[];
+    webComponentPath?: boolean | RegExp
 }
 
 export interface SemiThemeOptions {
-    name?: string;
+    name?: string
 }
 
 export default class SemiWebpackPlugin {
@@ -31,35 +36,58 @@ export default class SemiWebpackPlugin {
         this.options = options;
     }
 
-    apply(compiler: any) {
-        const NormalModule = this.options.webpackContext?.NormalModule || _NormalModule_;
+    apply(compiler: Compiler | LegacyCompiler) {
+        let NormalModule = this.options.webpackContext?.NormalModule;
+        if (!NormalModule && 'webpack' in compiler) NormalModule = compiler.webpack.NormalModule;
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        if (!NormalModule) NormalModule = require('webpack/lib/NormalModule');
+
         compiler.hooks.compilation.tap('SemiPlugin', (compilation: any) => {
-            if (this.options.theme || this.options.prefixCls || this.options.omitCss) {
-                if (NormalModule.getCompilationHooks) {
-                    NormalModule.getCompilationHooks(compilation).loader.tap('SemiPlugin', (context: any, module: any) => {
-                        if (this.options.omitCss) {
-                            this.omitCss(module);
+            if (NormalModule.getCompilationHooks) {
+                NormalModule.getCompilationHooks(compilation).loader.tap('SemiPlugin', (context: any, module: any) => {
+                    if (this.options.omitCss) {
+                        this.omitCss(module);
+                        if (!this.options.webComponentPath) {
                             return;
                         }
-                        this.customTheme(module);
-                        if (this.options.prefixCls) {
-                            this.customPrefix(module, this.options.prefixCls);
-                        }
-                    });
-                } else {
-                    compilation.hooks.normalModuleLoader.tap('SemiPlugin', (context: any, module: any) => {
-                        if (this.options.omitCss) {
-                            this.omitCss(module);
+                    }
+                    this.customTheme(module);
+                    if (this.options.prefixCls) {
+                        this.customPrefix(module, this.options.prefixCls);
+                    }
+                    if (this.options.webComponentPath) {
+                        this.webComponentAdapter(module);
+                    }
+                });
+            } else {
+                compilation.hooks.normalModuleLoader.tap('SemiPlugin', (context: any, module: any) => {
+                    if (this.options.omitCss) {
+                        this.omitCss(module);
+                        if (!this.options.webComponentPath) {
                             return;
                         }
-                        this.customTheme(module);
-                        if (this.options.prefixCls) {
-                            this.customPrefix(module, this.options.prefixCls);
-                        }
-                    });
-                }
+                    }
+                    this.customTheme(module);
+                    if (this.options.prefixCls) {
+                        this.customPrefix(module, this.options.prefixCls);
+                    }
+                    if (this.options.webComponentPath) {
+                        this.webComponentAdapter(module);
+                    }
+                });
             }
         });
+    }
+
+    webComponentAdapter(module: any) {
+        const compatiblePath = transformPath(module.resource);
+        const reg = this.options.webComponentPath instanceof RegExp ? this.options.webComponentPath : /src\/([^/]+\/)*[^/]+\.(ts|tsx|js|jsx)$/;
+        if (reg.test(compatiblePath)) {
+            module.loaders = module.loaders || [];
+            module.loaders.push({
+                loader: path.join(__dirname, 'semi-web-component-loader')
+            });
+        }
     }
 
     omitCss(module: any) {
@@ -84,8 +112,11 @@ export default class SemiWebpackPlugin {
             const scssLoader = require.resolve('sass-loader');
             const cssLoader = require.resolve('css-loader');
             const styleLoader = require.resolve('style-loader');
-            const semiSemiLoaderOptions = typeof this.options.theme === 'object' ? this.options.theme : {
-                name: this.options.theme
+            const extraCssLoader = path.join(__dirname, 'semi-extract-css-content-loader');
+            const rawLoader = require.resolve('raw-loader');
+            const semiSemiLoaderOptions = typeof this.options.theme === 'object' ? { ...this.options.theme, cssLayer: this.options.cssLayer } : {
+                name: this.options.theme,
+                cssLayer: this.options.cssLayer
             };
             if (!this.hasSemiThemeLoader(module.loaders)) {
                 const lastLoader = this.options.extractCssOptions ? {
@@ -94,10 +125,20 @@ export default class SemiWebpackPlugin {
                 } : {
                     loader: styleLoader
                 };
-                module.loaders = [
-                    lastLoader,
+                const getRawCssLoaders = [
                     {
-                        loader: cssLoader
+                        loader: rawLoader
+                    },
+                    {
+                        loader: extraCssLoader
+                    }
+                ];
+                const commonLoaderList = [
+                    {
+                        loader: cssLoader,
+                        options: {
+                            sourceMap: false,
+                        }
                     }, {
                         loader: scssLoader
                     },
@@ -109,7 +150,21 @@ export default class SemiWebpackPlugin {
                             variables: this.convertMapToString(this.options.variables || {}),
                             include: this.options.include
                         }
-                    }];
+                    }
+                ];
+                let loaderList = commonLoaderList;
+                if (this.options.webComponentPath) {
+                    loaderList = [
+                        ...getRawCssLoaders,
+                        ...commonLoaderList,
+                    ];
+                } else {
+                    loaderList = [
+                        lastLoader,
+                        ...commonLoaderList,
+                    ];
+                }
+                module.loaders = this.options.overrideStylesheetLoaders?.(loaderList) ?? loaderList;
             }
         }
     }

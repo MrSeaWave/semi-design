@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 35
+order: 48
 category: Input
 title: Upload
 icon: doc-upload
@@ -97,7 +97,7 @@ import { IconPlus } from '@douyinfe/semi-icons';
         };
         let style = { ...basicStyle, ...marginStyle[pos] };
 
-        return <div style={style}>Please upload pet certification materials</div>;
+        return <div style={style}>Please upload certification materials</div>;
     };
     const defaultFileList = [
         {
@@ -166,7 +166,7 @@ import { IconCamera } from '@douyinfe/semi-icons';
         color: 'var(--semi-color-white)',
     };
     
-    const hoverMask =  (<div style={style}>
+    const hoverMask = (<div style={style}>
         <IconCamera />
     </div>);
 
@@ -389,20 +389,20 @@ import { IconPlus } from '@douyinfe/semi-icons';
     const defaultFileList = [
         {
             uid: '1',
-            name: 'vigo.png',
+            name: 'dyBag.jpeg',
             status: 'success',
             size: '130KB',
             preview: true,
-            url: 'https://sf6-cdn-tos.douyinstatic.com/img/ee-finolhu/c2a65140483e4a20802d64af5fec1b39~noop.image',
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
         },
         {
             uid: '2',
-            name: 'abc.jpeg',
+            name: 'dyBag2.jpeg',
             status: 'success',
             size: '222KB',
             preview: true,
             fileInstance: new File([new ArrayBuffer(2048)], 'abc.jpeg', { type: 'image/png' }),
-            url: 'https://sf6-cdn-tos.douyinstatic.com/img/ee-finolhu/c2a65140483e4a20802d64af5fec1b39~noop.image',
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
         },
     ];
     return (
@@ -449,41 +449,6 @@ import { IconUpload } from '@douyinfe/semi-icons';
 };
 ```
 
-### Custom preview logic
-
-When `listType` is `list`, you can pass in `previewFile` to view the logic.
-For example, when you do not need to preview the image type by thumbnail, you can always return a `<IconFile />` in `previewFile`
-
-```jsx live=true width=48%
-import React from 'react';
-import { Upload, Button } from '@douyinfe/semi-ui';
-import { IconUpload, IconFile } from '@douyinfe/semi-icons';
-
-() => {
-    let action = '//semi.design/api/upload';
-    const defaultFileList = [
-        {
-            uid: '1',
-            name: 'vigo.png',
-            status: 'success',
-            size: '130KB',
-            url: 'https://sf6-cdn-tos.douyinstatic.com/img/ee-finolhu/c2a65140483e4a20802d64af5fec1b39~noop.image',
-        },
-    ];
-    return (
-        <Upload
-            defaultFileList={defaultFileList}
-            action={action}
-            previewFile={file => <IconFile size="large" />}
-        >
-            <Button icon={<IconUpload />} theme="light">
-                Click upload
-            </Button>
-        </Upload>
-    );
-};
-```
-
 ### Custom list operation area
 
 When `listType` is `list`, you can customize the list operation area by passing in `renderFileOperation`
@@ -494,20 +459,20 @@ import { Upload, Button } from '@douyinfe/semi-ui';
 import { IconUpload, IconDownload, IconEyeOpened, IconDelete } from '@douyinfe/semi-icons';
 
 () => {
-    let action = 'https://run.mocky.io/v3/d6ac5c9e-4d39-4309-a747-7ed3b5694859';
+    let action = 'https://api.semi.design/upload';
 
     const defaultFileList = [
         {
             uid: '1',
-            name: 'vigo.png',
+            name: 'dyBag.jpeg',
             status: 'success',
             size: '130KB',
             preview: true,
-            url: 'https://sf6-cdn-tos.douyinstatic.com/img/ee-finolhu/c2a65140483e4a20802d64af5fec1b39~noop.image',
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
         }
     ];
     const renderFileOperation = (fileItem) => (
-        <div style={{ display: 'flex',columnGap: 8, padding: '0 8px' }}>
+        <div style={{ display: 'flex', columnGap: 8, padding: '0 8px' }}>
             <Button icon={<IconEyeOpened></IconEyeOpened>} type="tertiary" theme="borderless" size="small"></Button>
             <Button icon={<IconDownload></IconDownload>} type="tertiary" theme="borderless" size="small"></Button>
             <Button onClick={e=>fileItem.onRemove()} icon={<IconDelete></IconDelete>} type="tertiary" theme="borderless" size="small"></Button>
@@ -520,6 +485,95 @@ import { IconUpload, IconDownload, IconEyeOpened, IconDelete } from '@douyinfe/s
     );
 };
 ```
+
+### Custom preview logic
+
+When `listType` is list, the preview logic can be implemented by passing in `previewFile`.  
+For example, when you don't need thumbnail preview for image types, you can constantly return a `<IconFile />` in previewFile.  
+If you want to enlarge and preview the image when clicked, you can use the `Image` component in `previewFile`.  
+Or if you want to use an additional operation area to achieve enlarged preview when clicked, you can also combine `renderFileOperation` to place some custom elements such as Icon to achieve enlarged preview when clicked.
+
+```jsx live=true width=48%
+import React from 'react';
+import { Upload, Button, Image } from '@douyinfe/semi-ui';
+import { IconUpload, IconFile } from '@douyinfe/semi-icons';
+
+() => {
+    let action = '//semi.design/api/upload';
+    const defaultFileList = [
+        {
+            uid: '1',
+            name: 'dyBag.jpeg',
+            status: 'success',
+            size: '130KB',
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
+        },
+        {
+            uid: '2',
+            name: 'dyBag2.png',
+            status: 'success',
+            size: '130KB',
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
+        },
+    ];
+    return (
+        <Upload
+            defaultFileList={defaultFileList}
+            action={action}
+            previewFile={file => file.uid === '1' ? <IconFile size="large" /> : <Image src={file.url} />}
+        >
+            <Button icon={<IconUpload />} theme="light">
+                Click upload
+            </Button>
+        </Upload>
+    );
+};
+```
+The following is an example of combining `renderFileOperation` and `ImagePreview`. In this example, clicking the first Icon on the right can enlarge the image for preview.
+```jsx live=true
+import React, { useStae } from 'react';
+import { Upload, Button, ImagePreview } from '@douyinfe/semi-ui';
+import { IconUpload, IconDownload, IconEyeOpened, IconDelete, IconExpand } from '@douyinfe/semi-icons';
+
+() => {
+    let action = 'https://api.semi.design/upload';
+    const [visible, setVisible] = useState(false);
+    const defaultFileList = [
+        {
+            uid: '1',
+            name: 'dyBag.png',
+            status: 'success',
+            size: '130KB',
+            preview: true,
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
+        }
+    ];
+    const renderFileOperation = (fileItem) => (
+        <div style={{ display: 'flex', columnGap: 8, padding: '0 8px' }}>
+            <Button
+                icon={<IconExpand></IconExpand>}
+                type="tertiary"
+                theme="borderless"
+                size="small"
+                onClick={()=> setVisible(true)}
+            >
+            </Button>
+            <Button icon={<IconDownload></IconDownload>} type="tertiary" theme="borderless" size="small"></Button>
+            <Button onClick={e=>fileItem.onRemove()} icon={<IconDelete></IconDelete>} type="tertiary" theme="borderless" size="small"></Button>
+            <ImagePreview
+                src={fileItem.url}
+                visible={visible}
+                onVisibleChange={setVisible}
+            />
+        </div>
+    );
+    return <Upload action={action} defaultFileList={defaultFileList} itemStyle={{ width: 300 }} renderFileOperation={renderFileOperation}>
+        <Button icon={<IconUpload />} theme="light">Click upload</Button>
+    </Upload>;
+};
+
+```
+
 
 ### Default file list
 
@@ -536,11 +590,11 @@ import { IconUpload } from '@douyinfe/semi-icons';
     const defaultFileList = [
         {
             uid: '1',
-            name: 'vigo.png',
+            name: 'dyBag.jpeg',
             status: 'success',
             size: '130KB',
             preview: true,
-            url: 'https://sf6-cdn-tos.douyinstatic.com/img/ee-finolhu/c2a65140483e4a20802d64af5fec1b39~noop.image',
+            url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/edit-bag.jpeg',
         },
         {
             uid: '2',
@@ -578,7 +632,7 @@ import { IconUpload } from '@douyinfe/semi-icons';
     const initList = [
         {
             uid: '1',
-            name: 'vigo.png',
+            name: 'dyBag.jpeg',
             status: 'success',
             size: '130KB',
             preview: true,
@@ -700,7 +754,7 @@ import { Upload } from '@douyinfe/semi-ui';
 import { IconPlus, IconEyeOpened } from '@douyinfe/semi-icons';
 
 () => {
-    let action = 'https://run.mocky.io/v3/d6ac5c9e-4d39-4309-a747-7ed3b5694859';
+    let action = 'https://api.semi.design/upload';
     const defaultFileList = [
         {
             uid: '1',
@@ -739,11 +793,11 @@ Set `hotSpotLocation` to customize the order of click hotspots, the default is a
 
 ```jsx live=true width=48%
 import React from 'react';
-import { Upload, Select } from '@douyinfe/semi-ui';
+import { Upload, Select, RadioGroup, Radio } from '@douyinfe/semi-ui';
 import { IconPlus, IconEyeOpened } from '@douyinfe/semi-icons';
 
 () => {
-    let action = 'https://run.mocky.io/v3/d6ac5c9e-4d39-4309-a747-7ed3b5694859';
+    let action = 'https://api.semi.design/upload';
     const defaultFileList = [
         {
             uid: '1',
@@ -759,13 +813,16 @@ import { IconPlus, IconEyeOpened } from '@douyinfe/semi-icons';
         const feature = "width=300,height=300";
         window.open(file.url, 'imagePreview', feature);
     };
-    const [hotSpotLocation, $hotSpotLocation] = useState('end');
+    const [hotSpotLocation, setLocation] = useState('end');
     return (
         <>
-            <Select value={hotSpotLocation} onChange={$hotSpotLocation} style={{ width: 120 }}>
-                <Select.Option value='start'>Start</Select.Option>
-                <Select.Option value='end'>End</Select.Option>
-            </Select>
+            <RadioGroup
+                value={hotSpotLocation}
+                type='button'
+                onChange={e => setLocation(e.target.value)}>
+                <Radio value='start'>start</Radio>
+                <Radio value='end'>end</Radio>
+            </RadioGroup>
             <hr />
             <Upload
                 action={action}
@@ -784,6 +841,84 @@ import { IconPlus, IconEyeOpened } from '@douyinfe/semi-icons';
 };
 ```
 
+### Photo Wall With Preview
+With the Image component, through the renderThumbnail API, you can click on the image to enlarge the preview
+
+```jsx live=true width=48%
+import React from 'react';
+import { Upload, Image } from '@douyinfe/semi-ui';
+import { IconPlus } from '@douyinfe/semi-icons';
+
+() => {
+    let action = 'https://api.semi.design/upload';
+    const defaultFileList = [
+        {
+            uid: '1',
+            name: 'music.png',
+            status: 'success',
+            size: '130KB',
+            preview: true,
+            url:
+                'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/Resso.png',
+        }
+    ];
+    return (
+        <>
+            <Upload
+                action={action}
+                listType="picture"
+                accept="image/*"
+                multiple
+                defaultFileList={defaultFileList}
+                renderThumbnail={(file) => (<Image src={file.url} />)}
+            >
+                <IconPlus size="extra-large" />
+            </Upload>
+        </>
+    );
+};
+```
+
+### Photo Wall Width/Height
+By setting picHeight, picWidth (provided after v2.42), the width and height of picture wall elements can be uniformly set
+
+```jsx live=true dir="column"
+import React from 'react';
+import { Upload } from '@douyinfe/semi-ui';
+import { IconPlus } from '@douyinfe/semi-icons';
+
+() => {
+    let action = 'https://api.semi.design/upload';
+    const defaultFileList = [
+        {
+            uid: '1',
+            name: 'image-1.jpg',
+            status: 'success',
+            size: '130KB',
+            preview: true,
+            url:
+                'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/abstract.jpg',
+        }
+    ];
+    return (
+        <>
+            <Upload
+                action={action}
+                listType="picture"
+                accept="image/*"
+                multiple
+                defaultFileList={defaultFileList}
+                picHeight={110}
+                picWidth={200}
+            >
+                <IconPlus size="extra-large" style={{ margin: 4 }} />
+                Click to add picture
+            </Upload>
+        </>
+    );
+};
+```
+
 ### Disabled
 
 ```jsx live=true width=48%
@@ -795,7 +930,7 @@ import { IconUpload } from '@douyinfe/semi-icons';
     const defaultFileList = [
         {
             uid: '1',
-            name: 'vigo.png',
+            name: 'dyBag.jpeg',
             status: 'success',
             size: '130KB',
             preview: true,
@@ -858,10 +993,10 @@ class ManulUploadDemo extends React.Component {
                     <Button icon={<IconPlus />} theme="light" style={{ marginRight: 8 }}>
                         Select a document
                     </Button>
-                    <Button icon={<IconUpload />} theme="light" onClick={this.manulUpload}>
-                        Start upload
-                    </Button>
                 </Upload>
+                <Button icon={<IconUpload />} theme="light" onClick={this.manulUpload}>
+                    Start upload
+                </Button>
             </div>
         );
     }
@@ -1100,10 +1235,13 @@ afterUpload is triggered when the upload is completed (xhr.onload) and no error 
 ```ts
 // afterUploadResult:
 {
-     status?:'success' |'uploadFail' |'validateFail' |'validating' |'uploading' |'wait',
-     validateMessage?: React.ReactNode | string, // file validation information
-     autoRemove: boolean, // Whether to remove the file from the fileList, the default is false
-     name: string,
+    status?:'success' |'uploadFail' |'validateFail' |'validating' |'uploading' |'wait',
+    validateMessage?: React.ReactNode | string, // file validation information
+    autoRemove?: boolean, // Whether to remove the file from the fileList, the default is false
+    name?: string;
+    // The URL for previewing image file, usually the storage address returned by the Server after receiving response, supported since v2.63.
+    // Previous versions can also manually update the controlled properties in the fileList through onChange callback.
+    url?: string; // support after v2.63
 }
 ```
 
@@ -1166,7 +1304,7 @@ customRequest contains the following input parameters
      // Function to be called when upload error
      onError: (userXhr: {status: number }, e: event) => any,
       // The function that should be called after the upload is successful, response is the request result after the upload is successful
-     onSuccess: (response: any, e: event) => any,
+     onSuccess: (response: any, e?: event) => any,
      // props.withCredentials set by the user
      withCredentials: boolean,
      // props.action set by the user
@@ -1251,6 +1389,8 @@ import { IconUpload } from '@douyinfe/semi-icons';
 |onRetry | Upload retry callback | (file: <FileItem\>) => void | | 1.18.0 |
 |onSizeError | File size invalid callback| (file:[File](https://developer.mozilla.org/zh-CN/docs/Web/API/File), fileList:Array<FileItem\>) => void | | |
 |onSuccess | Callback after successful upload| (responseBody: object, file: [File](https://developer.mozilla.org/zh-CN/docs/Web/API/File), fileList:Array<FileItem\> ) => void | |
+|picHeight | Set picture display height when listType='picture' | string\|number |  | 2.42.0 |
+|picWidth | Set picture display width when listType='picture' | string\|number |  | 2.42.0 |
 |previewFile | Customize the preview logic, the content returned by this function will replace the original thumbnail | (fileItem: FileItem) => ReactNode | | |
 |prompt | Custom slot, which can be used to insert prompt text. Different from writing directly in `children`, the content of `prompt` will not trigger upload when clicked.<br/>(In the picture wall mode, the incoming prompt is only supported after v1.3.0) | ReactNode | | |
 |promptPosition | The position of the prompt text. When the listType is list, the reference object is the children element; when the listType is picture, the reference object is the picture list. Optional values ​​`left`, `right`, `bottom`<br/> (In picture wall mode, promptPosition is only supported after v1.3.0) | string |'right' | |
@@ -1309,10 +1449,14 @@ interface FileItem {
 ```
 
 ## Methods
+
+Some internal methods provided by Upload can be accessed through ref:
+
 |Name | Description | Type | Version|
 |----|----|----|----|
 | insert | Upload file, when index is passed, it will be inserted at the specified position, if not passed, it will be inserted at the end | (files: Array<File\>, index?: number) => void | 2.2.0 |
 | upload | Start upload manually, use with uploadTrigger="custom" | () => void | |
+| openFileDialog | open file select Dialog | () => void | 2.21.0 |
 
 ## Content Guidelines
 - Upload button

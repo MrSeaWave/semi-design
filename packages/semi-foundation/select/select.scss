@@ -1,6 +1,6 @@
 //@import '../theme/variables.scss';
-@import './variables.scss';
 @import "./animation.scss";
+@import './variables.scss';
 @import './option.scss';
 @import './mixin.scss';
 
@@ -8,6 +8,7 @@ $module: #{$prefix}-select;
 $single: #{$module}-single;
 $filterable: #{$module}-filterable;
 $multiple: #{$module}-multiple;
+$overflowList: #{$prefix}-overflow-list;
 
 .#{$module} {
     box-sizing: border-box;
@@ -22,9 +23,12 @@ $multiple: #{$module}-multiple;
     position: relative;
     outline: none;
     cursor: pointer;
-    transition: background-color $transition_duration-select-bg $transition_function-select-bg $transition_delay-select-bg,
-    border $transition_duration-select-border $transition_function-select-border $transition_delay-select-border;
-    transform:scale($transform_scale-select);
+    transition: background-color $transition_duration-select-bg $transition_function-select-bg $transition_delay-select-bg, border $transition_duration-select-border $transition_function-select-border $transition_delay-select-border;
+    transform: scale($transform_scale-select);
+
+    max-height: 300px;
+    overflow-y: auto;
+
     &:hover {
         background-color: $color-select-bg-hover;
         border: $width-select-border-hover solid $color-select-border-hover;
@@ -32,7 +36,13 @@ $multiple: #{$module}-multiple;
 
     &:focus {
         border: $width-select-border-focus solid $color-select-border-focus;
+        background-color: $color-select-bg-focus;
+        // background-color: plum;
         outline: 0;
+    }
+
+    &:active{
+        background-color: $color-select-bg-active;
     }
 
     &-small {
@@ -50,12 +60,12 @@ $multiple: #{$module}-multiple;
 
     &-open,
     &-focus {
-        border: $border-thickness-control-focus solid $color-select_default-border-focus;
+        border: $width-select-border-focus solid $color-select_default-border-focus;
         outline: 0;
 
         &:hover {
             background-color: $color-select-bg-default;
-            border: $border-thickness-control-focus solid $color-select_default-border-focus;
+            border: $width-select-border-hover solid $color-select_default-border-focus;
         }
 
         // when click the trigger, trigger get the focus state, active style should take effect
@@ -115,9 +125,9 @@ $multiple: #{$module}-multiple;
         }
 
         &:focus {
-            // border: $border-thickness-control-focus solid $color-select_default-border-focus;
             // when select is disabled, the border should not have active color
-            border: $border-thickness-control-focus solid transparent;
+            border: $width-select-border-focus solid $color-select_input_disabled-border-focus;
+            background-color: $color-select_input_disabled-bg-focus;
         }
 
         .#{$module}-selection,
@@ -177,12 +187,11 @@ $multiple: #{$module}-multiple;
         }
 
         .#{$prefix}-tag {
+            @include select-tag-margin;
 
             &:nth-of-type(1) {
                 margin-left: 0;
             }
-
-            @include select-tag-margin;
         }
 
         .#{$prefix}-tag-group {
@@ -199,6 +208,28 @@ $multiple: #{$module}-multiple;
         display: flex;
         align-items: center;
         height: 100%;
+
+        &-collapse {
+            display: inline-flex;
+            flex-shrink: 0;
+            width: 100%;
+
+            .#{$overflowList}-overflow {
+                max-width: 100%; // when one tag exceed the max width
+                min-width: 50px;
+            }
+
+            &>&-tag {
+                background-color: transparent;
+            }
+
+            &>&-N {
+                background-color: transparent;
+                padding: 4px;
+                color: var(--semi-color-text-0);
+                font-size: 12px;
+            }
+        }
     }
 
     &-multiple {
@@ -363,17 +394,29 @@ $multiple: #{$module}-multiple;
         overflow: hidden;
         position: relative;
 
+        &:not(.#{$module}-content-wrapper-empty) {
+            .#{$prefix}-input-wrapper {
+                height: $height-select_multiple_input_default;
+                line-height: $height-select_multiple_input_default;
+                .#{$prefix}-input-default {
+                    height: $height-select_multiple_input_default;
+                }
+            }
+        }
+
         &-empty {
             .#{$prefix}-input-wrapper {
                 position: absolute;
                 top: 0;
                 left: 0;
                 height: 100%;
-                width: 100%;
+                .#{$prefix}-input-default {
+                    height: 100%;
+                }
+                // width: 100%; // no need to set width here, will calcuate inline style by js
             }
         }
     }
-
     .#{$prefix}-input-wrapper {
         // position: absolute;
         // top: 0;
@@ -394,10 +437,45 @@ $multiple: #{$module}-multiple;
     }
 }
 
+.#{$multiple}.#{$filterable}.#{$module}-large {
+    .#{$module}-content-wrapper {
+        &:not(.#{$module}-content-wrapper-empty) {
+            .#{$prefix}-input-wrapper-large {
+                height: $height-select_multiple_input_large;
+                line-height: $height-select_multiple_input_large;
+                .#{$prefix}-input-large {
+                    height: $height-select_multiple_input_large
+                }
+            }
+        }
+    }
+}
+
+.#{$multiple}.#{$filterable}.#{$module}-small {
+    .#{$module}-content-wrapper {
+        &:not(.#{$module}-content-wrapper-empty) {
+            .#{$prefix}-input-wrapper {
+                height: $height-select_multiple_input_small;
+                line-height: $height-select_multiple_input_small;
+                .#{$prefix}-input-small {
+                    height: $height-select_multiple_input_small;
+                }
+            }
+        }
+    }
+}
+
+
+.#{$module}-option-list-wrapper {
+    padding-top: $spacing-select_option_list-paddingTop;
+    padding-bottom: $spacing-select_option_list-paddingBottom;
+    padding-left: $spacing-select_option_list-paddingLeft;
+    padding-right: $spacing-select_option_list-paddingRight;
+}
+
 .#{$module}-option-list {
     overflow-x: hidden;
     overflow-y: auto;
-    padding: $spacing-select_option_list-paddingTop $spacing-select_option_list-paddingRight $spacing-select_option_list-paddingBottom $spacing-select_option_list-paddingLeft;
     &-chosen {
         .#{$module}-option-icon {
             display: flex;
@@ -431,6 +509,53 @@ $multiple: #{$module}-multiple;
     padding-top: $spacing-select_loading_wrapper-paddingTop;
     padding-bottom: $spacing-select_loading_wrapper-paddingBottom;
     cursor: not-allowed;
+    // make sure that spin align vertical, no need to make 20px as a spacing token here
+    height: 20px;
+    box-sizing: content-box;
+}
+
+
+.#{$module}-borderless {
+
+    &:not(:focus-within):not(:hover){
+        background-color:transparent;
+        border-color: transparent;
+        .#{$module}-arrow {
+            opacity: 0;
+        }
+    }
+
+    &:focus-within:not(:active){
+        background-color:transparent;
+    }
+
+    // split style into not and normal to avoid style override
+    &.#{$module}-error:not(:focus-within){
+        border-color: $color-select_danger-border-focus;
+    }
+
+    &.#{$module}-warning:not(:focus-within){
+        border-color: $color-select_warning-border-focus;
+    }
+
+    &.#{$module}-error:focus-within{
+        border-color: $color-select_danger-border-focus;
+    }
+
+    &.#{$module}-warning:focus-within{
+        border-color: $color-select_warning-border-focus;
+    }
+
+}
+
+
+.#{$module}-dropdown-search-wrapper {
+    padding-top: $spacing-select_dropdown_input_paddingTop;
+    padding-right: $spacing-select_dropdown_input_paddingRight;
+    padding-bottom: $spacing-select_dropdown_input_paddingBottom;
+    padding-top: $spacing-select_dropdown_input_paddingTop;
+    padding-left: $spacing-select_dropdown_input_paddingLeft;
+    border-bottom: 1px solid $color-select_dropdown_input-border;
 }
 
 @import './rtl.scss';

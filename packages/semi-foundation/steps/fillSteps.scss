@@ -92,7 +92,7 @@ $module: #{$prefix}-steps;
                 color: $color-steps_success-text-default;
             }
 
-            &:hover {
+            &-hover:hover {
                 background-color: $color-steps-bg-hover;
 
                 .#{$prefix}-icon,
@@ -101,7 +101,7 @@ $module: #{$prefix}-steps;
                 }
             }
 
-            &:active {
+            &-active:active {
                 background-color: $color-steps-bg-active;
 
                 .#{$prefix}-icon,
@@ -118,7 +118,7 @@ $module: #{$prefix}-steps;
                 color: $color-steps_danger-text-default;
             }
 
-            &:hover {
+            &-hover:hover {
                 background: $color-steps-bg-hover;
 
                 .#{$prefix}-icon,
@@ -127,7 +127,7 @@ $module: #{$prefix}-steps;
                 }
             }
 
-            &:active {
+            &-active:active {
                 background-color: $color-steps-bg-active;
 
                 .#{$prefix}-icon,
@@ -144,7 +144,7 @@ $module: #{$prefix}-steps;
                 color: $color-steps_warning-text-default;
             }
 
-            &:hover {
+            &-hover:hover {
                 background: $color-steps-bg-hover;
 
                 .#{$module}-item-title,
@@ -153,7 +153,7 @@ $module: #{$prefix}-steps;
                 }
             }
 
-            &:active {
+            &-active:active {
                 background-color: $color-steps-bg-active;
 
                 .#{$module}-item-title,

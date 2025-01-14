@@ -1,8 +1,4 @@
-/* eslint-disable jsx-a11y/interactive-supports-focus,jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable react/no-did-update-set-state */
-/* eslint-disable max-len */
-/* eslint-disable no-nested-ternary */
+/* eslint-disable jsx-a11y/interactive-supports-focus */
 import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -20,6 +16,7 @@ import YearAndMonth from './yearAndMonth';
 import { IconClock, IconCalendar } from '@douyinfe/semi-icons';
 import { getDefaultFormatTokenByType } from '@douyinfe/semi-foundation/datePicker/_utils/getDefaultFormatToken';
 import getDefaultPickerDate from '@douyinfe/semi-foundation/datePicker/_utils/getDefaultPickerDate';
+import { ScrollItemProps } from '../scrollList/scrollItem';
 
 const prefixCls = cssClasses.PREFIX;
 
@@ -29,6 +26,7 @@ export interface MonthsGridProps extends MonthsGridFoundationProps, BaseProps {
     renderDate?: () => React.ReactNode;
     renderFullDate?: () => React.ReactNode;
     focusRecordsRef?: React.RefObject<{ rangeStart: boolean; rangeEnd: boolean }>;
+    yearAndMonthOpts?: ScrollItemProps<any>
 }
 
 export type MonthsGridState = MonthsGridFoundationState;
@@ -36,7 +34,7 @@ export type MonthsGridState = MonthsGridFoundationState;
 export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGridState> {
     static propTypes = {
         type: PropTypes.oneOf(strings.TYPE_SET),
-        defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object, PropTypes.array]),
+        defaultValue: PropTypes.array,
         defaultPickerValue: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.number,
@@ -66,7 +64,6 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
         startDateOffset: PropTypes.func,
         endDateOffset: PropTypes.func,
         autoSwitchDate: PropTypes.bool,
-        motionEnd: PropTypes.bool,
         density: PropTypes.string,
         dateFnsLocale: PropTypes.object.isRequired,
         timeZone: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -169,7 +166,7 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
     }
 
     componentDidUpdate(prevProps: MonthsGridProps, prevState: MonthsGridState) {
-        const { defaultValue, defaultPickerValue, motionEnd } = this.props;
+        const { defaultValue, defaultPickerValue } = this.props;
         if (prevProps.defaultValue !== defaultValue) {
             // we should always update panel state when value changes
             this.foundation.updateSelectedFromProps(defaultValue);
@@ -179,12 +176,6 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
             this.foundation.initDefaultPickerValue();
         }
 
-        if (prevProps.motionEnd !== motionEnd && motionEnd === true) {
-            if (this.foundation.isRangeType()) {
-                const currentPanelHeight = this.calcScrollListHeight();
-                this.setState({ currentPanelHeight });
-            }
-        }
 
         const isRange = this.foundation.isRangeType();
         if (isRange) {
@@ -240,14 +231,10 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
      * Calculate the height of the scrolling list, if the animation is not over, return 0
      */
     calcScrollListHeight = () => {
-        const { motionEnd } = this.props;
-        let wrapLeft, wrapRight, switchLeft, switchRight;
-        if (motionEnd) {
-            wrapLeft = this.adapter.getCache(`wrap-${strings.PANEL_TYPE_LEFT}`);
-            wrapRight = this.adapter.getCache(`wrap-${strings.PANEL_TYPE_RIGHT}`);
-            switchLeft = this.adapter.getCache(`switch-${strings.PANEL_TYPE_LEFT}`);
-            switchRight = this.adapter.getCache(`switch-${strings.PANEL_TYPE_RIGHT}`);
-        }
+        const wrapLeft = this.adapter.getCache(`wrap-${strings.PANEL_TYPE_LEFT}`);
+        const wrapRight = this.adapter.getCache(`wrap-${strings.PANEL_TYPE_RIGHT}`);
+        const switchLeft = this.adapter.getCache(`switch-${strings.PANEL_TYPE_LEFT}`);
+        const switchRight = this.adapter.getCache(`switch-${strings.PANEL_TYPE_RIGHT}`);
 
         const leftRect = wrapLeft && wrapLeft.getBoundingClientRect();
         const rightRect = wrapRight && wrapRight.getBoundingClientRect();
@@ -508,7 +495,7 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
 
     renderYearAndMonth(panelType: PanelType, panelDetail: MonthInfo) {
         const { pickerDate } = panelDetail;
-        const { locale, localeCode, density } = this.props;
+        const { locale, localeCode, density, yearAndMonthOpts, startYear, endYear } = this.props;
         const y = pickerDate.getFullYear();
         const m = pickerDate.getMonth() + 1;
         return (
@@ -516,10 +503,12 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
                 ref={current => this.cacheRefCurrent(`yam-${panelType}`, current)}
                 locale={locale}
                 localeCode={localeCode}
-                currentYear={y}
-                currentMonth={m}
+                // currentYear={y}
+                // currentMonth={m}
+                currentYear={{ left: y, right: 0 }}
+                currentMonth={{ left: m, right: 0 }}
                 onSelect={item =>
-                    this.foundation.toYearMonth(panelType, new Date(item.currentYear, item.currentMonth - 1))
+                    this.foundation.toYearMonth(panelType, new Date(item.currentYear.left, item.currentMonth.left - 1))
                 }
                 onBackToMain={() => {
                     this.foundation.showDatePanel(panelType);
@@ -529,6 +518,9 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
                     }
                 }}
                 density={density}
+                yearAndMonthOpts={yearAndMonthOpts}
+                startYear={startYear}
+                endYear={endYear}
             />
         );
     }
@@ -569,13 +561,13 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
 
         const switchCls = classnames(`${prefixCls}-switch`);
         const dateCls = classnames({
-            [`${prefixCls }-switch-date`]: true,
-            [`${prefixCls }-switch-date-active`]: !isTimePickerOpen,
+            [`${prefixCls}-switch-date`]: true,
+            [`${prefixCls}-switch-date-active`]: !isTimePickerOpen,
         });
         const timeCls = classnames({
-            [`${prefixCls }-switch-time`]: true,
+            [`${prefixCls}-switch-time`]: true,
             [`${prefixCls}-switch-time-disabled`]: disabledTimePicker,
-            [`${prefixCls }-switch-date-active`]: isTimePickerOpen,
+            [`${prefixCls}-switch-date-active`]: isTimePickerOpen,
         });
         const textCls = classnames(`${prefixCls}-switch-text`);
 
@@ -608,7 +600,7 @@ export default class MonthsGrid extends BaseComponent<MonthsGridProps, MonthsGri
         const { monthLeft, monthRight } = this.state;
         const { type, insetInput, presetPosition, renderQuickControls, renderDateInput } = this.props;
         const monthGridCls = classnames({
-            [`${prefixCls }-month-grid`]: true,
+            [`${prefixCls}-month-grid`]: true,
         });
         const panelTypeLeft = strings.PANEL_TYPE_LEFT;
         const panelTypeRight = strings.PANEL_TYPE_RIGHT;

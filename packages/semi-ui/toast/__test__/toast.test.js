@@ -9,9 +9,8 @@ describe('Toast', () => {
         // semi-animation会使用Date.now()，所以这里需要clear掉全局的advanceTo对Date的修改
         clear();
         const tw = document.querySelector(`.${BASE_CLASS_PREFIX}-toast-wrapper`);
-
         if (tw) {
-            tw.innerHTML = '';
+            tw.childNodes[0].innerHTML = '';
         }
     });
     afterEach(async () => {
@@ -34,6 +33,7 @@ describe('Toast', () => {
         let opts = {
             duration: 1,
             content: 'dur1',
+            motion:false,
         };
         Toast.info(opts);
         let toast = document.querySelector(`.${BASE_CLASS_PREFIX}-toast-info`);
@@ -44,6 +44,22 @@ describe('Toast', () => {
             expect(toast).toEqual(null);
             done();
         }, 1500);
+    });
+    it('update content by id', done => {
+        const id = 'toastid'
+        Toast.info({ content: 'bytedance', id, motion: false });
+        let toast = document.querySelector(`.${BASE_CLASS_PREFIX}-toast-info`);
+        expect(toast.textContent).toEqual('bytedance');
+        setTimeout(() => {
+            Toast.info({ content: 'dancebyte', id, motion: false });
+            expect(toast.textContent).toEqual('dancebyte');
+            setTimeout(() => {
+                Toast.error({ content: 'error', id, motion: false});
+                expect(toast.textContent).toEqual('error');
+                expect(toast?.className).toEqual(`${BASE_CLASS_PREFIX}-toast ${BASE_CLASS_PREFIX}-toast-error`)
+                done()
+            }, 1000)
+        }, 1000)
     });
     it('should trigger onClose after duration', done => {
         let spyOnClose = sinon.spy(() => {});

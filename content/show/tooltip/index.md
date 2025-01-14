@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 63
+order: 79
 category: 展示类
 title: Tooltip 工具提示
 icon: doc-tooltip
@@ -18,128 +18,60 @@ import { Tooltip } from '@douyinfe/semi-ui';
 
 ### 注意事项
 
-ToolTip 为了计算定位，需要获取到 children 的真实 DOM 元素，因此 ToolTip 类型目前支持如下两种类型的 children
+Tooltip 需要将 DOM 事件监听器应用到 children 中，如果子元素是自定义的组件，你需要确保它能将属性传递至底层的 DOM 元素
 
-1. 真实 dom 节点的 jsx 类型，如 span，div，p...
-2. 使用 forwardRef 包裹后的函数式组件，将 props 与 ref 透传到真实的 dom 节点上
+同时为了计算弹出层的定位，需要获取到 children 的真实 DOM 元素，因此 Tooltip 支持如下类型的 children
 
-```jsx live=true hideInDSM
+1. Class Component，不强制绑定ref，但需要确保 props 可被透传至真实的 DOM 节点上
+2. 使用 forwardRef 包裹后的函数式组件，将 props 与 ref 透传到 children 内真实的 DOM 节点上
+3. 真实 DOM 节点, 如 span，div，p...
+
+```jsx live=true noInline=true dir="column"
 import React, { forwardRef } from 'react';
-import { Tooltip } from '@douyinfe/semi-ui';
+import { Tooltip, Space } from '@douyinfe/semi-ui';
 
-function Demo() {
-    const Test = forwardRef((props, ref) => (
-        <span {...props} ref={ref}>
-            Test
-        </span>
-    ));
-    return (
-        <Tooltip content={'hi bytedance'}>
-            <Test />
-        </Tooltip>
-    );
-}
-```
+const style={ border: '2px solid var(--semi-color-border)', paddingLeft: 4, paddingRight: 4, borderRadius: 4 };
 
-### 基本用法
+// 将props属性传递，绑定ref
+const FCChildren = forwardRef((props, ref) => {
+    return (<span {...props} ref={ref} style={style}>Functional Component</span>);
+});
 
-你可以使用 Tooltip 包裹任何支持 `onClick`/`onMouseEnter`/`onMouseLeave` 的组件。
-
-当然包裹的组件可能会绑定了自己的 `onClick`/`onMouseEnter`/`onMouseLeave` 等事件，这种情况下你需要为 Tooltip 选择合适的触发时机。
-
-例如：
-
--   组件已经绑定了 `onClick` 事件，那么 Tooltip 的 `trigger` 参数值最好传 `hover`。
--   组件已经绑定了 `onMouseEnter`/`onMouseLeave` 事件，Tooltip 的 `trigger` 参数值最好传 `click` 。
-
-```jsx live=true hideInDSM
-import React from 'react';
-import { Tooltip, Tag } from '@douyinfe/semi-ui';
-
-function Demo() {
-    return (
-        <Tooltip content={'hi bytedance'}>
-            <Tag>悬停此处</Tag>
-        </Tooltip>
-    );
-}
-```
-
-### 触发时机
-
--   配置触发展示的时机，默认为 `hover`，可选 `hover`/`focus`/`click`/`custom`
--   设为 `custom` 时，需要配合 `visible` 属性使用，此时显示与否完全受控
-
-```jsx live=true hideInDSM
-import React, { useState } from 'react';
-import { Tooltip, Button, ButtonGroup, Input } from '@douyinfe/semi-ui';
-
-function Demo() {
-    const [visible, setVisible] = useState(false);
-    // container 需要设置 position: relative
-    const getPopupContainer = () => document.querySelector('#tooltip-container');
-
-    return (
-        <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }} id="tooltip-container">
-            <div style={{ width: '150%', height: '150%', paddingLeft: 50, paddingTop: 50 }}>
-                <Tooltip content={'hi bytedance'} getPopupContainer={getPopupContainer}>
-                    <Button style={{ marginBottom: 20 }}>悬停显示</Button>
-                </Tooltip>
-                <br />
-                <Tooltip content={'hi bytedance'} trigger="click" getPopupContainer={getPopupContainer}>
-                    <Button style={{ marginBottom: 20 }}>点击显示</Button>
-                </Tooltip>
-                <br />
-                <Tooltip content={'hi bytedance'} trigger="focus" getPopupContainer={getPopupContainer}>
-                    <Input style={{ width: 100, marginBottom: 20 }} placeholder="聚焦显示" />
-                </Tooltip>
-                <br />
-                <Tooltip
-                    content={'hi bytedance'}
-                    trigger="custom"
-                    visible={visible}
-                    getPopupContainer={getPopupContainer}
-                >
-                    <span style={{ display: 'inline-block' }}>
-                        <ButtonGroup>
-                            <Button onClick={() => setVisible(true)}>受控显示</Button>
-                            <Button onClick={() => setVisible(false)}>受控隐藏</Button>
-                        </ButtonGroup>
-                    </span>
-                </Tooltip>
-            </div>
-        </div>
-    );
-}
-```
-
-### 覆盖特定样式
-
-你可以通过 className、style 为弹出层配置特定样式，例如覆盖默认的 maxWidth （280px）
-```jsx live=true
-import React from 'react';
-import { Tooltip, Tag } from '@douyinfe/semi-ui';
-
-() => {
-    return (
-        <Tooltip
-            style={{
-                maxWidth: 320
-            }}
-            className='another-classname'
-            content={'hi semi semi semi semi semi semi semi'}
-        >
-            <Tag style={{ marginRight: '8px' }}>Custom Style And ClassName</Tag>
-        </Tooltip>
-    );
+// 将props属性传递
+class MyComponent extends React.Component {
+    render() {
+        return (<span {...this.props} style={style}>ClassComponent</span>);
+    }
 };
+
+function Demo() {
+    return (
+        <Space>
+            <Tooltip content={'semi design'}>
+                <FCChildren />
+            </Tooltip>
+            <Tooltip content={'semi design'}>
+                <MyComponent />
+            </Tooltip>
+            <Tooltip content={'semi design'}>
+                <span style={style}>DOM</span>
+            </Tooltip>
+        </Space>
+    );
+}
+render(Demo);
+
 ```
 
 ### 位置
 
-支持弹出层在不同方向展示，共有 12 个方向
+可以通过 position 配置弹出层方向以及对齐位置，position 详细可选值请参考下方 API 文档  
+配置为 `top` 时 向上弹出  
+配置为 `topLeft` 时，向上弹出，且弹出层与 children 左对齐（当arrowPointAtCenter=false时）  
+配置为 `topRight` 时，向上弹出，且弹出层与 children 右对齐（当arrowPointAtCenter=false时）    
+其他方向同理  
 
-```jsx live=true hideInDSM
+```jsx live=true dir="column"
 import React from 'react';
 import { Tooltip, Tag } from '@douyinfe/semi-ui';
 
@@ -166,8 +98,8 @@ function Demo() {
     ];
 
     return (
-        <div style={{ paddingLeft: 40 }}>
-            <div style={{ marginLeft: 40, whiteSpace: 'nowrap' }}>
+        <div>
+            <div style={{ marginLeft: 80, whiteSpace: 'nowrap' }}>
                 {tops.map((pos, index) => (
                     <Tooltip
                         content={
@@ -176,14 +108,15 @@ function Demo() {
                                 <p>hi bytedance</p>
                             </article>
                         }
+                        arrowPointAtCenter={false}
                         position={Array.isArray(pos) ? pos[0] : pos}
                         key={index}
                     >
-                        <Tag style={{ marginRight: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
+                        <Tag style={{ margin: 8, padding: 20 }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
                     </Tooltip>
                 ))}
             </div>
-            <div style={{ width: 40, float: 'left' }}>
+            <div style={{ width: 80, float: 'left' }}>
                 {lefts.map((pos, index) => (
                     <Tooltip
                         content={
@@ -192,14 +125,15 @@ function Demo() {
                                 <p>hi bytedance</p>
                             </article>
                         }
+                        arrowPointAtCenter={false}
                         position={Array.isArray(pos) ? pos[0] : pos}
                         key={index}
                     >
-                        <Tag style={{ marginBottom: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
+                        <Tag style={{ margin: 8, padding: 20, width: 60 }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
                     </Tooltip>
                 ))}
             </div>
-            <div style={{ width: 40, marginLeft: 180 }}>
+            <div style={{ width: 40, marginLeft: 300 }}>
                 {rights.map((pos, index) => (
                     <Tooltip
                         content={
@@ -208,14 +142,15 @@ function Demo() {
                                 <p>hi bytedance</p>
                             </article>
                         }
+                        arrowPointAtCenter={false}
                         position={Array.isArray(pos) ? pos[0] : pos}
                         key={index}
                     >
-                        <Tag style={{ marginBottom: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
+                        <Tag style={{ margin: 8, padding: 20, width: 60 }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
                     </Tooltip>
                 ))}
             </div>
-            <div style={{ marginLeft: 40, clear: 'both', whiteSpace: 'nowrap' }}>
+            <div style={{ marginLeft: 80, clear: 'both', whiteSpace: 'nowrap' }}>
                 {bottoms.map((pos, index) => (
                     <Tooltip
                         content={
@@ -224,10 +159,11 @@ function Demo() {
                                 <p>hi bytedance</p>
                             </article>
                         }
+                        arrowPointAtCenter={false}
                         position={Array.isArray(pos) ? pos[0] : pos}
                         key={index}
                     >
-                        <Tag style={{ marginRight: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
+                        <Tag style={{ margin: 8, padding: 20, width: 60 }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
                     </Tooltip>
                 ))}
             </div>
@@ -235,10 +171,119 @@ function Demo() {
     );
 }
 ```
+### 指向元素中心
 
+默认情况下 `arrowPointAtCenter=true`，小三角始终指向 children 元素中心位置。
+你可以将其设置为 false，此时小三角将不再保持指向元素中心。弹出层与 children 边缘对齐
+
+```jsx live=true
+import React from 'react';
+import { Tooltip, Button } from '@douyinfe/semi-ui';
+
+function Demo() {
+    return (
+        <>
+            <div>
+                <Tooltip
+                    position='topLeft'
+                    content='semi design tooltip'>
+                    <Button type='secondary' style={{ marginRight: 8 }}>指向元素中心</Button>
+                </Tooltip>
+            </div>
+
+            <div style={{ marginTop: 20 }}>
+                <Tooltip
+                    content='semi design tooltip'
+                    arrowPointAtCenter={false}
+                    position='topLeft'
+                >
+                    <Button type='secondary' style={{ marginRight: 8, width: 120 }}>边缘对齐</Button>
+                </Tooltip>
+            </div>
+        </>
+    );
+};
+
+```
+### 触发时机
+
+-   配置触发展示的时机，默认为 `hover`，可选 `hover`/`focus`/`click`/`custom`/ 'contextMenu' 
+-   设为 `custom` 时，需要配合 `visible` 属性使用，此时显示与否完全受控
+-   contextMenu 右键触发在 v 2.42.0 后开始提供
+
+```jsx live=true hideInDSM
+import React, { useState } from 'react';
+import { Tooltip, Button, Input, RadioGroup, Radio } from '@douyinfe/semi-ui';
+
+function Demo() {
+    const [visible, setVisible] = useState(false);
+    // container 需要设置 position: relative
+    const getPopupContainer = () => document.querySelector('#tooltip-container');
+
+    return (
+        <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }} id="tooltip-container">
+            <div style={{ width: '150%', height: '150%', paddingLeft: 50, paddingTop: 50 }}>
+                <Tooltip content={'hi bytedance'} getPopupContainer={getPopupContainer}>
+                    <Button theme='solid' type='tertiary' style={{ marginBottom: 20 }}>悬停显示</Button>
+                </Tooltip>
+                <br />
+                <Tooltip content={'hi bytedance'} trigger="click" getPopupContainer={getPopupContainer}>
+                    <Button style={{ marginBottom: 20 }}>点击显示</Button>
+                </Tooltip>
+                <br />
+                <Tooltip content={'hi bytedance'} trigger="focus" getPopupContainer={getPopupContainer}>
+                    <Input style={{ width: 100, marginBottom: 20 }} placeholder="聚焦显示" />
+                </Tooltip>
+                <br />
+                <Tooltip content={'hi bytedance'} trigger="contextMenu" getPopupContainer={getPopupContainer}>
+                    <Button theme='solid' type='secondary' style={{ marginBottom: 20 }}>右键点击展示</Button>
+                </Tooltip>
+                <br />
+                <Tooltip
+                    content={'hi bytedance'}
+                    trigger="custom"
+                    visible={visible}
+                    getPopupContainer={getPopupContainer}
+                >
+                    <span style={{ display: 'inline-block' }}>
+                        <RadioGroup type='button' onChange={(e) => setVisible(e.target.value)} value={visible}>
+                            <Radio value={true}>受控显示</Radio>
+                            <Radio value={false}>受控隐藏</Radio>
+                        </RadioGroup>
+                    </span>
+                </Tooltip>
+            </div>
+        </div>
+    );
+}
+```
+
+### 覆盖特定样式
+
+你可以通过 className、style 为弹出层配置特定样式，例如覆盖默认的 maxWidth （280px）
+```jsx live=true
+import React from 'react';
+import { Tooltip, Tag } from '@douyinfe/semi-ui';
+
+() => {
+    return (
+        <div>
+            <Tooltip
+                style={{
+                    maxWidth: 320
+                }}
+                className='another-classname'
+                content={'hi semi semi semi semi semi semi semi'}
+            >
+                <Tag style={{ marginRight: '8px' }}>Custom Style And ClassName</Tag>
+            </Tooltip>
+        </div>
+    );
+};
+```
 ### 渲染至指定 DOM
 
-传入 `getPopupContainer`，弹层将会渲染至该函数返回的 DOM 中。
+传入 `getPopupContainer`，弹层将会渲染至该函数返回的 DOM 中。 这会改变浮层 DOM 树位置，但不会改变视图渲染位置。
 
 **需要注意的是：** 返回的容器如果不是 `document.body`，**`position` 需要设为 `"relative"`**（版本 >= 0.18.0）。
 
@@ -261,118 +306,6 @@ function Demo() {
     );
 }
 ```
-
-### 指向元素中心
-
-**版本：**>= 0.34.0
-
-在**显示小三角**的条件（`showArrow=true`）下，可以传入 `arrowPointAtCenter=true` 使得小三角始终指向元素中心位置。
-
-```jsx live=true hideInDSM
-import React from 'react';
-import { Tooltip, Tag } from '@douyinfe/semi-ui';
-
-function Demo() {
-    const tops = [
-        ['topLeft', 'TL'],
-        ['top', 'Top'],
-        ['topRight', 'TR'],
-    ];
-    const lefts = [
-        ['leftTop', 'LT'],
-        ['left', 'Left'],
-        ['leftBottom', 'LB'],
-    ];
-    const rights = [
-        ['rightTop', 'RT'],
-        ['right', 'Right'],
-        ['rightBottom', 'RB'],
-    ];
-    const bottoms = [
-        ['bottomLeft', 'BL'],
-        ['bottom', 'Bottom'],
-        ['bottomRight', 'BR'],
-    ];
-
-    return (
-        <div style={{ paddingLeft: 40 }}>
-            <div style={{ marginLeft: 40, whiteSpace: 'nowrap' }}>
-                {tops.map((pos, index) => (
-                    <Tooltip
-                        showArrow
-                        arrowPointAtCenter
-                        content={
-                            <article>
-                                Hi ByteDancer, this is a tooltip.
-                                <br /> We have 2 lines.
-                            </article>
-                        }
-                        position={Array.isArray(pos) ? pos[0] : pos}
-                        key={index}
-                    >
-                        <Tag style={{ marginRight: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
-                    </Tooltip>
-                ))}
-            </div>
-            <div style={{ width: 40, float: 'left' }}>
-                {lefts.map((pos, index) => (
-                    <Tooltip
-                        showArrow
-                        arrowPointAtCenter
-                        content={
-                            <article>
-                                Hi ByteDancer, this is a tooltip.
-                                <br /> We have 2 lines.
-                            </article>
-                        }
-                        position={Array.isArray(pos) ? pos[0] : pos}
-                        key={index}
-                    >
-                        <Tag style={{ marginBottom: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
-                    </Tooltip>
-                ))}
-            </div>
-            <div style={{ width: 40, marginLeft: 180 }}>
-                {rights.map((pos, index) => (
-                    <Tooltip
-                        showArrow
-                        arrowPointAtCenter
-                        content={
-                            <article>
-                                Hi ByteDancer, this is a tooltip.
-                                <br /> We have 2 lines.
-                            </article>
-                        }
-                        position={Array.isArray(pos) ? pos[0] : pos}
-                        key={index}
-                    >
-                        <Tag style={{ marginBottom: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
-                    </Tooltip>
-                ))}
-            </div>
-            <div style={{ marginLeft: 40, clear: 'both', whiteSpace: 'nowrap' }}>
-                {bottoms.map((pos, index) => (
-                    <Tooltip
-                        showArrow
-                        arrowPointAtCenter
-                        content={
-                            <article>
-                                Hi ByteDancer, this is a tooltip.
-                                <br /> We have 2 lines.
-                            </article>
-                        }
-                        position={Array.isArray(pos) ? pos[0] : pos}
-                        key={index}
-                    >
-                        <Tag style={{ marginRight: '8px' }}>{Array.isArray(pos) ? pos[1] : pos}</Tag>
-                    </Tooltip>
-                ))}
-            </div>
-        </div>
-    );
-}
-```
-
 ### 搭配 Popover 或 Popconfirm 使用
 
 Tooltip、Popconfirm、Popover 都需要劫持 children 的相关事件（onMouseEnter/onMouseLeave/onClick....），用于配置 trigger。  
@@ -384,7 +317,7 @@ import React from 'react';
 import { Tooltip, Popconfirm, Button } from '@douyinfe/semi-ui';
 
 () => (
-    <Popconfirm content="是否确认删除">
+    <Popconfirm content="是否确认删除" title='确认' style={{ width: 320 }}>
         <span style={{ display: 'inline-block' }}>
             <Tooltip content={'删除评价'}>
                 <Button type="danger">删除</Button>
@@ -415,11 +348,12 @@ function Demo() {
                 是一个很长很长很长很长的链接
             </Text>
             <br />
+            <br />
             <Paragraph
                 ellipsis={{ rows: 3, showTooltip: { type: 'popover', opts: { style: { width: 300 } } } }}
                 style={{ width: 300 }}
             >
-                多行截断，展示 Popover：Semi Design 是由互娱社区前端团队与 UED
+                多行截断，展示 Popover：Semi Design 是由抖音前端团队与 UED
                 团队共同设计开发并维护的设计系统。设计系统包含设计语言以及一整套可复用的前端组件，帮助设计师与开发者更容易地打造高质量的、用户体验一致的、符合设计规范的
                 Web 应用。
             </Paragraph>
@@ -432,34 +366,36 @@ function Demo() {
 
 ---
 
-| 属性 | 说明 | 类型 | 默认值 | 版本 |
-| --- | --- | --- | --- | --- |
-| autoAdjustOverflow | 弹出层被遮挡时是否自动调整方向 | boolean | true |  |
-| arrowPointAtCenter | “小三角”是否指向元素中心，需要同时传入"showArrow=true" | boolean | true | **0.34.0** |
-| content | 弹出层内容 | string\|ReactNode |  |  |
-| className | 弹出层的样式名 | string |  |  |
-| clickToHide | 点击弹出层及内部任一元素时是否自动关闭弹层 | boolean | false | **0.24.0** |
-| disableFocusListener | trigger为`hover`时，不响应键盘聚焦弹出浮层事件，详见[issue#977](https://github.com/DouyinFE/semi-design/issues/977) | boolean | false | **2.17.0** |
-| getPopupContainer | 指定父级 DOM，弹层将会渲染至该 DOM 中，自定义需要设置 `position: relative` | function():HTMLElement | () => document.body |  |
-| mouseEnterDelay | 鼠标移入后，延迟显示的时间，单位毫秒（仅当 trigger 为 hover/focus 时生效） | number | 50 |  |
-| mouseLeaveDelay | 鼠标移出后，延迟消失的时间，单位毫秒（仅当 trigger 为 hove/focus 时生效），不小于 mouseEnterDelay | number | 50 |  |
-| motion | 是否展示弹出层动画 | boolean\|object | true |  |
+| 属性 | 说明                                                                                                                                                   | 类型 | 默认值 | 版本 |
+| --- |------------------------------------------------------------------------------------------------------------------------------------------------------| --- | --- | --- |
+| autoAdjustOverflow | 弹出层被遮挡时是否自动调整方向                                                                                                                                      | boolean | true |  |
+| arrowPointAtCenter | “小三角”是否指向元素中心，需要同时传入"showArrow=true"                                                                                                                 | boolean | true |  |
+| content | 弹出层内容                                                                                                                                                | string\|ReactNode |  |  |
+| className | 弹出层的样式名                                                                                                                                              | string |  |  |
+| clickToHide | 点击弹出层及内部任一元素时是否自动关闭弹层                                                                                                                                | boolean | false |  |
+| disableFocusListener | trigger为`hover`时，不响应键盘聚焦弹出浮层事件，详见[issue#977](https://github.com/DouyinFE/semi-design/issues/977)                                                     | boolean | false | **2.17.0** |
+| getPopupContainer | 指定父级 DOM，弹层将会渲染至该 DOM 中，自定义需要设置 `position: relative` 这会改变浮层 DOM 树位置，但不会改变视图渲染位置。                                                                                                 | function():HTMLElement | () => document.body |  |
+| keepDOM | 关闭时是否保留内部组件不销毁                                                                                                                                       | boolean | false | **2.31.0** |
+| margin | 计算溢出时的增加的冗余值，详见[issue#549](https://github.com/DouyinFE/semi-design/issues/549)                                                                       | number ｜ <ApiType detail='{ marginLeft: number; marginTop: number; marginRight: number; marginBottom: number }'>MarginObject</ApiType> | 0 |  **2.23.0**|
+| mouseEnterDelay | 鼠标移入后，延迟显示的时间，单位毫秒（仅当 trigger 为 hover/focus 时生效）                                                                                                     | number | 50 |  |
+| mouseLeaveDelay | 鼠标移出后，延迟消失的时间，单位毫秒（仅当 trigger 为 hove/focus 时生效），不小于 mouseEnterDelay                                                                                  | number | 50 |  |
+| motion | 是否展示弹出层动画                                                                                                                                            | boolean | true |  |
 | position | 弹出层展示位置，可选值：`top`, `topLeft`, `topRight`, `left`, `leftTop`, `leftBottom`, `right`, `rightTop`, `rightBottom`, `bottom`, `bottomLeft`, `bottomRight` | string | 'top' |  |
-| prefixCls | 弹出层 wrapper div 的 `className` 前缀，设置该项时，弹出层将不再带 Tooltip 的样式 | string | 'semi-tooltip' |  |
-| preventScroll | 指示浏览器是否应滚动文档以显示新聚焦的元素，作用于组件内的 focus 方法 | boolean |  |  |
-| rePosKey | 可以更新该项值手动触发弹出层的重新定位 | string\|number |  |  |
-| style    | 弹出层的内联样式 | object |  |  |
-| spacing | 弹出层与 `children` 元素的距离，单位 px | number | 8 |  |
-| showArrow | 是否显示箭头三角形 | boolean | true |  |
-| stopPropagation | 是否阻止弹层上的点击事件冒泡 | boolean | false | **0.34.0** |
-| transformFromCenter | 是否从包裹的元素水平或垂直中心处变换，该参数仅影响动效变换的 `transform-origin`，一般无需改动 | boolean | true |  |
-| trigger | 触发展示的时机，可选值：`hover` / `focus` / `click` / `custom` | string | 'hover' |  |
-| visible | 是否展示弹出层 | boolean |  |  |
-| wrapperClassName | 当 children 为 disabled ，或者 children 为多个元素时，外层将会包裹一层 span 元素，该 api 用于设置此 span 的样式类名 | string |  | **1.32.0** |
-| wrapperId | 弹出层 wrapper 节点的 id，trigger 的 aria 属性指向此 id，若不设置组件会随机生成一个 id | string |  | 2.11.0  |
-| zIndex | 弹层层级 | number | 1060 |  |
-| onVisibleChange | 弹出层展示/隐藏时触发的回调 | function(isVisible:boolean) |  |  |
-| onClickOutSide | 当弹出层处于展示状态，点击非Children、非浮层内部区域时的回调（仅trigger为custom、click时有效）| function(e:event) |  | **2.1.0** |
+| prefixCls | 弹出层 wrapper div 的 `className` 前缀，设置该项时，弹出层将不再带 Tooltip 的样式                                                                                           | string | 'semi-tooltip' |  |
+| preventScroll | 指示浏览器是否应滚动文档以显示新聚焦的元素，作用于组件内的 focus 方法                                                                                                               | boolean |  |  |
+| rePosKey | 可以更新该项值手动触发弹出层的重新定位                                                                                                                                  | string\|number |  |  |
+| style    | 弹出层的内联样式                                                                                                                                             | object |  |  |
+| spacing | 弹出层与 `children` 元素的距离，单位 px（object类型自 v2.45后支持）                                                                                                                     | number ｜ <ApiType detail='{ x: number; y: number }'>SpacingObject</ApiType>  | 8 |  |
+| showArrow | 是否显示箭头三角形                                                                                                                                            | boolean | true |  |
+| stopPropagation | 是否阻止弹层上的点击事件冒泡                                                                                                                                       | boolean | false | **0.34.0** |
+| transformFromCenter | 是否从包裹的元素水平或垂直中心处变换，该参数仅影响动效变换的 `transform-origin`，一般无需改动                                                                                             | boolean | true |  |
+| trigger | 触发展示的时机，可选值：`hover` / `focus` / `click` / `custom` / `contextMenu` (v2.42后提供)                                                                                                   | string | 'hover' |  |
+| visible | 是否展示弹出层                                                                                                                                              | boolean |  |  |
+| wrapperClassName | 当 children 为 disabled ，或者 children 为多个元素时，外层将会包裹一层 span 元素，该 api 用于设置此 span 的样式类名                                                                    | string |  |  |
+| wrapperId | 弹出层 wrapper 节点的 id，trigger 的 aria 属性指向此 id，若不设置组件会随机生成一个 id                                                                                          | string |  | 2.11.0  |
+| zIndex | 弹层层级                                                                                                                                                 | number | 1060 |  |
+| onVisibleChange | 弹出层展示/隐藏时触发的回调                                                                                                                                       | function(isVisible:boolean) |  |  |
+| onClickOutSide | 当弹出层处于展示状态，点击非Children、非浮层内部区域时的回调（仅trigger为custom、click时有效）                                                                                         | function(e:event) |  | **2.1.0** |
 
 ## Accessibility
 
@@ -493,11 +429,14 @@ function Demo() {
 
 ## FAQ
 
--   **为什么 Tooltip content 配置很长很长的内容时，会超出显示 / 不默认配置 word-break 样式?**  
-    不同语言内容（纯英文、中文、中英文混合）对 word-break 的需求不太一致，所以组件层没有做这个预设。否则效果往往会适得其反，使用方可以根据自己当前语言需求，使用 CSS 进行设置。
+-   **为什么 Tooltip content 配置很长很长的内容时，某些情况下内容会超出显示区域?**  
+    在 v2.36.0 版本以前，考虑到不同语言内容（纯英文、中文、中英文混合、其他语种混合）对换行的需求不太一致，所以组件层没有做这个预设。在接收到较多使用反馈后，自 v2.36.0 版本，Tooltip 内部通过设置 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap" target="_blank" rel="noopener noreferrer">word-wrap</a> 为 break-word 处理文本换行。对于任意版本，如果默认设置不符合预期，使用方都可以通过 style/className API 设置换行相关 CSS 属性进行调整。
+
 
 <!-- ## 相关物料
 
 ```material
 41
 ``` -->
+## 相关物料
+<semi-material-list code="41"></semi-material-list>

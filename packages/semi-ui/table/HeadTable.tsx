@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get, noop } from 'lodash';
@@ -6,11 +5,10 @@ import classnames from 'classnames';
 
 import ColGroup from './ColGroup';
 import TableHeader from './TableHeader';
-import { Fixed, TableComponents, Scroll, BodyScrollEvent, ColumnProps, OnHeaderRow } from './interface';
+import { Fixed, TableComponents, Scroll, BodyScrollEvent, ColumnProps, OnHeaderRow, Sticky } from './interface';
 
 export interface HeadTableProps {
-    [x: string]: any;
-    anyColumnFixed?: boolean;
+    tableLayout?: 'fixed' | 'auto';
     bodyHasScrollBar?: boolean;
     columns?: ColumnProps[];
     components?: TableComponents;
@@ -24,6 +22,7 @@ export interface HeadTableProps {
     showHeader?: boolean;
     onDidUpdate?: (ref: React.MutableRefObject<any>) => void;
     onHeaderRow?: OnHeaderRow<any>;
+    sticky?: Sticky
 }
 
 /**
@@ -31,7 +30,7 @@ export interface HeadTableProps {
  */
 class HeadTable extends React.PureComponent<HeadTableProps> {
     static propTypes = {
-        anyColumnFixed: PropTypes.bool,
+        tableLayout: PropTypes.string,
         bodyHasScrollBar: PropTypes.bool,
         columns: PropTypes.array,
         components: PropTypes.object,
@@ -69,13 +68,10 @@ class HeadTable extends React.PureComponent<HeadTableProps> {
             components,
             onDidUpdate,
             showHeader,
-            anyColumnFixed,
-            bodyHasScrollBar
+            tableLayout,
+            bodyHasScrollBar,
+            sticky
         } = this.props;
-
-        if (!showHeader) {
-            return null;
-        }
 
         const Table = get(components, 'header.outer', 'table');
         const x = get(scroll, 'x');
@@ -95,18 +91,28 @@ class HeadTable extends React.PureComponent<HeadTableProps> {
             <TableHeader {...this.props} columns={columns} components={components} onDidUpdate={onDidUpdate} />
         );
 
+        const headTableCls = classnames(`${prefixCls}-header`, {
+            [`${prefixCls}-header-sticky`]: sticky,
+            [`${prefixCls}-header-hidden`]: !showHeader,
+        });
+
+        const stickyTop = get(sticky, 'top', 0);
+        if (typeof stickyTop === 'number') {
+            headStyle.top = stickyTop;
+        }
+
         return (
             <div
                 key="headTable"
                 style={headStyle}
-                className={`${prefixCls}-header`}
+                className={headTableCls}
                 ref={forwardedRef}
                 onScroll={handleBodyScroll}
             >
                 <Table
                     style={tableStyle}
                     className={classnames(prefixCls, {
-                        [`${prefixCls}-fixed`]: anyColumnFixed,
+                        [`${prefixCls}-fixed`]: tableLayout === 'fixed',
                     })}
                 >
                     {colgroup}

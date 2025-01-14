@@ -1,18 +1,19 @@
 ---
 localeCode: zh-CN
-order: 60
+order: 76
 category: 展示类
-title:  Table 表格
+title: Table 表格
 icon: doc-table
 brief: 表格用于呈现结构化的数据内容，通常会伴随提供对数据进行操作（排序、搜索、分页……）的能力。
 ---
-
 
 ## 如何使用
 
 往 Table 传入表头 `columns` 和数据 `dataSource` 进行渲染。
 
-> 请为 `dataSource` 中的每个数据项提供一个与其他数据项值不同的 `key`，或者使用 `rowKey` 参数指定一个作为主键的属性名，表格的行选择、展开等绝大多数行操作功能都会使用到。
+<Notice title='注意事项'>
+ 请为 `dataSource` 中的每个数据项提供一个与其他数据项值不同的 `key`，或者使用 `rowKey` 参数指定一个作为主键的属性名，表格的行选择、展开等绝大多数行操作功能都会使用到。
+</Notice>
 
 ```jsx import
 import React from 'react';
@@ -31,12 +32,11 @@ function App() {
         {
             title: '所有者',
             dataIndex: 'owner',
-
         },
         {
             title: '更新日期',
             dataIndex: 'updateTime',
-        }
+        },
     ];
     const data = [
         {
@@ -45,8 +45,9 @@ function App() {
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
             size: '2M',
             owner: '姜鹏志',
+            status: 'success',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
+            avatarBg: 'grey',
         },
         {
             key: '2',
@@ -54,17 +55,19 @@ function App() {
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '2M',
             owner: '郝宣',
+            status: 'pending',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '3',
             name: '设计文档',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '34KB',
+            status: 'wait',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
     ];
 
@@ -91,15 +94,33 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" shape="square" src={record.nameIconSrc} style={{ marginRight: 12 }}></Avatar>
+                        <Avatar
+                            size="small"
+                            shape="square"
+                            src={record.nameIconSrc}
+                            style={{ marginRight: 12 }}
+                        ></Avatar>
                         {text}
                     </div>
                 );
-            }
+            },
         },
         {
             title: '大小',
             dataIndex: 'size',
+        },
+        {
+            title: '交付状态',
+            dataIndex: 'status',
+            render: (text) => {
+                const tagConfig = {
+                    success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                    pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                    wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+                };
+                const tagProps = tagConfig[text];
+                return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+            }
         },
         {
             title: '所有者',
@@ -113,8 +134,7 @@ function App() {
                         {text}
                     </div>
                 );
-            }
-
+            },
         },
         {
             title: '更新日期',
@@ -125,18 +145,19 @@ function App() {
             dataIndex: 'operate',
             render: () => {
                 return <IconMore />;
-            }
+            },
         },
     ];
     const data = [
-        {
+         {
             key: '1',
             name: 'Semi Design 设计稿.fig',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
             size: '2M',
             owner: '姜鹏志',
+            status: 'success',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
+            avatarBg: 'grey',
         },
         {
             key: '2',
@@ -144,17 +165,19 @@ function App() {
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '2M',
             owner: '郝宣',
+            status: 'pending',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '3',
             name: '设计文档',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '34KB',
+            status: 'wait',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
     ];
 
@@ -188,8 +211,9 @@ function App() {
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
             size: '2M',
             owner: '姜鹏志',
+            status: 'success',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
+            avatarBg: 'grey',
         },
         {
             key: '2',
@@ -197,17 +221,19 @@ function App() {
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '2M',
             owner: '郝宣',
+            status: 'pending',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '3',
             name: '设计文档',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '34KB',
+            status: 'wait',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
     ];
 
@@ -249,10 +275,13 @@ render(App);
 
 往 Table 传入 [rowSelection](#rowSelection) 即可打开此功能。
 
-- 点击表头的选择框，会选择 `dataSource` 里所有不是 `disabled` 状态的行。选择所有行回调函数为 `onSelectAll`；
-- 点击行的选择框会选中当前行。它的回调函数为 `onSelect`；
-  
-> **注意：**请务必为每行数据提供一个与其他行值不同的 `key`，或者使用 `rowKey` 参数指定一个作为主键的属性名。
+-   点击表头的选择框，会选择 `dataSource` 里所有不是 `disabled` 状态的行。选择所有行回调函数为 `onSelectAll`；
+-   点击行的选择框会选中当前行。它的回调函数为 `onSelect`；
+
+<Notice title='注意事项'>
+    <div>1. 请务必为 `dataSource` 中每行数据提供一个与其他行值不同的 `key`，或者使用 `rowKey` 参数指定一个作为主键的属性名。</div>
+    <div>2. 如你遇见在第二页点击行选择后，回到第一页问题，请检查组件渲染是否触发了 `dataSource` 更新（浅对比）。`dataSource` 更新后，非受控的翻页器会回到第一页。请将 `dataSource` 放在 state 内。</div>
+</Notice>
 
 ```jsx live=true noInline=true dir="column"
 import React from 'react';
@@ -260,7 +289,9 @@ import { Table, Avatar } from '@douyinfe/semi-ui';
 import { IconMore } from '@douyinfe/semi-icons';
 
 function App() {
-    const columns = [
+    const [selectedKeys, setSelectedKeys] = useState([]);
+
+    const columns = useMemo(() => [
         {
             title: '标题',
             dataIndex: 'name',
@@ -268,15 +299,33 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" shape="square" src={record.nameIconSrc} style={{ marginRight: 12 }}></Avatar>
+                        <Avatar
+                            size="small"
+                            shape="square"
+                            src={record.nameIconSrc}
+                            style={{ marginRight: 12 }}
+                        ></Avatar>
                         {text}
                     </div>
                 );
-            }
+            },
         },
         {
             title: '大小',
             dataIndex: 'size',
+        },
+        {
+            title: '交付状态',
+            dataIndex: 'status',
+            render: (text) => {
+                const tagConfig = {
+                    success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                    pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                    wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+                };
+                const tagProps = tagConfig[text];
+                return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+            }
         },
         {
             title: '所有者',
@@ -284,12 +333,13 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
                         {text}
                     </div>
                 );
-            }
-
+            },
         },
         {
             title: '更新日期',
@@ -300,19 +350,20 @@ function App() {
             dataIndex: 'operate',
             render: () => {
                 return <IconMore />;
-            }
+            },
         },
-    ];
-    const data = [
+    ], []);
+
+    const data = useMemo(() => [
         {
             key: '1',
             name: 'Semi Design 设计稿.fig',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
             size: '2M',
             owner: '姜鹏志',
+            status: 'success',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
-
+            avatarBg: 'grey',
         },
         {
             key: '2',
@@ -320,47 +371,52 @@ function App() {
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '2M',
             owner: '郝宣',
+            status: 'pending',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '3',
             name: '设计文档',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '34KB',
+            status: 'wait',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
         {
             key: '4',
-            name: 'Semi Pro 设计稿.fig',
+            name: 'Semi D2C 设计稿.fig',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
             size: '2M',
             owner: '姜鹏志',
+            status: 'wait',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
-
+            avatarBg: 'grey',
         },
         {
             key: '5',
-            name: 'Semi Pro 分享演示文稿',
+            name: 'Semi D2C 分享演示文稿',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '2M',
             owner: '郝宣',
+            status: 'pending',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '6',
-            name: 'Semi Pro 设计文档',
+            name: 'Semi D2C 设计文档',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '34KB',
+            status: 'success',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
-    ];
+    ], []);
+
     const rowSelection = {
         getCheckboxProps: record => ({
             disabled: record.name === '设计文档', // Column configuration not to be checked
@@ -374,12 +430,16 @@ function App() {
         },
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            setSelectedKeys(selectedRowKeys);
         },
     };
 
-    const pagination = useMemo(() => ({
-        pageSize: 3
-    }), []);
+    const pagination = useMemo(
+        () => ({
+            pageSize: 3,
+        }),
+        []
+    );
 
     return <Table columns={columns} dataSource={data} rowSelection={rowSelection} pagination={pagination} />;
 }
@@ -405,9 +465,9 @@ const raw = [
         nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
         size: '2M',
         owner: '姜鹏志',
+        status: 'success',
         updateTime: '2020-02-02 05:13',
-        avatarBg: 'grey'
-
+        avatarBg: 'grey',
     },
     {
         key: '2',
@@ -415,33 +475,36 @@ const raw = [
         nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
         size: '2M',
         owner: '郝宣',
+        status: 'pending',
         updateTime: '2020-01-17 05:31',
-        avatarBg: 'red'
+        avatarBg: 'red',
     },
     {
         key: '3',
         name: '设计文档',
         nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
         size: '34KB',
+        status: 'wait',
         owner: 'Zoey Edwards',
         updateTime: '2020-01-26 11:01',
-        avatarBg: 'light-blue'
+        avatarBg: 'light-blue',
     },
     {
         key: '4',
-        name: 'Semi Pro 设计文档可能也有点长所以也会显示Tooltip',
+        name: 'Semi D2C 设计文档可能也有点长所以也会显示Tooltip',
         nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
         size: '34KB',
+        status: 'success',
         owner: '姜琪',
         updateTime: '2020-01-26 11:01',
-        avatarBg: 'green'
-    }
+        avatarBg: 'green',
+    },
 ];
 
 function App() {
     const [dataSource, setData] = useState(raw);
 
-    const removeRecord = (key) => {
+    const removeRecord = key => {
         let newDataSource = [...dataSource];
         if (key != null) {
             let idx = newDataSource.findIndex(data => data.key === key);
@@ -465,19 +528,37 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar size="small" shape="square" src={record.nameIconSrc} style={{ marginRight: 12 }}></Avatar>
+                        <Avatar
+                            size="small"
+                            shape="square"
+                            src={record.nameIconSrc}
+                            style={{ marginRight: 12 }}
+                        ></Avatar>
                         {/* 宽度计算方式为单元格设置宽度 - 非文本内容宽度 */}
-                        <Text heading={5} ellipsis={{ showTooltip: true }} style={{ width: 'calc(400px - 76px)' }}>
+                        <Text ellipsis={{ showTooltip: true }} style={{ width: 'calc(400px - 76px)' }}>
                             {text}
                         </Text>
                     </span>
                 );
-            }
+            },
         },
         {
             title: '大小',
             dataIndex: 'size',
             width: 150,
+        },
+        {
+            title: '交付状态',
+            dataIndex: 'status',
+            render: (text) => {
+                const tagConfig = {
+                    success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                    pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                    wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+                };
+                const tagProps = tagConfig[text];
+                return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+            }
         },
         {
             title: '所有者',
@@ -486,12 +567,13 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
                         {text}
                     </div>
                 );
-            }
-
+            },
         },
         {
             title: '更新日期',
@@ -501,7 +583,9 @@ function App() {
         {
             title: '',
             dataIndex: 'operate',
-            render: (text, record) => <Button icon={<IconDelete />} theme='borderless' onClick={() => removeRecord(record.key)} />
+            render: (text, record) => (
+                <Button icon={<IconDelete />} theme="borderless" onClick={() => removeRecord(record.key)} />
+            ),
         },
     ];
 
@@ -513,11 +597,18 @@ function App() {
         />
     );
 
-
     return (
         <>
-            <Button onClick={resetData} style={{ marginBottom: 10 }}>重置</Button>
-            <Table style={{ minHeight: 350 }} columns={columns} dataSource={dataSource} pagination={false} empty={empty} />
+            <Button onClick={resetData} style={{ marginBottom: 10 }}>
+                重置
+            </Button>
+            <Table
+                style={{ minHeight: 350 }}
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+                empty={empty}
+            />
         </>
     );
 }
@@ -529,10 +620,9 @@ render(App);
 
 表格分页目前支持两种模式：受控和非受控模式。
 
-- 受控模式下，分页的状态完全由外部传入，依据为是否往 Table 传入了 `pagination.currentPage` 这个字段。一般情况下，受控模式适用于远程拉取数据并渲染。
-- 非受控模式下，Table 默认会将传入的 `dataSource` 长度作为 `total` 传给 Pagination 组件，当然你也可以传入一个 `total` 字段来覆盖 Table 组件的取值，不过我们并不推荐用户在非受控分页模式下传入这个字段。
+-   受控模式下，分页的状态完全由外部传入，依据为是否往 Table 传入了 `pagination.currentPage` 这个字段。一般情况下，受控模式适用于远程拉取数据并渲染。
+-   非受控模式下，Table 默认会将传入的 `dataSource` 长度作为 `total` 传给 Pagination 组件，当然你也可以传入一个 `total` 字段来覆盖 Table 组件的取值，不过我们并不推荐用户在非受控分页模式下传入这个字段。
 
-> 非受控时传入自定义的 `pagination.total` 字段在 >=0.25.0 版本后才支持
 
 ```jsx live=true noInline=true dir="column"
 import React, { useState, useMemo } from 'react';
@@ -559,8 +649,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -568,8 +658,21 @@ const columns = [
     {
         title: '大小',
         dataIndex: 'size',
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
+    },
+    {
+        title: '交付状态',
+        dataIndex: 'status',
+        render: (text) => {
+            const tagConfig = {
+                success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+            };
+            const tagProps = tagConfig[text] || {};
+            return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+        }
     },
     {
         title: '所有者',
@@ -577,21 +680,22 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -599,15 +703,18 @@ const DAY = 24 * 60 * 60 * 1000;
 function App() {
     const [dataSource, setData] = useState([]);
 
-    const rowSelection = useMemo(() => ({
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        getCheckboxProps: record => ({
-            disabled: record.name === 'Michael James', // Column configuration not to be checked
-            name: record.name,
+    const rowSelection = useMemo(
+        () => ({
+            onChange: (selectedRowKeys, selectedRows) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            getCheckboxProps: record => ({
+                disabled: record.name === 'Michael James', // Column configuration not to be checked
+                name: record.name,
+            }),
         }),
-    }), []);
+        []
+    );
     const scroll = useMemo(() => ({ y: 300 }), []);
 
     const getData = () => {
@@ -617,11 +724,12 @@ function App() {
             const randomNumber = (i * 1000) % 199;
             data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
+                status: isSemiDesign ? 'success' : 'wait',
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return data;
@@ -675,8 +783,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -684,8 +792,21 @@ const columns = [
     {
         title: '大小',
         dataIndex: 'size',
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
+    },
+    {
+        title: '交付状态',
+        dataIndex: 'status',
+        render: (text) => {
+            const tagConfig = {
+                success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+            };
+            const tagProps = tagConfig[text] || {};
+            return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+        }
     },
     {
         title: '所有者',
@@ -693,21 +814,22 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 const getData = () => {
@@ -717,11 +839,12 @@ const getData = () => {
         const randomNumber = (i * 1000) % 199;
         data.push({
             key: '' + i,
-            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
             owner: isSemiDesign ? '姜鹏志' : '郝宣',
             size: randomNumber,
+            status: isSemiDesign ? 'success' : 'wait',
             updateTime: new Date().valueOf() + randomNumber * DAY,
-            avatarBg: isSemiDesign ? 'grey' : 'red'
+            avatarBg: isSemiDesign ? 'grey' : 'red',
         });
     }
     return data;
@@ -765,7 +888,7 @@ function App() {
                 currentPage,
                 pageSize: 5,
                 total: data.length,
-                onPageChange: handlePageChange
+                onPageChange: handlePageChange,
             }}
             loading={loading}
         />
@@ -779,9 +902,11 @@ render(App);
 
 可以通过设置 column 的 `fixed` 属性以及 `scroll.x` 来进行列固定，通过设置 `scroll.y` 来进行表头固定。
 
+如果是固定值，设置为 >=所有固定列宽之和+所有表格列宽之和 的数值。
+
+> -   建议指定 `scroll.x` 为大于表格宽度的**固定值**或百分比。 如果是固定值，设置为 `>=所有固定列宽之和+所有表格列宽之和` 的数值。
+> -   若列头与内容不对齐或出现列重复或者固定列失效的情况，请指定固定列的宽度 `width`，若指定宽度后仍不生效，请尝试建议留一列不设宽度以适应弹性布局，或者检查是否有超长连续字段破坏布局。
 > -   请确保表格内部的所有元素在渲染后不会对单元格的高度造成影响（例如含有未加载完成的图片等），这种情况下请给定子元素一个确定的高度，以此确保左右固定列单元格不会错乱。
-> -   若列头与内容不对齐或出现列重复，请指定固定列的宽度 `width`。如果指定 `width` 不生效，请尝试建议留一列不设宽度以适应弹性布局，或者检查是否有超长连续字段破坏布局。
-> -   建议指定 `scroll.x` 为大于表格宽度的**固定值**或百分比。推荐设置为 `>=所有固定列宽之和+所有表格列宽之和` 的固定数值。
 
 ```jsx live=true noInline=true dir="column"
 import React, { useState, useMemo } from 'react';
@@ -812,8 +937,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -822,8 +947,8 @@ const columns = [
         title: '大小',
         dataIndex: 'size',
         width: 200,
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
     },
     {
         title: '所有者',
@@ -832,21 +957,22 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
         width: 200,
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
+        },
     },
     {
         title: '',
@@ -856,7 +982,7 @@ const columns = [
         width: 100,
         render: () => {
             return <IconMore />;
-        }
+        },
     },
 ];
 
@@ -864,16 +990,19 @@ function App() {
     const [dataSource, setData] = useState([]);
 
     const scroll = useMemo(() => ({ y: 300, x: 1200 }), []);
-    const rowSelection = useMemo(() => ({
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        getCheckboxProps: record => ({
-            disabled: record.name === 'Michael James', // Column configuration not to be checked
-            name: record.name,
+    const rowSelection = useMemo(
+        () => ({
+            onChange: (selectedRowKeys, selectedRows) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            getCheckboxProps: record => ({
+                disabled: record.name === 'Michael James', // Column configuration not to be checked
+                name: record.name,
+            }),
+            fixed: true,
         }),
-        fixed: true,
-    }), []);
+        []
+    );
 
     const getData = () => {
         const data = [];
@@ -882,11 +1011,11 @@ function App() {
             const randomNumber = (i * 1000) % 199;
             data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return data;
@@ -903,11 +1032,152 @@ function App() {
 render(App);
 ```
 
+通过 `sticky` 属性可以将表头固定在页面顶部。v2.21 版本支持。传入 `top` 时可以控制距离滚动容器的距离。
+
+开启 sticky 后，Table 会自动打开 fixed 布局，列宽将由 `column.width` 决定。没有给定 width 的列宽由浏览器自动分配。
+
+<StickyHeaderTable />
+
+```jsx live=false noInline=true dir="column"
+import React, { useState, useMemo } from 'react';
+import { Table, Avatar } from '@douyinfe/semi-ui';
+import { IconMore } from '@douyinfe/semi-icons';
+import * as dateFns from 'date-fns';
+
+const DAY = 24 * 60 * 60 * 1000;
+const figmaIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png';
+
+const columns = [
+    {
+        title: '标题',
+        dataIndex: 'name',
+        fixed: true,
+        width: 250,
+        render: (text, record, index) => {
+            return (
+                <div>
+                    <Avatar size="small" shape="square" src={figmaIconUrl} style={{ marginRight: 12 }}></Avatar>
+                    {text}
+                </div>
+            );
+        },
+        filters: [
+            {
+                text: 'Semi Design 设计稿',
+                value: 'Semi Design 设计稿',
+            },
+            {
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
+            },
+        ],
+        onFilter: (value, record) => record.name.includes(value),
+    },
+    {
+        title: '大小',
+        dataIndex: 'size',
+        width: 200,
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
+    },
+    {
+        title: '所有者',
+        dataIndex: 'owner',
+        width: 200,
+        render: (text, record, index) => {
+            return (
+                <div>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
+                    {text}
+                </div>
+            );
+        },
+    },
+    {
+        title: '更新日期',
+        dataIndex: 'updateTime',
+        width: 200,
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
+            return dateFns.format(new Date(value), 'yyyy-MM-dd');
+        },
+    },
+    {
+        title: '',
+        dataIndex: 'operate',
+        fixed: 'right',
+        align: 'center',
+        width: 100,
+        render: () => {
+            return <IconMore />;
+        },
+    },
+];
+
+function App() {
+    const [dataSource, setData] = useState([]);
+
+    const scroll = useMemo(() => ({ y: 300, x: 1200 }), []);
+    const rowSelection = useMemo(
+        () => ({
+            onChange: (selectedRowKeys, selectedRows) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            getCheckboxProps: record => ({
+                disabled: record.name === 'Michael James', // Column configuration not to be checked
+                name: record.name,
+            }),
+            fixed: true,
+        }),
+        []
+    );
+
+    const getData = () => {
+        const data = [];
+        for (let i = 0; i < 46; i++) {
+            const isSemiDesign = i % 2 === 0;
+            const randomNumber = (i * 1000) % 199;
+            data.push({
+                key: '' + i,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
+                owner: isSemiDesign ? '姜鹏志' : '郝宣',
+                size: randomNumber,
+                updateTime: new Date().valueOf() + randomNumber * DAY,
+                avatarBg: isSemiDesign ? 'grey' : 'red',
+            });
+        }
+        return data;
+    };
+
+    useEffect(() => {
+        const data = getData();
+        setData(data);
+    }, []);
+
+    return (
+        <Table
+            sticky={{ top: 60 }}
+            columns={columns}
+            dataSource={dataSource}
+            rowSelection={rowSelection}
+            scroll={scroll}
+        />
+    );
+}
+
+render(App);
+```
+
 ### 带排序和过滤功能的表头
 
 表格内部集成了过滤器和排序控件，用户可以通过在 Column 中传入 `filters` 以及 `onFilter` 开启表头的过滤器控件展示，传入 `sorter` 开启表头的排序控件的展示。
 
-> **注意：**请务必为每行数据提供一个与其他行值不同的 `key`，或者使用 `rowKey` 参数指定一个作为主键的属性名。
+<Notice title='注意事项'>
+    <div>1. 请为 `dataSource` 中的每个数据项提供一个与其他数据项值不同的 `key`，或者使用 `rowKey` 参数指定一个作为主键的属性名，表格的行选择、展开等绝大多数行操作功能都会使用到。</div>
+    <div>2. 排序和筛选列必须设置独立的 `dataIndex`</div>
+</Notice>
 
 ```jsx live=true noInline=true dir="column"
 import React, { useState, useMemo } from 'react';
@@ -936,18 +1206,31 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
-        sorter: (a, b) => a.name.length - b.name.length > 0 ? 1 : -1,
+        sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
     },
     {
         title: '大小',
         dataIndex: 'size',
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
+    },
+    {
+        title: '交付状态',
+        dataIndex: 'status',
+        render: (text) => {
+            const tagConfig = {
+                success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+            };
+            const tagProps = tagConfig[text];
+            return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+        }
     },
     {
         title: '所有者',
@@ -955,35 +1238,39 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 function App() {
     const [dataSource, setData] = useState([]);
 
-    const rowSelection = useMemo(() => ({
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        getCheckboxProps: record => ({
-            disabled: record.name === 'Michael James', // Column configuration not to be checked
-            name: record.name,
+    const rowSelection = useMemo(
+        () => ({
+            onChange: (selectedRowKeys, selectedRows) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            getCheckboxProps: record => ({
+                disabled: record.name === 'Michael James', // Column configuration not to be checked
+                name: record.name,
+            }),
         }),
-    }), []);
+        []
+    );
     const scroll = useMemo(() => ({ y: 300 }), []);
 
     const getData = () => {
@@ -993,11 +1280,12 @@ function App() {
             const randomNumber = (i * 1000) % 199;
             data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
+                status:  isSemiDesign ? 'success' : 'wait',
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return data;
@@ -1014,10 +1302,447 @@ function App() {
 render(App);
 ```
 
+sorter 为函数类型时，可以通过函数的第三个参数获取 sortOrder 状态。函数类型为 `(a?: RecordType, b?: RecordType, sortOrder?: 'ascend' | 'descend') => number`。v2.47 版本支持。
+
+可通过 `showSortTip` 属性控制是否展示排序提示，自 v2.65 版本支持，默认为 `false`。当开启提示后，当仅有排序功能时候，鼠标移动至表头时，会展示排序提示；其他情况下，仅鼠标移动至排序图标时，会展示排序提示。
+
+**注**：在使用 `sortOrder` 属性受控排序时，由于无法预测下一个排序顺序，因此 `showSortTip` 不生效，不会展示提示。
+
+```jsx live=true noInline=true dir="column"
+import React from 'react';
+import { Table, Avatar } from '@douyinfe/semi-ui';
+import * as dateFns from 'date-fns';
+
+function App() {
+    const columns = [
+        {
+            title: '标题',
+            dataIndex: 'name',
+            width: 400,
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        <Avatar size="small" shape="square" src={figmaIconUrl} style={{ marginRight: 12 }}></Avatar>
+                        {text}
+                    </div>
+                );
+            }
+        },
+        {
+            title: '大小',
+            dataIndex: 'size',
+            sorter: (r1, r2, order) => {
+                const a = r1.size;
+                const b = r2.size;
+                if (typeof a === "number" && typeof b === "number") {
+                    return a - b; // 数字正常比较大小
+                } else if (typeof a === "undefined") {
+                    return order === "ascend" ? 1 : -1; // undefined 在后面
+                } else if (typeof b === "undefined") {
+                    return order === "ascend" ? -1 : 1; // undefined 在后面
+                } else {
+                    return 0; // 保持原来的顺序
+                }
+            },
+            showSortTip: true,
+            render: text => text ? `${text} KB` : '未知',
+        },
+        {
+            title: '所有者',
+            dataIndex: 'owner',
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
+                        {text}
+                    </div>
+                );
+            },
+        },
+        {
+            title: '更新日期',
+            dataIndex: 'updateTime',
+            render: value => {
+                return dateFns.format(new Date(value), 'yyyy-MM-dd');
+            },
+        },
+    ];
+
+    const figmaIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png';
+    const docIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png';
+
+    const dataSource = [
+        {
+            key: '1',
+            name: 'Semi Design 设计稿.fig',
+            nameIconSrc: figmaIconUrl,
+            size: 3,
+            owner: '姜鹏志',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'grey',
+        },
+        {
+            key: '2',
+            name: 'Semi Design 分享演示文稿',
+            nameIconSrc: docIconUrl,
+            size: undefined,
+            owner: '郝宣',
+            updateTime: '2020-01-17 05:31',
+            avatarBg: 'red',
+        },
+        {
+            key: '3',
+            name: '设计文档3',
+            nameIconSrc: docIconUrl,
+            size: 1,
+            owner: 'Zoey Edwards',
+            updateTime: '2020-01-26 11:01',
+            avatarBg: 'light-blue',
+        },
+        {
+            key: '4',
+            name: '设计文档4',
+            nameIconSrc: docIconUrl,
+            size: 5,
+            owner: 'Zoey Edwards',
+            updateTime: '2020-01-26 11:01',
+            avatarBg: 'light-blue',
+        },
+        {
+            key: '5',
+            name: '设计文档5',
+            nameIconSrc: docIconUrl,
+            size: undefined,
+            owner: 'Zoey Edwards',
+            updateTime: '2020-01-26 11:01',
+            avatarBg: 'light-blue',
+        },
+        {
+            key: '6',
+            name: '设计文档6',
+            nameIconSrc: docIconUrl,
+            size: 2,
+            owner: 'Zoey Edwards',
+            updateTime: '2020-01-26 11:01',
+            avatarBg: 'light-blue',
+        },
+    ];
+
+    return <Table columns={columns} dataSource={dataSource} />;
+}
+
+render(App);
+```
+
+### 自定义表头筛选
+
+如果你需要将筛选器输入框展示在表头，可在 `title` 传入 ReactNode，配合 `filteredValue` 使用。
+
+```jsx live=true noInline=true dir="column"
+import React, { useState, useEffect, useRef } from 'react';
+import { Table, Avatar, Input, Space } from '@douyinfe/semi-ui';
+import * as dateFns from 'date-fns';
+
+function App() {
+    const [dataSource, setData] = useState([]);
+    const [filteredValue, setFilteredValue] = useState([]);
+    const compositionRef = useRef({ isComposition: false });
+
+    const DAY = 24 * 60 * 60 * 1000;
+    const figmaIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png';
+
+
+    const handleChange = (value) => {
+        if (compositionRef.current.isComposition) {
+            return;
+        }
+        const newFilteredValue = value ? [value] : [];
+        setFilteredValue(newFilteredValue);
+    };
+    const handleCompositionStart = () => {
+        compositionRef.current.isComposition = true;
+    };
+
+    const handleCompositionEnd = (event) => {
+        compositionRef.current.isComposition = false;
+        const value = event.target.value;
+        const newFilteredValue = value ? [value] : [];
+        setFilteredValue(newFilteredValue);
+    };
+
+
+    const columns = [
+        {
+            title: (
+                <Space>
+                    <span>标题</span>
+                    <Input
+                        placeholder="请输入筛选值"
+                        style={{ width: 200 }}
+                        onCompositionStart={handleCompositionStart}
+                        onCompositionEnd={handleCompositionEnd}
+                        onChange={handleChange}
+                        showClear 
+                    />
+                </Space>
+            ),
+            dataIndex: 'name',
+            width: 400,
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        <Avatar size="small" shape="square" src={figmaIconUrl} style={{ marginRight: 12 }}></Avatar>
+                        {text}
+                    </div>
+                );
+            },
+            onFilter: (value, record) => record.name.includes(value),
+            filteredValue,
+        },
+        {
+            title: '大小',
+            dataIndex: 'size',
+            sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+            render: text => `${text} KB`,
+        },
+        {
+            title: '交付状态',
+            dataIndex: 'status',
+            render: (text) => {
+                const tagConfig = {
+                    success: { color: 'green', prefixIcon: <IconTickCircle />, text: '已交付' },
+                    pending: { color: 'pink', prefixIcon: <IconClear />, text: '已延期' },
+                    wait: { color: 'cyan', prefixIcon: <IconComment />, text: '待评审' },
+                };
+                const tagProps = tagConfig[text];
+                return <Tag shape='circle' {...tagProps} style={{ userSelect: 'text' }}>{tagProps.text}</Tag>
+            }
+        },
+        {
+            title: '所有者',
+            dataIndex: 'owner',
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
+                        {text}
+                    </div>
+                );
+            },
+        },
+        {
+            title: '更新日期',
+            dataIndex: 'updateTime',
+            sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+            render: value => {
+                return dateFns.format(new Date(value), 'yyyy-MM-dd');
+            },
+        },
+    ];
+
+    const getData = () => {
+        const data = [];
+        for (let i = 0; i < 46; i++) {
+            const isSemiDesign = i % 2 === 0;
+            const randomNumber = (i * 1000) % 199;
+            data.push({
+                key: '' + i,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 首页${i}.fig`,
+                owner: isSemiDesign ? '姜鹏志' : '郝宣',
+                size: randomNumber,
+                status:  isSemiDesign ? 'success' : 'wait',
+                updateTime: new Date('2024-01-25').valueOf() + randomNumber * DAY,
+                avatarBg: isSemiDesign ? 'grey' : 'red',
+            });
+        }
+        return data;
+    };
+
+    useEffect(() => {
+        const data = getData();
+        setData(data);
+    }, []);
+
+    return <Table columns={columns} dataSource={dataSource} />;
+}
+
+render(App);
+```
+
+### 自定义筛选器
+
+使用 `renderFilterDropdown` 自定义渲染筛选器面板。v2.52 支持。
+
+你可以在用户输入筛选值的时候调用 `setTempFilteredValue` 存储筛选值，在筛选值输入完毕后调用 `confirm` 触发真正的筛选。也可以通过 `confirm({ filteredValue })` 直接筛选。
+
+设置 `tempFilteredValue` 的原因是在需要存储临时筛选值的场景，不需要自己声明一个 state 保存这个临时筛选值。
+
+```typescript
+type RenderFilterDropdown = (props?: RenderFilterDropdownProps) => React.ReactNode;
+interface RenderFilterDropdownProps {
+    /** 临时筛选值，初始值为 `filteredValue` 或 `defaultFilteredValue`  */
+    tempFilteredValue: any[];
+    /** 设置临时筛选值  */
+    setTempFilteredValue: (tempFilteredValue: any[]) => void;
+    /** `confirm` 默认会将 `tempFilteredValue` 赋值给 `filteredValue` 并触发 `onChange` 事件。你也可以通过传入 `filteredValue` 直接设置筛选值  */
+    confirm: (props?: { closeDropdown?: boolean; filteredValue?: any[] }) => void;
+    /** 清除筛选值、临时筛选值  */
+    clear: (props?: { closeDropdown?: boolean }) => void;
+    /** 关闭 dropdown  */
+    close: () => void;
+    /** 筛选器配置项，如不需要可以不传  */
+    filters?: RenderDropdownProps['filters']
+}
+```
+
+
+```jsx live=true noInline=true dir="column"
+import React, { useState, useEffect, useRef } from 'react';
+import { Table, Avatar, Input, Button, Space } from '@douyinfe/semi-ui';
+import * as dateFns from 'date-fns';
+
+function App() {
+    const [dataSource, setData] = useState([]);
+    const inputRef = useRef();
+
+    const DAY = 24 * 60 * 60 * 1000;
+    const figmaIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png';
+
+    const columns = [
+        {
+            title: '标题',
+            dataIndex: 'name',
+            width: 400,
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        <Avatar size="small" shape="square" src={figmaIconUrl} style={{ marginRight: 12 }}></Avatar>
+                        {text}
+                    </div>
+                );
+            },
+            onFilter: (value, record) => record.name.includes(value),
+            renderFilterDropdown: (props) => {
+                console.log('renderFilterDropdown', props);
+                const { tempFilteredValue, setTempFilteredValue, confirm, clear, close } = props;
+
+                const handleChange = value => {
+                    const filteredValue = value ? [value] : [];
+                    setTempFilteredValue(filteredValue);
+                    // 你也可以在 input value 变化时直接筛选
+                    // confirm({ filteredValue });
+                };
+
+                return (
+                    <Space vertical align='start' style={{ padding: 8 }}>
+                        <Input ref={inputRef} value={tempFilteredValue[0]} onChange={handleChange}/>
+                        <Space>
+                            <Button onClick={() => confirm({ closeDropdown: true })}>筛选+关闭</Button>
+                            <Button onClick={() => clear({ closeDropdown: true })}>清除+关闭</Button>
+                            <Button onClick={() => close()}>直接关闭</Button>
+                        </Space>
+                    </Space>
+                );
+            },
+            onFilterDropdownVisibleChange: (visible) => {
+                console.log('inputRef', visible, inputRef);
+                if (inputRef.current && inputRef.current.focus) {
+                    inputRef.current.focus();
+                }
+            }
+        },
+        {
+            title: '大小',
+            dataIndex: 'size',
+            sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+            render: text => `${text} KB`,
+        },
+        {
+            title: '所有者',
+            dataIndex: 'owner',
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
+                        {text}
+                    </div>
+                );
+            },
+            onFilter: (value, record) => record.owner.includes(value),
+            defaultFilteredValue: ['姜鹏志'],
+            renderFilterDropdown: (props) => {
+                console.log('renderFilterDropdown', props);
+                const { tempFilteredValue, setTempFilteredValue, confirm, clear, close } = props;
+
+                const handleChange = (value) => {
+                    if (value) {
+                        setTempFilteredValue([value]);
+                    } else {
+                        setTempFilteredValue([]);
+                    }
+                };
+
+                return (
+                    <Space vertical align='start' style={{ padding: 8 }}>
+                        <Input value={tempFilteredValue[0]} onChange={handleChange}/>
+                        <Space>
+                            <Button onClick={() => confirm({ closeDropdown: false })}>筛选后不关闭</Button>
+                            <Button onClick={() => clear({ closeDropdown: false })}>清除后不关闭</Button>
+                            <Button onClick={() => close()}>直接关闭</Button>
+                        </Space>
+                    </Space>
+                );
+            },
+        },
+        {
+            title: '更新日期',
+            dataIndex: 'updateTime',
+            sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+            render: value => {
+                return dateFns.format(new Date(value), 'yyyy-MM-dd');
+            },
+        },
+    ];
+
+    const getData = () => {
+        const data = [];
+        for (let i = 0; i < 46; i++) {
+            const isSemiDesign = i % 2 === 0;
+            const randomNumber = (i * 1000) % 199;
+            data.push({
+                key: '' + i,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
+                owner: isSemiDesign ? '姜鹏志' : '郝宣',
+                size: randomNumber,
+                updateTime: new Date().valueOf() + randomNumber * DAY,
+                avatarBg: isSemiDesign ? 'grey' : 'red',
+            });
+        }
+        return data;
+    };
+
+    useEffect(() => {
+        const data = getData();
+        setData(data);
+    }, []);
+
+    return <Table columns={columns} dataSource={dataSource} />;
+}
+
+render(App);
+```
+
+
+
 ### 自定义筛选项渲染
 
 自 **1.1.0** 版本后，支持往 column 中传入 `renderFilterDropdownItem` 自定义每个筛选项的渲染方式。
-
 
 -   `text: ReactNode` 当前筛选项的文案；
 -   `value: any` 当前筛选项的值；
@@ -1053,8 +1778,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -1066,13 +1791,13 @@ const columns = [
         filterDropdownProps: {
             showTick: true,
         },
-        sorter: (a, b) => a.name.length - b.name.length > 0 ? 1 : -1,
+        sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
     },
     {
         title: '大小',
         dataIndex: 'size',
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
     },
     {
         title: '所有者',
@@ -1080,35 +1805,39 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 function App() {
     const [dataSource, setData] = useState([]);
 
-    const rowSelection = useMemo(() => ({
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        getCheckboxProps: record => ({
-            disabled: record.name === 'Michael James', // Column configuration not to be checked
-            name: record.name,
+    const rowSelection = useMemo(
+        () => ({
+            onChange: (selectedRowKeys, selectedRows) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            getCheckboxProps: record => ({
+                disabled: record.name === 'Michael James', // Column configuration not to be checked
+                name: record.name,
+            }),
         }),
-    }), []);
+        []
+    );
     const scroll = useMemo(() => ({ y: 300 }), []);
 
     const getData = () => {
@@ -1118,11 +1847,11 @@ function App() {
             const randomNumber = (i * 1000) % 199;
             data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return data;
@@ -1137,7 +1866,6 @@ function App() {
 }
 
 render(App);
-
 ```
 
 ### 可以展开的表格
@@ -1149,7 +1877,7 @@ render(App);
 
 #### 一般可展开行
 
-如果需要渲染可以展开的表格，除了需要在Table传 `expandedRowRender` 这个方法外，还必须要指定 `rowKey`（默认为 `key`），Table 会根据 `rowKey` 取得行唯一标识符。
+如果需要渲染可以展开的表格，除了需要在 Table 传 `expandedRowRender` 这个方法外，还必须要指定 `rowKey`（默认为 `key`），Table 会根据 `rowKey` 取得行唯一标识符。
 
 -   如果 `rowKey` 为 `Function`，则会把 `rowKey(record)` 的结果作为行唯一 ID
 -   如果 `rowKey` 为 `string` 类型，则会把 `record[rowKey]` 作为行唯一 ID
@@ -1171,7 +1899,7 @@ const columns = [
                     {text}
                 </span>
             );
-        }
+        },
     },
     {
         title: '大小',
@@ -1189,8 +1917,7 @@ const columns = [
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
@@ -1201,7 +1928,7 @@ const columns = [
         dataIndex: 'operate',
         render: () => {
             return <IconMore />;
-        }
+        },
     },
 ];
 
@@ -1213,7 +1940,7 @@ const data = [
         size: '2M',
         owner: '姜鹏志',
         updateTime: '2020-02-02 05:13',
-        avatarBg: 'grey'
+        avatarBg: 'grey',
     },
     {
         key: '2',
@@ -1222,7 +1949,7 @@ const data = [
         size: '2M',
         owner: '郝宣',
         updateTime: '2020-01-17 05:31',
-        avatarBg: 'red'
+        avatarBg: 'red',
     },
     {
         key: '3',
@@ -1231,7 +1958,7 @@ const data = [
         size: '34KB',
         owner: 'Zoey Edwards',
         updateTime: '2020-01-26 11:01',
-        avatarBg: 'light-blue'
+        avatarBg: 'light-blue',
     },
 ];
 
@@ -1256,11 +1983,10 @@ const expandData = {
         { key: '安全等级', value: '2级' },
         { key: '垂类标签', value: <Tag style={{ margin: 0 }}>文档</Tag> },
         { key: '认证状态', value: '已认证' },
-    ]
+    ],
 };
 
 function App() {
-
     const expandRowRender = (record, index) => {
         return <Descriptions align="justify" data={expandData[index]} />;
     };
@@ -1281,7 +2007,16 @@ function App() {
         },
     };
 
-    return <Table rowKey="name" columns={columns} dataSource={data} expandedRowRender={expandRowRender} rowSelection={rowSelection} pagination={false} />;
+    return (
+        <Table
+            rowKey="name"
+            columns={columns}
+            dataSource={data}
+            expandedRowRender={expandRowRender}
+            rowSelection={rowSelection}
+            pagination={false}
+        />
+    );
 }
 
 render(App);
@@ -1291,7 +2026,7 @@ render(App);
 
 **版本：>=0.27.0**
 
-默认情况，展开按钮会与第列文案渲染在同一个单元格内，你可以通过传入 `hideExpandedColumn={false}` 来渲染为单独一列：
+默认情况，展开按钮会与第一列文案渲染在同一个单元格内，你可以通过传入 `hideExpandedColumn={false}` 来渲染为单独一列：
 
 ```jsx live=true noInline=true dir="column"
 import React from 'react';
@@ -1310,7 +2045,7 @@ const columns = [
                     {text}
                 </span>
             );
-        }
+        },
     },
     {
         title: '大小',
@@ -1328,8 +2063,7 @@ const columns = [
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
@@ -1340,7 +2074,7 @@ const columns = [
         dataIndex: 'operate',
         render: () => {
             return <IconMore />;
-        }
+        },
     },
 ];
 
@@ -1352,7 +2086,7 @@ const data = [
         size: '2M',
         owner: '姜鹏志',
         updateTime: '2020-02-02 05:13',
-        avatarBg: 'grey'
+        avatarBg: 'grey',
     },
     {
         key: '2',
@@ -1361,7 +2095,7 @@ const data = [
         size: '2M',
         owner: '郝宣',
         updateTime: '2020-01-17 05:31',
-        avatarBg: 'red'
+        avatarBg: 'red',
     },
     {
         key: '3',
@@ -1370,7 +2104,7 @@ const data = [
         size: '34KB',
         owner: 'Zoey Edwards',
         updateTime: '2020-01-26 11:01',
-        avatarBg: 'light-blue'
+        avatarBg: 'light-blue',
     },
 ];
 
@@ -1395,11 +2129,10 @@ const expandData = {
         { key: '安全等级', value: '2级' },
         { key: '垂类标签', value: <Tag style={{ margin: 0 }}>文档</Tag> },
         { key: '认证状态', value: '已认证' },
-    ]
+    ],
 };
 
 function App() {
-
     const expandRowRender = (record, index) => {
         return <Descriptions align="justify" data={expandData[index]} />;
     };
@@ -1459,7 +2192,7 @@ const columns = [
                     {text}
                 </span>
             );
-        }
+        },
     },
     {
         title: '大小',
@@ -1477,8 +2210,7 @@ const columns = [
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
@@ -1489,7 +2221,7 @@ const columns = [
         dataIndex: 'operate',
         render: () => {
             return <IconMore />;
-        }
+        },
     },
 ];
 
@@ -1501,7 +2233,7 @@ const data = [
         size: '2M',
         owner: '姜鹏志',
         updateTime: '2020-02-02 05:13',
-        avatarBg: 'grey'
+        avatarBg: 'grey',
     },
     {
         key: '2',
@@ -1510,7 +2242,7 @@ const data = [
         size: '2M',
         owner: '郝宣',
         updateTime: '2020-01-17 05:31',
-        avatarBg: 'red'
+        avatarBg: 'red',
     },
     {
         key: '3',
@@ -1519,7 +2251,7 @@ const data = [
         size: '34KB',
         owner: 'Zoey Edwards',
         updateTime: '2020-01-26 11:01',
-        avatarBg: 'light-blue'
+        avatarBg: 'light-blue',
     },
 ];
 
@@ -1544,11 +2276,10 @@ const expandData = {
         { key: '安全等级', value: '2级' },
         { key: '垂类标签', value: <Tag style={{ margin: 0 }}>文档</Tag> },
         { key: '认证状态', value: '已认证' },
-    ]
+    ],
 };
 
 function App() {
-
     const expandRowRender = (record, index) => {
         return <Descriptions align="justify" data={expandData[index]} />;
     };
@@ -1575,7 +2306,7 @@ function App() {
             columns={columns}
             dataSource={data}
             expandedRowRender={expandRowRender}
-            rowExpandable={ record => record.name !== '设计文档' }
+            rowExpandable={record => record.name !== '设计文档'}
             hideExpandedColumn={false}
             rowSelection={rowSelection}
             pagination={false}
@@ -1665,7 +2396,7 @@ function App() {
                             default: '无',
                         },
                     ],
-                }
+                },
             ],
         },
         {
@@ -1691,19 +2422,13 @@ function App() {
                     type: 'String 字符串',
                     description: '视频的描述',
                     default: '无',
-                }
+                },
             ],
         },
     ];
 
-    return (
-        <Table
-            columns={columns}
-            defaultExpandAllRows
-            dataSource={data}
-        />
-    );
-};
+    return <Table columns={columns} defaultExpandAllRows dataSource={data} />;
+}
 
 render(App);
 ```
@@ -1752,7 +2477,7 @@ const raw = [
                         default: '无',
                     },
                 ],
-            }
+            },
         ],
     },
     {
@@ -1778,13 +2503,13 @@ const raw = [
                 type: 'String 字符串',
                 description: '视频的描述',
                 default: '无',
-            }
+            },
         ],
     },
 ];
 
-const rowKey= 'key';
-const childrenRecordName= 'children';
+const rowKey = 'key';
+const childrenRecordName = 'children';
 
 function App() {
     const [expandedRowKeys, setExpandedRowKeys] = useState([1, 2]);
@@ -1930,7 +2655,7 @@ function App() {
             onExpandedRowsChange={rows => setExpandedRowKeys(rows.map(item => item[rowKey]))}
         />
     );
-};
+}
 
 render(App);
 ```
@@ -2022,7 +2747,7 @@ const ChildrenDataSelectedDemo = () => {
                                 default: '无',
                             },
                         ],
-                    }
+                    },
                 ],
             },
             {
@@ -2048,7 +2773,7 @@ const ChildrenDataSelectedDemo = () => {
                         type: 'String 字符串',
                         description: '视频的描述',
                         default: '无',
-                    }
+                    },
                 ],
             },
         ],
@@ -2056,7 +2781,7 @@ const ChildrenDataSelectedDemo = () => {
     );
 
     // 自定义禁用逻辑
-    const isRecordDisabled = (record) => {
+    const isRecordDisabled = record => {
         return false;
     };
 
@@ -2100,11 +2825,14 @@ const ChildrenDataSelectedDemo = () => {
     };
 
     // 选中一行时需要选中自己可选行
-    const doSelect = useCallback((record, selected) => {
-        const rowKeys = findShouldSelectRowKeys(record, selected);
-        setSelectedRowKeys(rowKeys);
-        console.log('select', record, rowKeys);
-    }, [selectedRowKeys, rowKey, childrenRecordName]);
+    const doSelect = useCallback(
+        (record, selected) => {
+            const rowKeys = findShouldSelectRowKeys(record, selected);
+            setSelectedRowKeys(rowKeys);
+            console.log('select', record, rowKeys);
+        },
+        [selectedRowKeys, rowKey, childrenRecordName]
+    );
 
     // 找出所有可选的行
     const doSelectAll = useCallback((selected, selectedRows) => {
@@ -2180,8 +2908,8 @@ function EventTable(props = {}) {
                         value: 'Semi Design 设计稿',
                     },
                     {
-                        text: 'Semi Pro 设计稿',
-                        value: 'Semi Pro 设计稿',
+                        text: 'Semi D2C 设计稿',
+                        value: 'Semi D2C 设计稿',
                     },
                 ],
                 onFilter: (value, record) => record.name.includes(value),
@@ -2189,8 +2917,8 @@ function EventTable(props = {}) {
             {
                 title: '大小',
                 dataIndex: 'size',
-                sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-                render: (text) => `${text} KB`
+                sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+                render: text => `${text} KB`,
             },
             {
                 title: '所有者',
@@ -2198,21 +2926,22 @@ function EventTable(props = {}) {
                 render: (text, record, index) => {
                     return (
                         <div>
-                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                                {typeof text === 'string' && text.slice(0, 1)}
+                            </Avatar>
                             {text}
                         </div>
                     );
-                }
-        
+                },
             },
             {
                 title: '更新日期',
                 dataIndex: 'updateTime',
-                sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-                render: (value) => {
+                sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+                render: value => {
                     return dateFns.format(new Date(value), 'yyyy-MM-dd');
-                }
-            }
+                },
+            },
         ],
         []
     );
@@ -2224,11 +2953,11 @@ function EventTable(props = {}) {
             const randomNumber = (i * 1000) % 199;
             _data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return _data;
@@ -2287,11 +3016,16 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" shape="square" src={record.nameIconSrc} style={{ marginRight: 12 }}></Avatar>
+                        <Avatar
+                            size="small"
+                            shape="square"
+                            src={record.nameIconSrc}
+                            style={{ marginRight: 12 }}
+                        ></Avatar>
                         {text}
                     </div>
                 );
-            }
+            },
         },
         {
             title: '大小',
@@ -2303,11 +3037,13 @@ function App() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
                         {text}
                     </div>
                 );
-            }
+            },
         },
         {
             title: '更新日期',
@@ -2318,7 +3054,7 @@ function App() {
             dataIndex: 'operate',
             render: () => {
                 return <IconMore />;
-            }
+            },
         },
     ];
     const data = [
@@ -2329,8 +3065,7 @@ function App() {
             size: '2M',
             owner: '姜鹏志',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
-
+            avatarBg: 'grey',
         },
         {
             key: '2',
@@ -2339,7 +3074,7 @@ function App() {
             size: '2M',
             owner: '郝宣',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '3',
@@ -2348,35 +3083,34 @@ function App() {
             size: '34KB',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
         {
             key: '4',
-            name: 'Semi Pro 设计稿.fig',
+            name: 'Semi D2C 设计稿.fig',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
             size: '2M',
             owner: '姜鹏志',
             updateTime: '2020-02-02 05:13',
-            avatarBg: 'grey'
-
+            avatarBg: 'grey',
         },
         {
             key: '5',
-            name: 'Semi Pro 分享演示文稿',
+            name: 'Semi D2C 分享演示文稿',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '2M',
             owner: '郝宣',
             updateTime: '2020-01-17 05:31',
-            avatarBg: 'red'
+            avatarBg: 'red',
         },
         {
             key: '6',
-            name: 'Semi Pro 设计文档',
+            name: 'Semi D2C 设计文档',
             nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
             size: '34KB',
             owner: 'Zoey Edwards',
             updateTime: '2020-01-26 11:01',
-            avatarBg: 'light-blue'
+            avatarBg: 'light-blue',
         },
     ];
 
@@ -2386,7 +3120,7 @@ function App() {
             return {
                 style: {
                     background: 'var(--semi-color-fill-0)',
-                }
+                },
             };
         } else {
             return {};
@@ -2394,6 +3128,238 @@ function App() {
     };
 
     return <Table columns={columns} dataSource={data} onRow={handleRow} pagination={false} />;
+}
+
+render(App);
+```
+
+### 单元格缩略
+
+使用 `ellipsis` 可以让单元格自动实现缩略效果。v2.34.0 支持。
+
+```jsx live=true noInline=true dir="column"
+import React from 'react';
+import { Table } from '@douyinfe/semi-ui';
+import { IconMore } from '@douyinfe/semi-icons';
+
+function App() {
+    const columns = [
+        {
+            title: '标题',
+            dataIndex: 'name',
+            fixed: true,
+            width: 250,
+            filters: [
+                {
+                    text: 'Semi Design 设计稿',
+                    value: 'Semi Design 设计稿',
+                },
+                {
+                    text: 'Semi D2C 设计稿',
+                    value: 'Semi D2C 设计稿',
+                },
+            ],
+            onFilter: (value, record) => record.name.includes(value),
+            sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
+            ellipsis: true,
+        },
+        {
+            title: '所有者',
+            dataIndex: 'owner',
+            width: 200,
+            ellipsis: true,
+            filters: [
+                {
+                    text: 'Semi Design 设计稿',
+                    value: 'Semi Design 设计稿',
+                },
+                {
+                    text: 'Semi D2C 设计稿',
+                    value: 'Semi D2C 设计稿',
+                },
+            ],
+            onFilter: (value, record) => record.name.includes(value),
+            sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
+        },
+        {
+            title: '大小',
+            dataIndex: 'size',
+            sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
+            ellipsis: true,
+        },
+        {
+            title: '更新日期',
+            dataIndex: 'updateTime',
+            width: 200,
+            ellipsis: true,
+        },
+        {
+            title: '',
+            dataIndex: 'operate',
+            fixed: 'right',
+            align: 'center',
+            width: 100,
+            render: () => {
+                return <IconMore />;
+            },
+        },
+    ];
+    const data = [
+        {
+            key: '1',
+            name: 'Semi is designed based on FA architecture, and the main logic is extracted as Foundation package, which is easy to migrate to other frameworks',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
+            size: '2M',
+            owner: 'Pengzhi Jiang Pengzhi Jiang Pengzhi Jiang Pengzhi Jiang',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'grey',
+        },
+        {
+            key: '2',
+            name: '由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
+            size: '2M',
+            owner: '郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'red',
+        },
+        {
+            key: '3',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
+            name: 'Semi is designed based on FA architecture, and the main logic is extracted as Foundation package, which is easy to migrate to other frameworks',
+            size: '34KB',
+            owner: 'Pengzhi Jiang Pengzhi Jiang Pengzhi Jiang Pengzhi Jiang',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'light-blue',
+        },
+        {
+            key: '4',
+            name: '由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
+            size: '34KB',
+            owner: '郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'light-blue',
+        },
+    ];
+
+    return <Table scroll={{ x: 1200 }} columns={columns} dataSource={data} pagination={false} />;
+}
+
+render(App);
+```
+
+设置 `ellipsis.showTitle` 为 false 可以隐藏默认原生的 HTML title。 配合 `column.render` 可以自定义内容提示。
+
+```jsx live=true noInline=true dir="column"
+import React from 'react';
+import { Table, Typography } from '@douyinfe/semi-ui';
+import { IconMore } from '@douyinfe/semi-icons';
+
+function App() {
+    const columns = [
+        {
+            title: '标题',
+            dataIndex: 'name',
+            fixed: true,
+            width: 250,
+            filters: [
+                {
+                    text: 'Semi Design 设计稿',
+                    value: 'Semi Design 设计稿',
+                },
+                {
+                    text: 'Semi D2C 设计稿',
+                    value: 'Semi D2C 设计稿',
+                },
+            ],
+            onFilter: (value, record) => record.name.includes(value),
+            sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
+            ellipsis: { showTitle: false },
+            render: (text) => <Typography.Text ellipsis={{ showTooltip: true }}>{text}</Typography.Text>,
+        },
+        {
+            title: '所有者',
+            dataIndex: 'owner',
+            width: 200,
+            filters: [
+                {
+                    text: 'Semi Design 设计稿',
+                    value: 'Semi Design 设计稿',
+                },
+                {
+                    text: 'Semi D2C 设计稿',
+                    value: 'Semi D2C 设计稿',
+                },
+            ],
+            onFilter: (value, record) => record.name.includes(value),
+            sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
+            ellipsis: { showTitle: false },
+            render: (text) => <Typography.Text ellipsis={{ showTooltip: true }}>{text}</Typography.Text>,
+        },
+        {
+            title: '大小',
+            dataIndex: 'size',
+            sorter: (a, b) => (a.name.length - b.name.length > 0 ? 1 : -1),
+            ellipsis: true,
+        },
+        {
+            title: '更新日期',
+            dataIndex: 'updateTime',
+            width: 200,
+            ellipsis: true,
+        },
+        {
+            title: '',
+            dataIndex: 'operate',
+            fixed: 'right',
+            align: 'center',
+            width: 100,
+            render: () => {
+                return <IconMore />;
+            },
+        },
+    ];
+    const data = [
+        {
+            key: '1',
+            name: 'Semi is designed based on FA architecture, and the main logic is extracted as Foundation package, which is easy to migrate to other frameworks',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png',
+            size: '2M',
+            owner: 'Pengzhi Jiang Pengzhi Jiang Pengzhi Jiang Pengzhi Jiang',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'grey',
+        },
+        {
+            key: '2',
+            name: '由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
+            size: '2M',
+            owner: '郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣郝宣',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'red',
+        },
+        {
+            key: '3',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
+            name: 'Semi is designed based on FA architecture, and the main logic is extracted as Foundation package, which is easy to migrate to other frameworks',
+            size: '34KB',
+            owner: 'Pengzhi Jiang',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'light-blue',
+        },
+        {
+            key: '4',
+            name: '由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。由抖音前端与 UED 团队维护，易于定制的现代化设计系统，帮助设计师与开发者打造高质量产品。',
+            nameIconSrc: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png',
+            size: '34KB',
+            owner: '郝宣',
+            updateTime: '2020-02-02 05:13',
+            avatarBg: 'light-blue',
+        },
+    ];
+
+    return <Table scroll={{ x: 1200 }} columns={columns} dataSource={data} pagination={false} />;
 }
 
 render(App);
@@ -2409,10 +3375,13 @@ render(App);
 
 不过你需要注意一些参数：
 
--   `resizable` 设定为 `true` 或者一个 `object`
--   `columns` 里需要伸缩功能的列都要指定 `width` 这个字段（如果不传，该列不具备伸缩功能，且其列宽度会被浏览器自动调整）
+- `resizable` 设定为 `true` 或者一个 `object`
+- `columns` 里需要伸缩功能的列都要指定 `width` 这个字段（如果不传，该列不具备伸缩功能，且其列宽度会被浏览器自动调整）
+- `column.resize` 可以在 resizable 开启后生效，设置为 false 后，列不再支持伸缩。v2.42 支持
 
-> 不推荐与固定列同时使用，固定列需要指定 `scroll.x`，这约定了表格是有宽度范围的，而伸缩列会拓展列宽，这可能会导致表格对不齐
+> 与固定列同时使用时，需指定某一列不设置宽度
+
+> 不推荐与 `scroll.x` 同时使用，scroll.x 指定表格是有宽度范围的，而伸缩列会拓展列宽，这可能会导致表格对不齐
 
 ```jsx live=true noInline=true dir="column"
 import React, { useMemo } from 'react';
@@ -2427,7 +3396,8 @@ function ResizableDemo() {
         {
             title: '标题',
             dataIndex: 'name',
-            width: 400,
+            width: 300,
+            resize: false,
             render: (text, record, index) => {
                 return (
                     <div>
@@ -2442,8 +3412,8 @@ function ResizableDemo() {
                     value: 'Semi Design 设计稿',
                 },
                 {
-                    text: 'Semi Pro 设计稿',
-                    value: 'Semi Pro 设计稿',
+                    text: 'Semi D2C 设计稿',
+                    value: 'Semi D2C 设计稿',
                 },
             ],
             onFilter: (value, record) => record.name.includes(value),
@@ -2452,8 +3422,8 @@ function ResizableDemo() {
             title: '大小',
             dataIndex: 'size',
             width: 200,
-            sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-            render: (text) => `${text} KB`
+            sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+            render: text => `${text} KB`,
         },
         {
             title: '所有者',
@@ -2462,21 +3432,32 @@ function ResizableDemo() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
                         {text}
                     </div>
                 );
-            }
-
+            },
         },
         {
             title: '更新日期',
             dataIndex: 'updateTime',
-            sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-            render: (value) => {
+            sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+            render: value => {
                 return dateFns.format(new Date(value), 'yyyy-MM-dd');
-            }
-        }
+            },
+        },
+        {
+            title: '操作列',
+            dataIndex: 'operate',
+            fixed: 'right',
+            width: 100,
+            resize: false,
+            render: () => {
+                return <IconMore />;
+            },
+        },
     ];
 
     const data = useMemo(() => {
@@ -2486,11 +3467,11 @@ function ResizableDemo() {
             const randomNumber = (i * 1000) % 199;
             _data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return _data;
@@ -2541,8 +3522,8 @@ function ResizableDemo() {
                     value: 'Semi Design 设计稿',
                 },
                 {
-                    text: 'Semi Pro 设计稿',
-                    value: 'Semi Pro 设计稿',
+                    text: 'Semi D2C 设计稿',
+                    value: 'Semi D2C 设计稿',
                 },
             ],
             onFilter: (value, record) => record.name.includes(value),
@@ -2551,8 +3532,8 @@ function ResizableDemo() {
             title: '大小',
             dataIndex: 'size',
             width: 200,
-            sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-            render: (text) => `${text} KB`
+            sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+            render: text => `${text} KB`,
         },
         {
             title: '所有者',
@@ -2561,21 +3542,22 @@ function ResizableDemo() {
             render: (text, record, index) => {
                 return (
                     <div>
-                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                        <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                            {typeof text === 'string' && text.slice(0, 1)}
+                        </Avatar>
                         {text}
                     </div>
                 );
-            }
-
+            },
         },
         {
             title: '更新日期',
             dataIndex: 'updateTime',
-            sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-            render: (value) => {
+            sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+            render: value => {
                 return dateFns.format(new Date(value), 'yyyy-MM-dd');
-            }
-        }
+            },
+        },
     ];
 
     const data = useMemo(() => {
@@ -2585,11 +3567,11 @@ function ResizableDemo() {
             const randomNumber = (i * 1000) % 199;
             _data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return _data;
@@ -2605,7 +3587,7 @@ function ResizableDemo() {
             const className = removeClass(curColumn.className, 'my-resizing');
 
             return { className };
-        }
+        },
     };
 
     return (
@@ -2636,206 +3618,189 @@ render(ResizableDemo);
 
 ### 拖拽排序
 
-使用自定义元素，我们可以集成 `react-dnd` 来实现拖拽排序。
+使用 [dnd-kit](https://github.com/clauderic/dnd-kit/tree/master) 搭配 [`components`](https://github.com/DouyinFE/semi-design/blob/340c93e4e1612a879be869c43ad7a9a85ab5a302/packages/semi-ui/table/interface.ts#L200) API 可轻松实现拖拽排序。v2.58 版本支持。
 
 ```jsx live=true dir="column" noInline=true hideInDSM
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Table, Avatar } from '@douyinfe/semi-ui';
-import { DndProvider, DragSource, DropTarget } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import * as dateFns from 'date-fns';
+import { DndContext, PointerSensor, useSensors, useSensor } from '@dnd-kit/core'; // based on @dnd-kit/core v6
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { CSS as cssDndKit } from '@dnd-kit/utilities';
+import classNames from 'classnames';
 
-let draggingIndex = -1;
-const PAGE_SIZE = 5;
-const DAY = 24 * 60 * 60 * 1000;
-const figmaIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png';
-
-function BodyRow(props) {
-    const { isOver, connectDragSource, connectDropTarget, moveRow, currentPage, ...restProps } = props;
-    const style = { ...restProps.style, cursor: 'move' };
-
-    let { className } = restProps;
-    if (isOver) {
-        console.log('true');
-        if (restProps.index > draggingIndex) {
-            className += ' drop-over-downward';
-        }
-        if (restProps.index < draggingIndex) {
-            className += ' drop-over-upward';
-        }
-    }
-
-    return connectDragSource(connectDropTarget(<tr {...restProps} className={className} style={style} />));
-}
-
-const rowSource = {
-    beginDrag(props) {
-        draggingIndex = props.index;
-        return {
-            index: props.index,
-        };
-    },
-};
-
-const rowTarget = {
-    drop(props, monitor) {
-        const dragIndex = monitor.getItem().index;
-        const hoverIndex = props.index;
-
-        if (dragIndex === hoverIndex) {
-            return;
-        }
-
-        props.moveRow(dragIndex, hoverIndex);
-
-        monitor.getItem().index = hoverIndex;
-    },
-};
-
-const DraggableBodyRow = DropTarget('row', rowTarget, (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-}))(
-    DragSource('row', rowSource, connect => ({
-        connectDragSource: connect.dragSource(),
-    }))(BodyRow)
-);
-
-const columns = [
-    {
-        title: '标题',
-        dataIndex: 'name',
-        width: 400,
-        render: (text, record, index) => {
-            return (
-                <div>
-                    <Avatar size="small" shape="square" src={figmaIconUrl} style={{ marginRight: 12 }}></Avatar>
-                    {text}
-                </div>
-            );
-        },
-        filters: [
+function App() {
+    const pageSize = 10;
+    const [dataSource, setData] = useState([]);
+    const [pageData, setPageData] = useState([]);
+    const columns = useMemo(
+        () => [
             {
-                text: 'Semi Design 设计稿',
-                value: 'Semi Design 设计稿',
+                title: '标题',
+                dataIndex: 'name',
+                width: 400,
+                render: (text, record, index) => {
+                    return (
+                        <div>
+                            <Avatar
+                                size="small"
+                                shape="square"
+                                src="https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png"
+                                style={{ marginRight: 12 }}
+                            ></Avatar>
+                            {text}
+                        </div>
+                    );
+                },
+                filters: [
+                    {
+                        text: 'Semi Design 设计稿',
+                        value: 'Semi Design 设计稿',
+                    },
+                    {
+                        text: 'Semi D2C 设计稿',
+                        value: 'Semi D2C 设计稿',
+                    },
+                ],
+                onFilter: (value, record) => record.name.includes(value),
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                title: '大小',
+                dataIndex: 'size',
+                sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+                render: text => `${text} KB`,
+            },
+            {
+                title: '所有者',
+                dataIndex: 'owner',
+                render: (text, record, index) => {
+                    return (
+                        <div>
+                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                                {typeof text === 'string' && text.slice(0, 1)}
+                            </Avatar>
+                            {text}
+                        </div>
+                    );
+                },
+            },
+            {
+                title: '更新日期',
+                dataIndex: 'updateTime',
+                sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+                render: value => {
+                    return dateFns.format(new Date(value), 'yyyy-MM-dd');
+                },
             },
         ],
-        onFilter: (value, record) => record.name.includes(value),
-    },
-    {
-        title: '大小',
-        dataIndex: 'size',
-        width: 200,
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
-    },
-    {
-        title: '所有者',
-        width: 200,
-        dataIndex: 'owner',
-        render: (text, record, index) => {
-            return (
-                <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
-                    {text}
-                </div>
-            );
+        []
+    );
+
+    useEffect(() => {
+        const getData = () => {
+            const data = [];
+            for (let i = 0; i < 46; i++) {
+                const isSemiDesign = i % 2 === 0;
+                const randomNumber = (i * 1000) % 199;
+                data.push({
+                    key: '' + i,
+                    name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
+                    owner: isSemiDesign ? '姜鹏志' : '郝宣',
+                    size: randomNumber,
+                    updateTime: new Date().valueOf() + randomNumber,
+                    avatarBg: isSemiDesign ? 'grey' : 'red',
+                });
+            }
+            return data;
+        };
+        const data = getData();
+        setData(data);
+    }, []);
+    const [pageNum, setPageNum] = useState(1);
+
+    useEffect(() => {
+        const currentPageData = dataSource.slice((pageNum - 1) * pageSize, pageNum * pageSize);
+        setPageData(currentPageData);
+    }, [dataSource, pageNum]);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: { distance: 1 },
+        })
+    );
+
+    const handleDragEnd = event => {
+        const { active, over } = event;
+        if (active && over && active.id !== over.id) {
+            setPageData(prev => {
+                const activeIndex = prev.findIndex(data => data.key === active.id);
+                const overIndex = prev.findIndex(data => data.key === over.id);
+                return arrayMove(prev, activeIndex, overIndex);
+            });
         }
-
-    },
-    {
-        title: '更新日期',
-        dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
-            return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
-];
-
-const initData = [];
-for (let i = 0; i < 46; i++) {
-    const isSemiDesign = i % 2 === 0;
-    const randomNumber = (i * 1000) % 199;
-    initData.push({
-        key: '' + i,
-        name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
-        owner: isSemiDesign ? '姜鹏志' : '郝宣',
-        size: randomNumber,
-        updateTime: new Date().valueOf() + randomNumber * DAY,
-        avatarBg: isSemiDesign ? 'grey' : 'red'
-    });
-}
-
-function DragSortingTableDemo(props) {
-    const [data, setData] = useState([...initData]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageData, setPageData] = useState(data.slice(0, PAGE_SIZE));
-
-    const components = useMemo(() => ({
-        body: {
-            row: DraggableBodyRow,
-        },
-    }), []);
-
-    const moveRow = (dragIndex, hoverIndex) => {
-        const totalDragIndex = (currentPage - 1) * PAGE_SIZE + dragIndex;
-        const totalHoverIndex = (currentPage - 1) * PAGE_SIZE + hoverIndex;
-        const dragRow = data[totalDragIndex];
-        const newData = [...data];
-        newData.splice(totalDragIndex, 1);
-        newData.splice(totalHoverIndex, 0, dragRow);
-        setData(newData);
-        setPageData(newData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE));
     };
 
-    const handlePageChange = (pageNum) => {
-        console.log(pageNum);
-        setCurrentPage(pageNum);
-        setPageData(data.slice((pageNum - 1) * PAGE_SIZE, pageNum * PAGE_SIZE));
+    const handleChange = ({ pagination }) => {
+        const { currentPage } = pagination;
+        setPageNum(currentPage);
+    };
+
+    const SortableRow = (props) => {
+        const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } = useSortable({
+            id: props['data-row-key'],
+        });
+        const style = {
+            ...props.style,
+            transform: cssDndKit.Transform.toString(transform),
+            transition,
+            cursor: 'grabbing',
+            ...(isDragging ? { zIndex: 999, position: 'relative' } : {}),
+        };
+        const rowCls = classNames(props.className,
+            {
+                ['isDragging']: isDragging,
+                ['isOver']: isOver,
+            }
+        );
+        const onPointerDown = (event) => {
+            event.persist();
+            console.log('props', event);
+            listeners.onPointerDown(event);
+        };
+
+        return <tr {...props} className={rowCls} ref={setNodeRef} style={style} {...attributes} {...listeners} onPointerDown={onPointerDown}></tr>;
     };
 
     return (
-        <div id="components-table-demo-drag-sorting">
-            <DndProvider backend={HTML5Backend}>
+        <DndContext
+            // https://docs.dndkit.com/api-documentation/context-provider#autoscroll
+            autoScroll={true}
+            sensors={sensors}
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={handleDragEnd}
+        >
+            <SortableContext items={pageData.map(data => data.key)} strategy={verticalListSortingStrategy}>
                 <Table
+                    components={{
+                        body: {
+                            row: SortableRow,
+                        },
+                    }}
+                    rowKey="key"
                     columns={columns}
                     dataSource={pageData}
-                    pagination={{
-                        pageSize: PAGE_SIZE,
-                        total: data.length,
-                        currentPage,
-                        onPageChange: handlePageChange
-                    }}
-                    components={components}
-                    onRow={(record, index) => ({
-                        index,
-                        moveRow,
-                    })}
+                    pagination={{ currentPage: pageNum, pageSize: pageSize, total: dataSource.length }}
+                    onChange={handleChange}
                 />
-            </DndProvider>
-        </div>
+            </SortableContext>
+        </DndContext>
     );
 }
 
-render(DragSortingTableDemo);
+render(App);
 ```
 
-本例中使用的 CSS 样式为：
-
-```css
-#components-table-demo-drag-sorting tr.drop-over-downward td {
-    border-bottom: 2px dashed #1890ff;
-}
-
-#components-table-demo-drag-sorting tr.drop-over-upward td {
-    border-top: 2px dashed #1890ff;
-}
-```
 
 ### 表格分组
 
@@ -2872,8 +3837,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -2881,8 +3846,8 @@ const columns = [
     {
         title: '大小',
         dataIndex: 'size',
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
     },
     {
         title: '所有者',
@@ -2890,31 +3855,32 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 const getData = () => {
     const data = [];
     for (let i = 0; i < 46; i++) {
         const isSemiDesign = i % 2 === 0;
-        const randomNumber = i * 1000 % 19 + 100;
+        const randomNumber = ((i * 1000) % 19) + 100;
         data.push({
             key: '' + i,
-            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
             owner: isSemiDesign ? '姜鹏志' : '郝宣',
             size: randomNumber,
             updateTime: new Date().valueOf() + randomNumber * DAY,
@@ -2927,7 +3893,8 @@ const getData = () => {
 const data = getData();
 
 function Demo() {
-    const rowKey = record => `${record.owner && record.owner.toLowerCase()}-${record.name && record.name.toLowerCase()}`;
+    const rowKey = record =>
+        `${record.owner && record.owner.toLowerCase()}-${record.name && record.name.toLowerCase()}`;
 
     return (
         <div style={{ padding: '20px 0px' }}>
@@ -2945,7 +3912,9 @@ function Demo() {
                         // onMouseLeave: () => {
                         //     console.log(`Grouped row mouse leave: `, group, index);
                         // },
-                        onClick: e => { console.log(`Grouped row clicked: `, group, index); }
+                        onClick: e => {
+                            console.log(`Grouped row clicked: `, group, index);
+                        },
                     };
                 }}
                 clickGroupedRowToExpand // if you want to click the entire row to expand
@@ -2964,7 +3933,7 @@ render(Demo);
 
 -   必须传递 `scroll.y`（number） 与 `style.width`（number）；
 -   需要传递每行的高度 `virtualized.itemSize`（不传时普通行高默认为 `56`，组头行高默认为 `56`），可以为如下类型：
-    -   `number` 
+    -   `number`
     -   `(index, { sectionRow?: boolean, expandedRow?: boolean }) => number`
 -   表格分组虚拟化需要版本 >= `0.37.0`
 -   Semi Table 底层借助了 `react-window` 的能力来实现虚拟化，因此 `react-window` `VariableSizeList` 所支持的其他参数也可以通过 `virtualized`(object)传入，例如 `overscanCount`
@@ -2986,11 +3955,7 @@ const columns = [
         width: 200,
         fixed: true,
         render: (text, record, index) => {
-            return (
-                <div>
-                    {text}
-                </div>
-            );
+            return <div>{text}</div>;
         },
         filters: [
             {
@@ -2998,8 +3963,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -3008,8 +3973,8 @@ const columns = [
         title: '大小',
         dataIndex: 'size',
         width: 150,
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
     },
     {
         title: '所有者',
@@ -3017,23 +3982,24 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
         fixed: 'right',
         width: 150,
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 const getData = () => {
@@ -3043,11 +4009,11 @@ const getData = () => {
         const randomNumber = (i * 1000) % 199;
         data.push({
             key: '' + i,
-            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
             owner: isSemiDesign ? '姜鹏志' : '郝宣',
             size: randomNumber,
             updateTime: new Date().valueOf() + randomNumber * DAY,
-            avatarBg: isSemiDesign ? 'grey' : 'red'
+            avatarBg: isSemiDesign ? 'grey' : 'red',
         });
     }
     return data;
@@ -3070,7 +4036,7 @@ function VirtualizedFixedDemo() {
                 scroll={scroll}
                 style={style}
                 virtualized
-                getVirtualizedListRef={ref => virtualizedListRef = ref}
+                getVirtualizedListRef={ref => (virtualizedListRef = ref)}
             />
         </>
     );
@@ -3097,11 +4063,7 @@ const columns = [
         width: 200,
         fixed: true,
         render: (text, record, index) => {
-            return (
-                <div>
-                    {text}
-                </div>
-            );
+            return <div>{text}</div>;
         },
         filters: [
             {
@@ -3109,8 +4071,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -3119,8 +4081,8 @@ const columns = [
         title: '大小',
         dataIndex: 'size',
         width: 150,
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
     },
     {
         title: '所有者',
@@ -3128,23 +4090,24 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
         fixed: 'right',
         width: 150,
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
 function InfiniteScrollDemo() {
@@ -3162,11 +4125,11 @@ function InfiniteScrollDemo() {
             const randomNumber = (i * 1000) % 199;
             newData.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         setData(newData);
@@ -3203,7 +4166,6 @@ function InfiniteScrollDemo() {
 }
 
 render(InfiniteScrollDemo);
-
 ```
 
 ### 受控的动态表格
@@ -3239,8 +4201,8 @@ class App extends React.Component {
                         value: 'Semi Design 设计稿',
                     },
                     {
-                        text: 'Semi Pro 设计稿',
-                        value: 'Semi Pro 设计稿',
+                        text: 'Semi D2C 设计稿',
+                        value: 'Semi D2C 设计稿',
                     },
                 ],
                 onFilter: (value, record) => record.name.includes(value),
@@ -3248,8 +4210,8 @@ class App extends React.Component {
             {
                 title: '大小',
                 dataIndex: 'size',
-                sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-                render: (text) => `${text} KB`
+                sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+                render: text => `${text} KB`,
             },
             {
                 title: '所有者',
@@ -3257,21 +4219,22 @@ class App extends React.Component {
                 render: (text, record, index) => {
                     return (
                         <div>
-                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                                {typeof text === 'string' && text.slice(0, 1)}
+                            </Avatar>
                             {text}
                         </div>
                     );
-                }
-        
+                },
             },
             {
                 title: '更新日期',
                 dataIndex: 'updateTime',
-                sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-                render: (value) => {
+                sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+                render: value => {
                     return dateFns.format(new Date(value), 'yyyy-MM-dd');
-                }
-            }
+                },
+            },
         ];
 
         this.getData = () => {
@@ -3281,11 +4244,11 @@ class App extends React.Component {
                 const randomNumber = (i * 1000) % 199;
                 data.push({
                     key: '' + i,
-                    name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                    name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                     owner: isSemiDesign ? '姜鹏志' : '郝宣',
                     size: randomNumber,
                     updateTime: new Date().valueOf() + randomNumber * DAY,
-                    avatarBg: isSemiDesign ? 'grey' : 'red'
+                    avatarBg: isSemiDesign ? 'grey' : 'red',
                 });
             }
             return data;
@@ -3636,11 +4599,11 @@ class App extends React.Component {
             let pagination = checked
                 ? false
                 : {
-                    currentPage: 1,
-                    pageSize: 8,
-                    total: data.length,
-                    onPageChange: page => this.setPage(page),
-                };
+                      currentPage: 1,
+                      pageSize: 8,
+                      total: data.length,
+                      onPageChange: page => this.setPage(page),
+                  };
 
             this.setState({ pagination });
         };
@@ -3821,7 +4784,7 @@ render(App);
 }
 ```
 
-`Column.render` 第四个入参为一个object，结构如下：
+`Column.render` 第四个入参为一个 object，结构如下：
 
 ```text
 {
@@ -3867,8 +4830,8 @@ const columns = [
                 value: 'Semi Design 设计稿',
             },
             {
-                text: 'Semi Pro 设计稿',
-                value: 'Semi Pro 设计稿',
+                text: 'Semi D2C 设计稿',
+                value: 'Semi D2C 设计稿',
             },
         ],
         onFilter: (value, record) => record.name.includes(value),
@@ -3891,8 +4854,8 @@ const columns = [
     {
         title: '大小',
         dataIndex: 'size',
-        sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-        render: (text) => `${text} KB`
+        sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+        render: text => `${text} KB`,
     },
     {
         title: '所有者',
@@ -3900,35 +4863,36 @@ const columns = [
         render: (text, record, index) => {
             return (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
-        }
-
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-        render: (value) => {
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+        render: value => {
             return dateFns.format(new Date(value), 'yyyy-MM-dd');
-        }
-    }
+        },
+    },
 ];
 
-const getData = (total) => {
+const getData = total => {
     const data = [];
     for (let i = 0; i < total; i++) {
         const isSemiDesign = i % 2 === 0;
         const randomNumber = (i * 1000) % 199;
         data.push({
             key: '' + i,
-            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
             owner: isSemiDesign ? '姜鹏志' : '郝宣',
             size: randomNumber,
             updateTime: new Date().valueOf() + randomNumber * DAY,
-            avatarBg: isSemiDesign ? 'grey' : 'red'
+            avatarBg: isSemiDesign ? 'grey' : 'red',
         });
     }
     return data;
@@ -3937,9 +4901,12 @@ const getData = (total) => {
 function Demo() {
     const [dataSource, setDataSource] = useState([]);
     const total = 46;
-    const pagination = useMemo(() => ({
-        pageSize: 12,
-    }), []);
+    const pagination = useMemo(
+        () => ({
+            pageSize: 12,
+        }),
+        []
+    );
 
     const rowSelection = useMemo(() => {
         return {
@@ -4009,8 +4976,8 @@ const columns = [
                         value: 'Semi Design 设计稿',
                     },
                     {
-                        text: 'Semi Pro 设计稿',
-                        value: 'Semi Pro 设计稿',
+                        text: 'Semi D2C 设计稿',
+                        value: 'Semi D2C 设计稿',
                     },
                 ],
                 onFilter: (value, record) => record.name.includes(value),
@@ -4020,10 +4987,10 @@ const columns = [
                 dataIndex: 'size',
                 width: 100,
                 fixed: true,
-                sorter: (a, b) => a.size - b.size > 0 ? 1 : -1,
-                render: (text) => `${text} KB`
+                sorter: (a, b) => (a.size - b.size > 0 ? 1 : -1),
+                render: text => `${text} KB`,
             },
-        ]
+        ],
     },
     {
         title: '其他信息',
@@ -4034,22 +5001,23 @@ const columns = [
                 render: (text, record, index) => {
                     return (
                         <div>
-                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                            <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                                {typeof text === 'string' && text.slice(0, 1)}
+                            </Avatar>
                             {text}
                         </div>
                     );
-                }
-        
+                },
             },
             {
                 title: '更新日期',
                 dataIndex: 'updateTime',
-                sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
-                render: (value) => {
+                sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
+                render: value => {
                     return dateFns.format(new Date(value), 'yyyy-MM-dd');
-                }
-            }
-        ]
+                },
+            },
+        ],
     },
     {
         title: '更多',
@@ -4059,22 +5027,22 @@ const columns = [
         dataIndex: 'operate',
         render: () => {
             return <IconMore />;
-        }
+        },
     },
 ];
 
-const getData = (total) => {
+const getData = total => {
     const data = [];
     for (let i = 0; i < total; i++) {
         const isSemiDesign = i % 2 === 0;
         const randomNumber = (i * 1000) % 199;
         data.push({
             key: '' + i,
-            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
             owner: isSemiDesign ? '姜鹏志' : '郝宣',
             size: randomNumber,
             updateTime: new Date().valueOf() + randomNumber * DAY,
-            avatarBg: isSemiDesign ? 'grey' : 'red'
+            avatarBg: isSemiDesign ? 'grey' : 'red',
         });
     }
     return data;
@@ -4113,18 +5081,18 @@ const DAY = 24 * 60 * 60 * 1000;
 const figmaIconUrl = 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/figma-icon.png';
 const Column = Table.Column;
 
-const getData = (total) => {
+const getData = total => {
     const data = [];
     for (let i = 0; i < total; i++) {
         const isSemiDesign = i % 2 === 0;
         const randomNumber = (i * 1000) % 199;
         data.push({
             key: '' + i,
-            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+            name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
             owner: isSemiDesign ? '姜鹏志' : '郝宣',
             size: randomNumber,
             updateTime: new Date().valueOf() + randomNumber * DAY,
-            avatarBg: isSemiDesign ? 'grey' : 'red'
+            avatarBg: isSemiDesign ? 'grey' : 'red',
         });
     }
     return data;
@@ -4142,8 +5110,8 @@ function Demo() {
             value: 'Semi Design 设计稿',
         },
         {
-            text: 'Semi Pro 设计稿',
-            value: 'Semi Pro 设计稿',
+            text: 'Semi D2C 设计稿',
+            value: 'Semi D2C 设计稿',
         },
     ];
 
@@ -4159,7 +5127,9 @@ function Demo() {
     const renderOwner = (text, record, index) => {
         return (
             <div>
-                <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                    {typeof text === 'string' && text.slice(0, 1)}
+                </Avatar>
                 {text}
             </div>
         );
@@ -4174,14 +5144,41 @@ function Demo() {
             onChange={(...args) => console.log(...args)}
         >
             <Column title="基本信息" fixed="left">
-                <Column title="标题" dataIndex="name" width={300} fixed render={renderName} filters={nameFilters} onFilter={(value, record) => record.name.includes(value)} />
-                <Column title="大小" dataIndex="size" width={100} fixed render={(text) => `${text} KB`} sorter={(a, b) => a.size - b.size > 0 ? 1 : -1} ></Column>
+                <Column
+                    title="标题"
+                    dataIndex="name"
+                    width={300}
+                    fixed
+                    render={renderName}
+                    filters={nameFilters}
+                    onFilter={(value, record) => record.name.includes(value)}
+                />
+                <Column
+                    title="大小"
+                    dataIndex="size"
+                    width={100}
+                    fixed
+                    render={text => `${text} KB`}
+                    sorter={(a, b) => (a.size - b.size > 0 ? 1 : -1)}
+                ></Column>
             </Column>
             <Column title="其他信息">
                 <Column title="所有者" dataIndex="owner" render={renderOwner} />
-                <Column title="更新日期" dataIndex="updateTime" sorter={(a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1} render={(value) => dateFns.format(new Date(value), 'yyyy-MM-dd')}></Column>
+                <Column
+                    title="更新日期"
+                    dataIndex="updateTime"
+                    sorter={(a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1)}
+                    render={value => dateFns.format(new Date(value), 'yyyy-MM-dd')}
+                ></Column>
             </Column>
-            <Column title="更多" dataIndex="operate" fixed="right" width={100} align="center" render={() => <IconMore />} />
+            <Column
+                title="更多"
+                dataIndex="operate"
+                fixed="right"
+                width={100}
+                align="center"
+                render={() => <IconMore />}
+            />
         </Table>
     );
 }
@@ -4189,11 +5186,10 @@ function Demo() {
 render(Demo);
 ```
 
-
 ### 行列合并
 
-- 表头除了通过 `children` 写法进行合并外，可通过设置 `column.colSpan` 进行表头的列合并。
-- 表格支持行/列合并，使用 `render` 里的单元格属性 `colSpan` 或者 `rowSpan` 设值为 0 时，设置的表格不会渲染。
+-   表头除了通过 `children` 写法进行合并外，可通过设置 `column.colSpan` 进行表头的列合并。
+-   表格支持行/列合并，使用 `render` 里的单元格属性 `colSpan` 或者 `rowSpan` 设值为 0 时，设置的表格不会渲染。
 
 ```text
 type Render = (text: string, record: Object, index: number, options?: RenderOptions) => {
@@ -4257,7 +5253,7 @@ const columns = [
                     children: `${text} KB`,
                     props: {
                         colSpan: 0,
-                    }
+                    },
                 };
             }
             if (index === 1) {
@@ -4265,7 +5261,7 @@ const columns = [
                     children: `${text} KB`,
                     props: {
                         rowSpan: 2,
-                    }
+                    },
                 };
             }
             if (index === 2) {
@@ -4273,11 +5269,11 @@ const columns = [
                     children: `${text} KB`,
                     props: {
                         rowSpan: 0,
-                    }
+                    },
                 };
             }
             return `${text} KB`;
-        }
+        },
     },
     {
         title: '所有者',
@@ -4285,7 +5281,9 @@ const columns = [
         render: (text, record, index) => {
             const children = (
                 <div>
-                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>{typeof text === 'string' && text.slice(0, 1)}</Avatar>
+                    <Avatar size="small" color={record.avatarBg} style={{ marginRight: 4 }}>
+                        {typeof text === 'string' && text.slice(0, 1)}
+                    </Avatar>
                     {text}
                 </div>
             );
@@ -4294,45 +5292,45 @@ const columns = [
                     children,
                     props: {
                         colSpan: 0,
-                    }
+                    },
                 };
             }
             return children;
-        }
+        },
     },
     {
         title: '更新日期',
         dataIndex: 'updateTime',
-        sorter: (a, b) => a.updateTime - b.updateTime > 0 ? 1 : -1,
+        sorter: (a, b) => (a.updateTime - b.updateTime > 0 ? 1 : -1),
         render: (value, record, index) => {
             const children = dateFns.format(new Date(value), 'yyyy-MM-dd');
             if (index === 0) {
                 return {
                     children,
                     props: {
-                        colSpan: 0
-                    }
+                        colSpan: 0,
+                    },
                 };
             }
             if (index === 1) {
                 return {
                     children,
                     props: {
-                        rowSpan: 2
-                    }
+                        rowSpan: 2,
+                    },
                 };
             }
             if (index === 2) {
                 return {
                     children,
                     props: {
-                        rowSpan: 0
-                    }
+                        rowSpan: 0,
+                    },
                 };
             }
             return children;
-        }
-    }
+        },
+    },
 ];
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -4340,18 +5338,18 @@ const DAY = 24 * 60 * 60 * 1000;
 function App() {
     const [dataSource, setData] = useState([]);
 
-    const getData = (total) => {
+    const getData = total => {
         const data = [];
         for (let i = 0; i < total; i++) {
             const isSemiDesign = i % 2 === 0;
             const randomNumber = (i * 1000) % 199;
             data.push({
                 key: '' + i,
-                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi Pro 设计稿${i}.fig`,
+                name: isSemiDesign ? `Semi Design 设计稿${i}.fig` : `Semi D2C 设计稿${i}.fig`,
                 owner: isSemiDesign ? '姜鹏志' : '郝宣',
                 size: randomNumber,
                 updateTime: new Date().valueOf() + randomNumber * DAY,
-                avatarBg: isSemiDesign ? 'grey' : 'red'
+                avatarBg: isSemiDesign ? 'grey' : 'red',
             });
         }
         return data;
@@ -4372,52 +5370,56 @@ render(App);
 
 ## Table
 
-| 属性                      | 说明                                                                                                           | 类型                                                                                                            | 默认值     | 版本                                    |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------- |
-| bordered                  | 是否展示外边框和列边框                                                                                         | boolean                                                                                                         | false      |
-| childrenRecordName        | 树形表格dataSource中每行元素中表示子级数据的字段，默认为children                                               | string                                                                                                          | 'children' |
-| className                 | 最外层样式名                                                                                                   | string                                                                                                          |            |
-| clickGroupedRowToExpand   | 点击分组表头行时分组内容展开或收起                                                                             | boolean                                                                                                         |            | **0.29.0**                              |
-| columns                   | 表格列的配置描述，详见[Column](#Column)                                                                        | Column[]                                                                                                        | []         |
-| dataSource                | 数据                                                                                                           | RecordType[]                                                                                                    | []         |
-| defaultExpandAllRows      | 默认是否展开所有行，动态加载数据时不生效                                                                                             | boolean                                                                                                         | false      |
-| defaultExpandAllGroupRows | 默认是否展开分组行，动态加载数据时不生效                                                                                             | boolean                                                                                                         | false      | **1.30.0**                              |
-| defaultExpandedRowKeys    | 默认展开的行 key 数组，，动态加载数据时不生效                                                                                          | Array<\*>                                                                                                       | []         |
-| empty                     | 无数据时展示的内容                                                                                             | ReactNode                                                                                                       | '暂无数据' |
-| expandCellFixed           | 展开图标所在列是否固定，与 Column 中的 fixed 取值相同                                                          | boolean\|string                                                                                                 | false      |
-| expandIcon                | 自定义展开按钮，传 `false` 关闭默认的渲染                                                                      | boolean \| ReactNode<br/> \| (expanded: boolean) => ReactNode                                                   |            |
-| expandedRowKeys           | 展开的行，传入此参数时行展开功能将受控                                                                         | (string \| number)[]  |                                         |
-| expandedRowRender         | 额外的展开行                                                                                                   | (record: object, index: number, expanded: boolean) => ReactNode                                                 |            |
-| expandAllRows             | 是否展开所有行                                                                                                 | boolean                                                                                                         | false      | **1.30.0**                              |
-| expandAllGroupRows        | 是否展开分组行                                                                                                 | boolean                                                                                                         | false      | **1.30.0**                              |
-| expandRowByClick          | 点击行时是否展开可展开行                                                                                       | boolean                                                                                                         | false      | **1.31.0**                              |
-| footer                    | 表格尾部                                                                                                       | ReactNode<br/>\|(pageData: object) => ReactNode                                                                 |            |
-| getVirtualizedListRef     | 返回虚拟化表格所用VariableSizeList的ref，仅在配置virtualized时有效                                             | (ref: React.RefObject) => void                                                                                  |            | **1.20.0**                              |
-| groupBy                   | 分组依据，一般为 dataSource 元素中某个键名或者返回值为字符串、数字的一个方法                                   | string\|number<br/>\|(record: RecordType) => string\|number                                                     |            | **0.29.0**                              |
-| hideExpandedColumn        | 当表格可展开时，展开按钮默认会与第一列文案渲染在同一个单元格内，设为false时默认将展开按钮单独作为一列渲染      | boolean                                                                                                         | true       |
-| indentSize                | 树形结构 TableCell 的缩进大小                                                                                  | number                                                                                                          | 20         |
-| loading                   | 页面是否加载中                                                                                                 | boolean                                                                                                         | false      |
-| pagination                | 分页组件配置                                                                                                   | boolean\|TablePaginationProps                                                                                   | true       |
-| prefixCls                 | 样式名前缀                                                                                                     | string                                                                                                          |            |
-| renderGroupSection        | 表头渲染方法                                                                                                   | (groupKey?: string \| number, group?: string[] \| number[]) => ReactNode                                        |            | **0.29.0**                              |
-| renderPagination          | 自定义分页器渲染方法                                                                                           | (paginationProps?: TablePaginationProps) => ReactNode                                                           |            | **1.13.0**                              |
-| resizable                 | 是否开启伸缩列功能，需要进行伸缩的列必须要提供 width 的值                                                      | boolean\|[Resizable](#Resizable)                                                                                | false      |
-| rowExpandable             | 传入该参数时，Table作行渲染时会调用该函数，返回值用于判断该行是否可展开，返回值为 false 时关闭可展开按钮的渲染 | (record: object) => boolean                                                                                     |            | **0.27.0**                              |
-| rowKey                    | 表格行 key 的取值，可以是字符串或一个函数                                                                      | string<br/>\|(record: RecordType) => string                                                                     | 'key'      |
-| rowSelection              | 表格行是否可选择，详见 [rowSelection](#rowSelection)                                                           | object                                                                                                          | -          |
-| scroll                    | 表格是否可滚动，配置滚动区域的宽或高，详见 [scroll](#scroll)                                                   | object                                                                                                          | -          |
-| showHeader                | 是否显示表头                                                                                                   | boolean                                                                                                         | true       |
-| size                      | 表格尺寸，影响表格行 `padding`                                                                                 | "default"\|"middle"\|"small"                                                                                    | "default"  | **1.0.0**                               |
-| title                     | 表格标题                                                                                                       | ReactNode<br/>\|(pageData: RecordType[]) => ReactNode                                                           |            |
-| virtualized               | 虚拟化配置                                                                                                     | Virtualized                                                                                                     | false      | **0.33.0**                              |
-| virtualized.itemSize      | 每行的高度                                                                                                     | number\|(index: number) => number                                                                               | 56         | **0.33.0**                              |
-| virtualized.onScroll      | 虚拟化滚动回调方法                                                                                             | ( scrollDirection?: 'forward' \| 'backward', scrollOffset?: number, scrollUpdateWasRequested?: boolean ) => void |            | **0.33.0**                              |
-| onChange                  | 分页、排序、筛选变化时触发                                                                                     | ({ pagination: TablePaginationProps, <br/>filters: Array<\*>, sorter: object, extra: any }) => void             |            |
-| onExpand                  | 点击行展开图标时进行触发                                                                                       | (expanded: boolean, record: RecordType, DOMEvent: MouseEvent) => void                                           |            | 第三个参数 DOMEvent 需版本 **>=0.28.0** |
-| onExpandedRowsChange      | 展开的行变化时触发                                                                                             | (rows: RecordType[]) => void                                                                                    |            |
-| onGroupedRow              | 类似于 onRow，不过这个参数单独用于定义分组表头的行属性                                                         | (record: RecordType, index: number) => object                                                                   |            | **0.29.0**                              |
-| onHeaderRow               | 设置头部行属性，返回的对象会被合并传给表头行                                                                   | (columns: Column[], index: number) => object                                                                    |            |
-| onRow                     | 设置行属性，返回的对象会被合并传给表格行                                                                       | (record: RecordType, index: number) => object                                                                   |            |
+| 属性 | 说明                                                                  | 类型 | 默认值 | 版本 |
+| --- |---------------------------------------------------------------------| --- | --- | --- |
+| bordered | 是否展示外边框和列边框                                                         | boolean | false |
+| childrenRecordName | 树形表格 dataSource 中每行元素中表示子级数据的字段，默认为 children                        | string | 'children' |
+| className | 最外层样式名                                                              | string |  |
+| clickGroupedRowToExpand | 点击分组表头行时分组内容展开或收起                                                   | boolean |  | **0.29.0** |
+| columns | 表格列的配置描述，详见[Column](#Column)                                        | Column[] | [] |
+| components | 覆盖 Table 的组成元素，如 table, body，row，td，th 等                            | <a target="_blank" href="https://github.com/DouyinFE/semi-design/blob/340c93e4e1612a879be869c43ad7a9a85ab5a302/packages/semi-ui/table/interface.ts#L200">TableComponents</a> |  |
+| dataSource | 数据。**请为每一条数据分配一个独立的 key，或使用 rowKey 指定一个作为主键的属性名**                                    | RecordType[] | [] |
+| defaultExpandAllRows | 默认是否展开所有行，动态加载数据时不生效                                                | boolean | false |
+| defaultExpandAllGroupRows | 默认是否展开分组行，动态加载数据时不生效                                                | boolean | false | **1.30.0** |
+| defaultExpandedRowKeys | 默认展开的行 key 数组，，动态加载数据时不生效                                           | Array<\*> | [] |
+| direction | RTL、LTR 方向，默认值等于 ConfigProvider direction，可在此单独配置 Table 的 direction | 'ltr' \| 'rtl' |  | **2.31.0** |
+| empty | 无数据时展示的内容                                                           | ReactNode | '暂无数据' |
+| expandCellFixed | 展开图标所在列是否固定，与 Column 中的 fixed 取值相同                                  | boolean\|string | false |
+| expandIcon | 自定义展开按钮，传 `false` 关闭默认的渲染                                           | boolean \| ReactNode<br/> \| (expanded: boolean) => ReactNode |  |
+| expandedRowKeys | 展开的行，传入此参数时行展开功能将受控                                                 | (string \| number)[] |  |
+| expandedRowRender | 额外的展开行。**请为每一条数据分配一个独立的 key，或使用 rowKey 指定一个作为主键的属性名**                                                               | (record: object, index: number, expanded: boolean) => ReactNode |  |
+| expandAllRows | 是否展开所有行                                                             | boolean | false | **1.30.0** |
+| expandAllGroupRows | 是否展开分组行                                                             | boolean | false | **1.30.0** |
+| expandRowByClick | 点击行时是否展开可展开行                                                        | boolean | false | **1.31.0** |
+| footer | 表格尾部                                                                | ReactNode<br/>\|(pageData: object) => ReactNode |  |
+| getVirtualizedListRef | 返回虚拟化表格所用 VariableSizeList 的 ref，仅在配置 virtualized 时有效               | (ref: React.RefObject) => void |  | **1.20.0** |
+| groupBy | 分组依据，一般为 dataSource 元素中某个键名或者返回值为字符串、数字的一个方法                        | string\|number<br/>\|(record: RecordType) => string\|number |  | **0.29.0** |
+| hideExpandedColumn | 当表格可展开时，展开按钮默认会与第一列文案渲染在同一个单元格内，设为 false 时默认将展开按钮单独作为一列渲染           | boolean | true |
+| indentSize | 树形结构 TableCell 的缩进大小                                                | number | 20 |
+| keepDOM | 折叠行时是否不销毁被折叠的 DOM                                                   | boolean | false |
+| loading | 页面是否加载中                                                             | boolean | false |
+| pagination | 分页组件配置                                                              | boolean\|TablePaginationProps | true |
+| prefixCls | 样式名前缀                                                               | string |  |
+| renderGroupSection | 表头渲染方法                                                              | (groupKey?: string \| number, group?: string[] \| number[]) => ReactNode |  | **0.29.0** |
+| renderPagination | 自定义分页器渲染方法                                                          | (paginationProps?: TablePaginationProps) => ReactNode |  | **1.13.0** |
+| resizable | 是否开启伸缩列功能，需要进行伸缩的列必须要提供 width 的值                                    | boolean\|[Resizable](#Resizable) | false |
+| rowExpandable | 传入该参数时，Table 作行渲染时会调用该函数，返回值用于判断该行是否可展开，返回值为 false 时关闭可展开按钮的渲染      | (record: object) => boolean |  | **0.27.0** |
+| rowKey | 表格行 key 的取值，可以是字符串或一个函数                                             | string<br/>\|(record: RecordType) => string | 'key' |
+| rowSelection | 表格行是否可选择，详见 [rowSelection](#rowSelection)                           | object | - |
+| scroll | 表格是否可滚动，配置滚动区域的宽或高，详见 [scroll](#scroll)                             | object | - |
+| showHeader | 是否显示表头                                                              | boolean | true |
+| size | 表格尺寸，影响表格行 `padding`                                                | "default"\|"middle"\|"small" | "default" | **1.0.0** |
+| sticky | 固定表头                                                                | boolean \| { top: number } | false | **2.21.0** |
+| title | 表格标题                                                                | ReactNode<br/>\|(pageData: RecordType[]) => ReactNode |  |
+| virtualized | 虚拟化配置                                                               | Virtualized | false | **0.33.0** |
+| virtualized.itemSize | 每行的高度                                                               | number\|(index: number) => number | 56 | **0.33.0** |
+| virtualized.onScroll | 虚拟化滚动回调方法                                                           | ( scrollDirection?: 'forward' \| 'backward', scrollOffset?: number, scrollUpdateWasRequested?: boolean ) => void |  | **0.33.0** |
+| onChange | 分页、排序、筛选变化时触发。extra.changeType 自 v2.72 支持。                                                       | ({ pagination: TablePaginationProps, <br/>filters: Array<\*>, sorter: object, extra: { changeType: 'sorter' \| 'filter' \| 'pagination' } }) => void |  |
+| onExpand | 点击行展开图标时进行触发                                                        | (expanded: boolean, record: RecordType, DOMEvent: MouseEvent) => void |  | 第三个参数 DOMEvent 需版本 **>=0.28.0** |
+| onExpandedRowsChange | 展开的行变化时触发                                                           | (rows: RecordType[]) => void |  |
+| onGroupedRow | 类似于 onRow，不过这个参数单独用于定义分组表头的行属性                                      | (record: RecordType, index: number) => object |  | **0.29.0** |
+| onHeaderRow | 设置头部行属性，返回的对象会被合并传给表头行                                              | (columns: Column[], index: number) => object |  |
+| onRow | 设置行属性，返回的对象会被合并传给表格行                                                | (record: RecordType, index: number) => object |  |
 
 一些上面用到的类型定义：
 
@@ -4428,7 +5430,6 @@ interface TablePaginationProps extends PaginationProps {
     formatPageText?: FormatPageText;
 }
 
-type VirtualizedMode = 'list' | 'grid';
 type VirtualizedItemSizeFn = (index?: number) => number;
 type VirtualizedOnScrollArgs = {
     scrollDirection?: 'forward' | 'backward';
@@ -4437,11 +5438,12 @@ type VirtualizedOnScrollArgs = {
 };
 type VirtualizedOnScroll = (object: VirtualizedOnScrollArgs) => void;
 
-type Virtualized = boolean | {
-    mode?: VirtualizedMode;
-    itemSize?: number | VirtualizedItemSizeFn;
-    onScroll?: VirtualizedOnScroll;
-};
+type Virtualized =
+    | boolean
+    | {
+          itemSize?: number | VirtualizedItemSizeFn;
+          onScroll?: VirtualizedOnScroll;
+      };
 ```
 
 RecordType 为 Table 和 Column 的泛型参数，默认为 object 类型。你可以这样使用 RecordType：
@@ -4490,10 +5492,9 @@ function App() {
 }
 ```
 
-## onHeaderRow / onRow用法
+## onHeaderRow / onRow 用法
 
-`onHeaderRow` 中可以返回 th 支持的属性或者事件
-`onRow` 中可以返回 tr 支持的属性或者事件
+`onHeaderRow` 中可以返回 th 支持的属性或者事件 `onRow` 中可以返回 tr 支持的属性或者事件
 
 ```jsx
 import React from 'react';
@@ -4527,37 +5528,43 @@ import { Table } from '@douyinfe/semi-ui';
 
 ## Column
 
-| 属性                          | 说明                                                                                                   | 类型                                                                                            | 默认值 | 版本                        |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- | ------ | --------------------------- |
-| align                         | 设置列的对齐方式                                                                                       | 'left' \| 'right' \| 'center'                                                                   | 'left' |
-| className                     | 列样式名                                                                                               | string                                                                                          |        |
-| children                      | 表头合并时用于子列的设置                                                                               | Column[]                                                                                        |        |
-| colSpan                       | 表头列合并,设置为 0 时，不渲染                                                                         | number                                                                                          |        |
-| dataIndex                     | 列数据在数据项中对应的 key，使用排序或筛选时必传                                                       | string                                                                                          |        |
-| defaultFilteredValue          | 筛选的默认值，值为已筛选的 value 数组                                    | any[]                                                                                           |        | **2.5.0** |
-| defaultSortOrder              | 排序的默认值，可设置为 'ascend'\|'descend'\|false                                                      | boolean\| string                                                                                | false  | **1.31.0**                  |
-| filterChildrenRecord          | 是否需要对子级数据进行本地过滤，开启该功能后如果子级符合过滤标准，父级即使不符合仍然会保留             | boolean                                                                                         |        | **0.29.0**                  |
-| filterDropdown                | 可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互                                         | ReactNode                                                                                       |        |
-| filterDropdownProps           | 透传给 Dropdown 的属性，详情点击[Dropdown API](/zh-CN/show/dropdown#Dropdown)                          | object                                                                                          |        |
-| filterDropdownVisible         | 控制 Dropdown 的 visible，详情点击[Dropdown API](/zh-CN/show/dropdown#Dropdown)                        | boolean                                                                                         |        |
-| filterIcon                    | 自定义 filter 图标                                                                                     | boolean\|ReactNode\|(filtered: boolean) => ReactNode                                            |        |
-| filterMultiple                | 是否多选                                                                                               | boolean                                                                                         | true   |
-| filteredValue                 | 筛选的受控属性，外界可用此控制列的筛选状态，值为已筛选的 value 数组                                    | any[]                                                                                           |        |
-| filters                       | 表头的筛选菜单项                                                                                       | Filter[]                                                                                        |        |
-| fixed                         | 列是否固定，可选 true(等效于 left) 'left' 'right'                                                      | boolean\|string                                                                                 | false  |
-| key                           | React 需要的 key，如果已经设置了唯一的 dataIndex，可以忽略这个属性                                     | string                                                                                          |        |
-| render                        | 生成复杂数据的渲染函数，参数分别为当前行的值，当前行数据，行索引，@return 里面可以设置表格行/列合并    | (text: any, record: RecordType, index: number, { expandIcon?: ReactNode }) => object\|ReactNode |        |
-| renderFilterDropdownItem      | 自定义每个筛选项渲染方式，用法详见[自定义筛选项渲染](#自定义筛选项渲染)                                | ({ value: any, text: any, onChange: Function, level: number, ...otherProps }) => ReactNode      | -      | **1.1.0**                   |
-| sortChildrenRecord            | 是否对子级数据进行本地排序                                                                             | boolean                                                                                         |        | **0.29.0**                  |
-| sortOrder                     | 排序的受控属性，外界可用此控制列的排序，可设置为 'ascend'\|'descend'\|false                            | boolean\| string                                                                                | false  |
-| sorter                        | 排序函数，本地排序使用一个函数(参考 Array.sort 的 compareFunction)，需要服务端排序可设为 true          | boolean\|(r1: RecordType, r2: RecordType) => number                                             | true   |
-| title                         | 列头显示文字。传入 function 时，title 将使用函数的返回值；传入其他类型，将会和 sorter、filter 进行聚合 | ReactNode\|({ filter: ReactNode, sorter: ReactNode, selection: ReactNode }) => ReactNode        |        | Function 类型需要**0.34.0** |
-| useFullRender                 | 是否完全自定义渲染，用法详见[完全自定义渲染](#完全自定义渲染)                                          | boolean                                                                                         | false  | **0.34.0**                  |
-| width                         | 列宽度                                                                                                 | string \| number                                                                                |        |
-| onCell                        | 设置单元格属性                                                                                         | (record: RecordType, rowIndex: number) => object                                                |        |
-| onFilter                      | 本地模式下，确定筛选的运行函数                                                                         | (filteredValue: any[], record: RecordType) => boolean                                           |        |
-| onFilterDropdownVisibleChange | 自定义筛选菜单可见变化时回调                                                                           | (visible: boolean) => void                                                                      |        |
-| onHeaderCell                  | 设置头部单元格属性                                                                                     | (column: RecordType, columnIndex: number) => object                                             |        |
+| 属性 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| align | 设置列的对齐方式，在 RTL 时会自动切换 | 'left' \| 'right' \| 'center' | 'left' |
+| className | 列样式名 | string |  |
+| children | 表头合并时用于子列的设置 | Column[] |  |
+| colSpan | 表头列合并,设置为 0 时，不渲染 | number |  |
+| dataIndex | 列数据在数据项中对应的 key，使用排序或筛选时必传，且需要保持不重复 | string |  |
+| defaultFilteredValue | 筛选的默认值，值为已筛选的 value 数组 | any[] |  | **2.5.0** |
+| defaultSortOrder | 排序的默认值，可设置为 'ascend'\|'descend'\|false | boolean\| string | false | **1.31.0** |
+| ellipsis | 文本缩略，开启后 table-layout 会自动切换为 fixed | boolean\| { showTitle: boolean } | false | **2.34.0** |
+| filterChildrenRecord | 是否需要对子级数据进行本地过滤，开启该功能后如果子级符合过滤标准，父级即使不符合仍然会保留 | boolean |  | **0.29.0** |
+| filterDropdown | 可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互 | ReactNode |  |
+| filterDropdownProps | 透传给 Dropdown 的属性，详情点击[Dropdown API](/zh-CN/show/dropdown#Dropdown) | object |  |
+| filterDropdownVisible | 控制 Dropdown 的 visible，详情点击[Dropdown API](/zh-CN/show/dropdown#Dropdown) | boolean |  |
+| filterIcon | 自定义 filter 图标 | boolean\|ReactNode\|(filtered: boolean) => ReactNode |  |
+| filterMultiple | 是否多选 | boolean | true |
+| filteredValue | 筛选的受控属性，外界可用此控制列的筛选状态，值为已筛选的 value 数组 | any[] |  |
+| filters | 表头的筛选菜单项。 | Filter[] |  |
+| fixed | 列是否固定，可选 true(等效于 left) 'left' 'right'，在 RTL 时会自动切换 | boolean\|string | false |
+| key | React 需要的 key，如果已经设置了唯一的 dataIndex，可以忽略这个属性 | string |  |
+| render | 生成复杂数据的渲染函数，参数分别为当前行的值，当前行数据，行索引，@return 里面可以设置表格行/列合并 | (text: any, record: RecordType, index: number, { expandIcon?: ReactNode, selection?: ReactNode, indentText?: ReactNode }) => object\|ReactNode |  |
+| renderFilterDropdown | 自定义筛选器 dropdown 面板，用法详见[自定义筛选器](#自定义筛选器) | (props?: RenderFilterDropdownProps) => React.ReactNode; | - | **2.52.0** |
+| renderFilterDropdownItem | 自定义每个筛选项渲染方式，用法详见[自定义筛选项渲染](#自定义筛选项渲染) | ({ value: any, text: any, onChange: Function, level: number, ...otherProps }) => ReactNode | - | **1.1.0** |
+| resize | 是否开启 resize 模式，只有 Table resizable 开启后此属性才会生效 | boolean |  | **2.42.0** |
+| showSortTip | 是否展示排序提示, 如果设置了 sortOrder，排序受控，则该参数不会生效 | boolean | false | **2.65.0** |
+| sortChildrenRecord | 是否对子级数据进行本地排序 | boolean |  | **0.29.0** |
+| sortOrder | 排序的受控属性，外界可用此控制列的排序，可设置为 'ascend'\|'descend'\|false | boolean\| string | false |
+| sorter | 排序函数，本地排序使用一个函数(参考 Array.sort 的 compareFunction)，需要服务端排序可设为 true。**必须给排序列设置一个独立的 dataIndex，必须为 dataSource 里面的每条数据项设置独立的 key** | boolean\|(r1: RecordType, r2: RecordType, sortOrder: 'ascend' \| 'descend') => number | true |
+| sortIcon | 自定义 sort 图标，返回的节点控制了整个排序按钮，包含升序和降序。需根据 sortOrder 控制高亮行为 | (props: { sortOrder }) => ReactNode | | **2.50.0** |
+| shouldCellUpdate | 自定义控制单元格是否渲染。默认 cell 会深对比 props 和 nextProps 是否变化，来决定是否渲染单元格。如果你的 props 中的 record 比较复杂，建议使用 `shouldCellUpdate` 接管单元格的渲染。 | (props: TableCellProps, prevProps: TableCellProps) => boolean | | **2.71.0** |
+| title | 列头显示文字。传入 function 时，title 将使用函数的返回值；传入其他类型，将会和 sorter、filter 进行聚合。需要搭配 useFullRender 获取函数类型中的 filter 等参数 | ReactNode\|({ filter: ReactNode, sorter: ReactNode, selection: ReactNode }) => ReactNode |  | Function 类型需要**0.34.0** |
+| useFullRender | 是否完全自定义渲染，用法详见[完全自定义渲染](#完全自定义渲染)， 开启此功能会造成一定的性能损耗 | boolean | false | **0.34.0** |
+| width | 列宽度 | string \| number |  |
+| onCell | 设置单元格属性 | (record: RecordType, rowIndex: number) => object |  |
+| onFilter | 本地模式下，确定筛选的运行函数。**必须给筛选列设置一个独立的 dataIndex，必须为 dataSource 里面的每条数据项设置独立的 key** | (filteredValue: any, record: RecordType) => boolean |  |
+| onFilterDropdownVisibleChange | 自定义筛选菜单可见变化时回调 | (visible: boolean) => void |  |
+| onHeaderCell | 设置头部单元格属性 | (column: RecordType, columnIndex: number) => object |  |
 
 一些上面用到的类型定义：
 
@@ -4573,43 +5580,46 @@ type Filter = {
 
 与 `onRow`、`onHeaderRow类似`，在 `column.onCell` `column.onHeaderCell` 中也能返回 td/th 支持的属性或事件
 
-
 ## rowSelection
 
-| 属性             | 说明                                                                    | 类型                                                                                                 | 默认值 | 版本       |
-| ---------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------ | ---------- |
-| className        | 所处列样式名                                                            | string                                                                                               |        |            |
-| disabled         | 表头的 `Checkbox` 是否禁用                                              | boolean                                                                                              | false  | **0.32.0** |
-| fixed            | 把选择框列固定在左边                                                    | boolean                                                                                              | false  |            |
-| getCheckboxProps | 选择框的默认属性配置                                                    | (record: RecordType) => object                                                                       |        |            |
-| hidden           | 是否隐藏选择列                                                          | boolean                                                                                              | false  | **0.34.0** |
-| selectedRowKeys  | 指定选中项的 key 数组，需要和 onChange 进行配合                         | string[]                                                                                             |        |            |
-| title            | 自定义列表选择框标题                                                    | string\|ReactNode                                                                                    |        |            |
-| width            | 自定义列表选择框宽度                                                    | string\|number                                                                                       |        |            |
-| onChange         | 选中项发生变化时的回调。第一个参数会保存上次选中的 row keys，即使你做了分页受控或更新了 dataSource [FAQ](#faq)    | (selectedRowKeys: number[]\|string[], selectedRows: RecordType[]) => void                            |        |            |
-| onSelect         | 用户手动点击某行选择框的回调                                            | (record: RecordType, selected: boolean, selectedRows: RecordType[], nativeEvent: MouseEvent) => void |        |            |
-| onSelectAll      | 用户手动点击表头选择框的回调，会选中/取消选中 dataSource 里的所有可选行 | (selected: boolean, selectedRows: RecordType[], changedRows: RecordType[]) => void                   |        |            |
+| 属性             | 说明                                                                                                                                                                           | 类型                                                                                                                                                                                                                                                                  | 默认值 | 版本       |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|------------|
+| className        | 所处列样式名                                                                                                                                                                   | string                                                                                                                                                                                                                                                                |        |            |
+| disabled         | 表头的 `Checkbox` 是否禁用                                                                                                                                                     | boolean                                                                                                                                                                                                                                                               | false  | **0.32.0** |
+| fixed            | 把选择框列固定在左边                                                                                                                                                           | boolean                                                                                                                                                                                                                                                               | false  |            |
+| getCheckboxProps | 选择框的默认属性配置                                                                                                                                                           | (record: RecordType) => object                                                                                                                                                                                                                                        |        |            |
+| hidden           | 是否隐藏选择列                                                                                                                                                                 | boolean                                                                                                                                                                                                                                                               | false  | **0.34.0** |
+| renderCell       | 自定义渲染勾选框                                                                                                                                                               | ({ selected: boolean, record: RecordType, originNode: JSX.Element, inHeader: boolean, disabled: boolean, indeterminate: boolean, index?: number, selectRow?: (selected: boolean, e: Event) => void, selectAll?: (selected: boolean, e: Event) => void }) => ReactNode |        | **2.52.0** |
+| selectedRowKeys  | 指定选中项的 key 数组，需要和 onChange 进行配合                                                                                                                                 | string[]                                                                                                                                                                                                                                                              |        |            |
+| shouldCellUpdate | 自定义控制单元格是否渲染。默认 cell 会深对比 props 和 nextProps 是否变化，来决定是否渲染单元格。如果你的 props 中的 record 比较复杂，建议使用 `shouldCellUpdate` 接管单元格的渲染。 | (props: TableCellProps, prevProps: TableCellProps) => boolean                                                                                                                                                                                                         |        | **2.71.0** |
+| width            | 自定义列表选择框宽度                                                                                                                                                           | string\|number                                                                                                                                                                                                                                                        |        |            |
+| onChange         | 选中项发生变化时的回调。第一个参数会保存上次选中的 row keys，即使你做了分页受控或更新了 dataSource [FAQ](#faq)                                                                   | (selectedRowKeys: number[]\|string[], selectedRows: RecordType[]) => void                                                                                                                                                                                             |        |            |
+| onSelect         | 用户手动点击某行选择框的回调                                                                                                                                                   | (record: RecordType, selected: boolean, selectedRows: RecordType[], nativeEvent: MouseEvent) => void                                                                                                                                                                  |        |            |
+| onSelectAll      | 用户手动点击表头选择框的回调，会选中/取消选中 dataSource 里的所有可选行                                                                                                         | (selected: boolean, selectedRows: RecordType[], changedRows: RecordType[]) => void                                                                                                                                                                                    |        |            |
 
 ## scroll
 
-| 属性                     | 说明                                                       | 类型           | 默认值 | 版本      |
-| ------------------------ | ---------------------------------------------------------- | -------------- | ------ | --------- |
+| 属性                     | 说明                                                     | 类型           | 默认值 | 版本      |
+|--------------------------|--------------------------------------------------------|----------------|--------|-----------|
 | scrollToFirstRowOnChange | 当分页、排序、筛选变化后是否自动滚动到表格顶部             | boolean        | false  | **1.1.0** |
 | x                        | 设置横向滚动区域的宽，可以为像素值、百分比或 'max-content' | string\|number |        |           |
-| y                        | 设置纵向滚动区域的高，可以为像素值                         | number         |        |           |
+| y                        | 设置纵向滚动区域的高，可以为像素值                        | number         |        |           |
 
 ## pagination
 
 翻页组件配置。`pagination` 建议不要使用字面量写法。
 
-| 属性               | 说明                                                                                                                                         | 类型                                                                                          | 默认值   | 版本         |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | -------- | ------------ |
-| currentPage        | 当前页码                                                                                                                                     | number                                                                                        | -        |              |
-| defaultCurrentPage | 默认的当前页码                                                                                                                               | number                                                                                        | 1        | **>=1.1.0**  |
+注意：pagination.onChange 设置后，Table onChange 不再响应分页器变化。
+
+| 属性               | 说明                                                                                                                                    | 类型                                                                                          | 默认值   | 版本         |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|----------|--------------|
+| currentPage        | 当前页码                                                                                                                                | number                                                                                        | -        |              |
+| defaultCurrentPage | 默认的当前页码                                                                                                                          | number                                                                                        | 1        | **>=1.1.0**  |
 | formatPageText     | 翻页区域文案自定义格式化，传 false 关闭文案显示；该项影响表格翻页区域左侧文案显示，不同于 `Pagination` 组件的 `showTotal` 参数，请注意甄别。 | boolean \| ({ currentStart: number, currentEnd: number, total: number }) => string\|ReactNode | true     | **>=0.27.0** |
-| pageSize           | 每页条数                                                                                                                                     | number                                                                                        | 10       |              |
-| position           | 位置                                                                                                                                         | 'bottom'\|'top'\|'both'                                                                       | 'bottom' |              |
-| total              | 数据总数                                                                                                                                     | number                                                                                        | 0        | **>=0.25.0** |
+| pageSize           | 每页条数                                                                                                                                | number                                                                                        | 10       |              |
+| position           | 位置                                                                                                                                    | 'bottom'\|'top'\|'both'                                                                       | 'bottom' |              |
+| total              | 数据总数                                                                                                                                | number                                                                                        | 0        | **>=0.25.0** |
+
 
 其他配置详见[Pagination](/zh-CN/navigation/pagination#API参考)
 
@@ -4618,7 +5628,7 @@ type Filter = {
 `resizable` 对象型的参数，主要包括一些表格列伸缩时的事件方法。这些事件方法都可以返回一个对象，该对象会和最终的 column 合并。
 
 | 属性          | 说明                     | 类型                                             | 默认值 |
-| ------------- | ------------------------ | ------------------------------------------------ | ------ |
+|---------------|------------------------|--------------------------------------------------|--------|
 | onResize      | 表格列改变宽度时触发     | (column: [Column](#Column)) => [Column](#Column) |        |
 | onResizeStart | 表格列开始改变宽度时触发 | (column: [Column](#Column)) => [Column](#Column) |        |
 | onResizeStop  | 表格列停止改变宽度时触发 | (column: [Column](#Column)) => [Column](#Column) |        |
@@ -4656,82 +5666,121 @@ function Demo() {
 }
 ```
 
-| 名称                 | 描述                                                                                                          | 版本   |
-| -------------------- | ------------------------------------------------------------------------------------------------------------- | ------ |
+| 名称                 | 描述                                                                                                         | 版本   |
+|----------------------|------------------------------------------------------------------------------------------------------------|--------|
 | getCurrentPageData() | 返回当前页的数据对象：{ dataSource: RecordType[], groups: Map<{groupKey: string, recordKeys: Set<string\>}> } | 0.37.0 |
-
 
 ## Accessibility
 
 ### ARIA
 
-- 表格的 role 为 grid，树形表格的 role 为 treegrid
-- 行的 role 为 row，单元格的 role 为 gridcell
-- 表格新增了 aria-rowcount 和 aria-colcount 属性表示行和列的数量
-- 行新增了 aria-rowindex 表示当前属于第几行，第一行为 1
-- 树形表格的行具有 aria-level 表示当前行的树形层级，第一层为 1
-- 可展开表格行具有 aria-expanded 属性，表示当前行是否展开
-- 单元格的新增了 aria-colindex 表示当前格子属于第几列，第一列为 1
-- 列的筛选和排序按钮添加了 aria-label，行的选择按钮添加了 aria-label 属性
+-   表格的 role 为 grid，树形表格的 role 为 treegrid
+-   行的 role 为 row，单元格的 role 为 gridcell
+-   表格新增了 aria-rowcount 和 aria-colcount 属性表示行和列的数量
+-   行新增了 aria-rowindex 表示当前属于第几行，第一行为 1
+-   树形表格的行具有 aria-level 表示当前行的树形层级，第一层为 1
+-   可展开表格行具有 aria-expanded 属性，表示当前行是否展开
+-   单元格的新增了 aria-colindex 表示当前格子属于第几列，第一列为 1
+-   列的筛选和排序按钮添加了 aria-label，行的选择按钮添加了 aria-label 属性
 
+## RTL/LTR
+
+- Table 的 RTL 默认值为 [ConfigProvider](/zh-CN/other/configprovider) direction，可以通过 Table direction 覆盖
+- Table 列的 align 与 fixed 属性会在 RTL 时会自动切换，left <-> right，固定列的 RTL 功能于 v2.31 版本支持
+- Table 的树形数据暂不支持 RTL（[Chrome、Safari 浏览器表现与 Firefox 表现不同](https://codesandbox.io/s/table-rtl-treedata-uy7gzl?file=/src/App.jsx)）
 
 ## 文案规范
-- 表格标题
-  - 表格标题应清晰的让用户感知到表格的目的；
-  - 为复杂表格添加描述，为用户提供更多关于表格的上下文信息；
-  - 使用句子大小写；
-- 列标题
-  - 保持列标题简洁，建议使用 1-2 个词作为列标题；
-  - 当列标题较长时，建议 2 行显示，剩余文字缩略并在 Tooltip 中显示完全；
-  - 采用 Sentence case 的大小写规则；
-  - 列标题使用句子大小写；
-- 表格操作
-  - 可以遵循 [Button 的文案规范](/zh-CN/input/button#%E6%96%87%E6%A1%88%E8%A7%84%E8%8C%83)
 
+-   表格标题
+    -   表格标题应清晰的让用户感知到表格的目的；
+    -   为复杂表格添加描述，为用户提供更多关于表格的上下文信息；
+    -   使用句子大小写；
+-   列标题
+    -   保持列标题简洁，建议使用 1-2 个词作为列标题；
+    -   当列标题较长时，建议 2 行显示，剩余文字缩略并在 Tooltip 中显示完全；
+    -   采用 Sentence case 的大小写规则；
+    -   列标题使用句子大小写；
+-   表格操作
+    -   可以遵循 [Button 的文案规范](/zh-CN/input/button#%E6%96%87%E6%A1%88%E8%A7%84%E8%8C%83)
 ## 设计变量
+
 <DesignToken/>
 
 ## FAQ
 
-- **表格数据为何没有更新？**  
-    Table 组件目前所有参数都为浅层对比，也就是说如果该参数值类型为一个 Array 或者 Object，你需要手动改变其引用才能触发更新。同理，如果你不想触发额外更新，尽量不要直接在传参的时候使用字面量或是在 render 过程中定义引用型参数值：
+- **点击第二页的行选择按钮，会跳转到第一页？**
+
+    Table 的 dataSource 更新后，会将页码重置到初始态。请检查数据源是否在组件渲染时发生了变化。
+
+    ```typescript
+    function App() {
+        const [dataSource, setDataSource] = useState([]);
+
+        useEffect(() => {
+            // ✅ 正确
+            const getData = () => {
+                // fetch data
+                const newData = fetch(/**/);
+                // set data
+                setDataSource(dataSource);
+            };
+
+            getData();
+        }, []);
+
+        // ❌ 错误
+        const data = [];
+
+        return <Table dataSource={data} columns={[/*...*/]} />;
+    }
+    ```
+
+-   **筛选后的数据条数不对？**
+
+    请检查你的筛选列和数据源是否配置正确。
+
+    筛选列需设置独立的 dataIndex，同时 dataSource 需要设置独立的 key，请参考 dataSource API。否则筛选功能无法正常工作。
+
+-   **表格数据为何没有更新？**  
+
+     Table 组件目前所有参数都为浅层对比，也就是说如果该参数值类型为一个 Array 或者 Object，你需要手动改变其引用才能触发更新。同理，如果你不想触发额外更新，尽量不要直接在传参的时候使用字面量或是在 render 过程中定义引用型参数值：
+
     ```text
     // ...render() {
         <Table dataSource={[/*...*/]} columns={[/*...*/]} />}
     ```
+
     上述的写法在每次 render 时都会触发表格内部对数据的更新（会清空当前的选中行以及展开行 key 数组等）。为了性能及避免一些异常，**请尽量将一些引用型参数定义在 render 方法之外（如果使用了 hooks 请利用 useMemo 或者 useState 进行存储）。**
 
-- **为何我的表格行不能选中以及展开？**
+-   **为何我的表格行不能选中以及展开？**
 
     请指定 rowKey 或者给 dataSource 的每项设置一个各不相同的 "key" 属性。**表格内所有行相关的操作都需要使用到。**
 
-- **如何实现点击排序按钮时自定义排序或传参给服务端排序？**
-    
+-   **如何实现点击排序按钮时自定义排序或传参给服务端排序？**
+
     onChange 方法的入参包括 pagination、filters、sorter，用户可以根据 sorter 对 dataSource 进行自定义排序。
 
-- **如何给某一行添加 className？**
-    
+-   **如何给某一行添加 className？**
+
     使用 onRow 或 onHeaderRow。
 
-- **如何给 table cell 设置样式？**
-    
+-   **如何给 table cell 设置样式？**
+
     涉及到单个 cell 需要控制样式的，可以通过 column.onHeaderCell、column.onCell 控制。
 
-- **为何 rowSelection onChange 的第一个参数缓存了之前选中的 keys ？**
-    
+-   **为何 rowSelection onChange 的第一个参数缓存了之前选中的 keys ？**
+
     这么做为了在分页受控时，在第一页选中数据后，去第二页选择数据，回到第一页后选择的 row keys 丢失的场景。如果不想用缓存的 keys，可以从当前 dataSource 过滤一遍，或者使用 rowSelection onChange 的第二个参数。
 
-- **支持单行选择吗**
+-   **支持单行选择吗**
 
     Table 暂不支持单行选则功能，用户可以通过自定义方式实现单选。实现方式移步 Table FAQ 文档。
 
-- **Table 是如何实现的，我想了解更多细节？**
+-   **Table 是如何实现的，我想了解更多细节？**
 
     查看 <a href="https://bytedance.feishu.cn/docs/doccnqLgNefWGMZHFz7j70GKqpY" target="_blank">Semi Table 组件设计方案</a>了解更多。
-    
 
 查看更多 Table FAQ 和用例，点击 <a href="https://bytedance.feishu.cn/docs/doccnsYk1qUmsIDP1ihJ9zjG0Ch" target="_blank">Table FAQ</a>
-
 
 <!-- ## 相关物料
 ```material

@@ -16,19 +16,19 @@ import DropdownTitle, { DropdownTitleProps } from './dropdownTitle';
 import DropdownContext, { DropdownContextType } from './context';
 import '@douyinfe/semi-foundation/dropdown/dropdown.scss';
 import { noop, get } from 'lodash';
-import { Motion } from '../_base/base';
+import { getDefaultPropsFromGlobalConfig } from "../_utils";
 
 const positionSet = strings.POSITION_SET;
 const triggerSet = strings.TRIGGER_SET;
 
-export { DropdownDividerProps } from './dropdownDivider';
-export { DropdownItemProps, Type } from './dropdownItem';
-export { DropdownMenuProps } from './dropdownMenu';
-export { DropdownTitleProps } from './dropdownTitle';
+export type { DropdownDividerProps } from './dropdownDivider';
+export type { DropdownItemProps, Type } from './dropdownItem';
+export type { DropdownMenuProps } from './dropdownMenu';
+export type { DropdownTitleProps } from './dropdownTitle';
 
 export interface DropDownMenuItemItem extends DropdownItemProps {
     node: 'item';
-    name?: string;
+    name?: string
 }
 export interface DropDownMenuItemDivider extends DropdownDividerProps {
     node: 'divider'
@@ -51,7 +51,7 @@ export interface DropdownProps extends TooltipProps {
     menu?: DropDownMenuItem[];
     trigger?: Trigger;
     zIndex?: number;
-    motion?: Motion;
+    motion?: boolean;
     className?: string;
     contentClassName?: string | any[];
     style?: React.CSSProperties;
@@ -59,11 +59,11 @@ export interface DropdownProps extends TooltipProps {
     rePosKey?: string | number;
     showTick?: boolean;
     closeOnEsc?: TooltipProps['closeOnEsc'];
-    onEscKeyDown?: TooltipProps['onEscKeyDown'];
+    onEscKeyDown?: TooltipProps['onEscKeyDown']
 }
 
 interface DropdownState {
-    popVisible: boolean;
+    popVisible: boolean
 }
 
 class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
@@ -78,28 +78,31 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
     static contextType = DropdownContext;
 
     static propTypes = {
-        render: PropTypes.node,
         children: PropTypes.node,
-        visible: PropTypes.bool,
-        position: PropTypes.oneOf(positionSet),
+        contentClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+        className: PropTypes.string,
         getPopupContainer: PropTypes.func,
+        margin: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
         mouseEnterDelay: PropTypes.number,
         mouseLeaveDelay: PropTypes.number,
-        trigger: PropTypes.oneOf(triggerSet),
-        zIndex: PropTypes.number,
-        motion: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.object]),
-        className: PropTypes.string,
-        contentClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-        style: PropTypes.object,
-        onVisibleChange: PropTypes.func,
-        rePosKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        showTick: PropTypes.bool,
-        prefixCls: PropTypes.string,
-        spacing: PropTypes.number,
         menu: PropTypes.array,
+        motion: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.object]),
+        onVisibleChange: PropTypes.func,
+        prefixCls: PropTypes.string,
+        position: PropTypes.oneOf(positionSet),
+        rePosKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        render: PropTypes.node,
+        spacing: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
+        showTick: PropTypes.bool,
+        style: PropTypes.object,
+        trigger: PropTypes.oneOf(triggerSet),
+        visible: PropTypes.bool,
+        zIndex: PropTypes.number,
     };
 
-    static defaultProps = {
+    static __SemiComponentName__ = "Dropdown";
+
+    static defaultProps = getDefaultPropsFromGlobalConfig(Dropdown.__SemiComponentName__, {
         onVisibleChange: noop,
         prefixCls: cssClasses.PREFIX,
         zIndex: tooltipNumbers.DEFAULT_Z_INDEX,
@@ -110,7 +113,9 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
         showTick: false,
         closeOnEsc: true,
         onEscKeyDown: noop,
-    };
+    });
+
+    tooltipRef: React.RefObject<Tooltip>
 
     constructor(props: DropdownProps) {
         super(props);
@@ -120,6 +125,7 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
         };
 
         this.foundation = new Foundation(this.adapter);
+        this.tooltipRef = React.createRef();
     }
 
     context: DropdownContextType;
@@ -128,7 +134,8 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
         return {
             ...super.adapter,
             setPopVisible: (popVisible: boolean) => this.setState({ popVisible }),
-            notifyVisibleChange: (visible: boolean) => this.props.onVisibleChange(visible),
+            notifyVisibleChange: (visible: boolean) => this.props.onVisibleChange?.(visible),
+            getPopupId: () => this.tooltipRef.current.getPopupId()
         };
     }
 
@@ -210,6 +217,7 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
             zIndex,
             className,
             motion,
+            margin,
             style,
             prefixCls,
             ...attr
@@ -229,6 +237,7 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
             <Tooltip
                 zIndex={zIndex}
                 motion={motion}
+                margin={margin}
                 content={pop}
                 className={className}
                 prefixCls={prefixCls}
@@ -238,19 +247,21 @@ class Dropdown extends BaseComponent<DropdownProps, DropdownState> {
                 onVisibleChange={this.handleVisibleChange}
                 showArrow={false}
                 returnFocusOnClose={true}
+                ref={this.tooltipRef}
                 {...attr}
             >
                 {React.isValidElement(children) ?
                     React.cloneElement(children, {
+                        //@ts-ignore
                         className: classnames(get(children, 'props.className'), {
                             [`${prefixCls}-showing`]: popVisible,
                         }),
                         'aria-haspopup': true,
                         'aria-expanded': popVisible,
-                        onKeyDown: e => {
+                        onKeyDown: (e: React.KeyboardEvent) => {
                             this.foundation.handleKeyDown(e);
-                            const childrenKeyDown = get(children, 'props.onKeyDown');
-                            childrenKeyDown && childrenKeyDown();
+                            const childrenKeyDown: (e: React.KeyboardEvent) => void = get(children, 'props.onKeyDown');
+                            childrenKeyDown && childrenKeyDown(e);
                         }
                     }) :
                     children}

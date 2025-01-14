@@ -16,6 +16,10 @@ const strings = {
     LEAF_ONLY_MERGE_TYPE: 'leafOnly',
     AUTO_MERGE_VALUE_MERGE_TYPE: 'autoMergeValue',
     NONE_MERGE_TYPE: 'none',
+    SEARCH_POSITION_TRIGGER: 'trigger',
+    SEARCH_POSITION_CUSTOM: 'custom',
+    RELATED: 'related',
+    UN_RELATED: 'unRelated'
 } as const;
 
 const numbers = {};
@@ -25,3 +29,5 @@ export {
     strings,
     numbers
 };
+
+export const VALUE_SPLIT = '_SEMI_CASCADER_SPLIT_';

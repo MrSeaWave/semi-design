@@ -8,7 +8,7 @@ export interface BodyAdapter<P = Record<string, any>, S = Record<string, any>> e
     setCachedExpandBtnShouldInRow: (cachedExpandBtnShouldInRow: boolean) => void;
     setCachedExpandRelatedProps: (cachedExpandRelatedProps: string[]) => void;
     observeBodyResize: (bodyWrapDOM: any) => void;
-    unobserveBodyResize: () => void;
+    unobserveBodyResize: () => void
 }
 
 export default class TableBodyFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<BodyAdapter<P, S>, P, S> {
@@ -32,7 +32,6 @@ export default class TableBodyFoundation<P = Record<string, any>, S = Record<str
 
         if (!isObject(newExpandRelatedProps) && !newExpandRelatedProps) {
             const expandRelatedProps = strings.EXPAND_RELATED_PROPS;
-            // eslint-disable-next-line no-param-reassign
             newExpandRelatedProps = expandRelatedProps.map(key => get(props, key, undefined));
         }
         this._adapter.setCachedExpandRelatedProps(newExpandRelatedProps);
@@ -130,7 +129,7 @@ export interface GroupFlattenData {
     sectionRow: boolean;
     group: Map<string, Record<string, any>[]>;
     groupKey: number;
-    expanded: boolean;
+    expanded: boolean
 }
 
 export interface FlattenData {
@@ -140,5 +139,5 @@ export interface FlattenData {
     parentKeys?: any[];
     childrenKeys?: any[];
     expandedRow?: boolean;
-    sectionRow?: boolean;
+    sectionRow?: boolean
 }

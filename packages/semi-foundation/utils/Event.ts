@@ -23,13 +23,12 @@ export default class Event {
         }
     }
 
-    off(event: string, callback: null | (() => void)) {
+    off(event: string, callback?: null | (() => void)) {
         if (event) {
             if (typeof callback === 'function') {
                 const callbacks = this._eventMap.get(event);
                 if (Array.isArray(callbacks) && callbacks.length) {
                     let index = -1;
-                    // eslint-disable-next-line max-depth
                     while ((index = callbacks.findIndex(cb => cb === callback)) > -1) {
                         callbacks.splice(index, 1);
                     }
@@ -45,7 +44,9 @@ export default class Event {
         if (!this._eventMap.has(event)) {
             return false;
         }
-        this._eventMap.get(event).forEach(callback => callback(...args));
+        const callbacks = [...this._eventMap.get(event)];
+        // clone to avoid someone writing  the logic of deleting callback in callbacks into his or her callback code, for example the once func above
+        callbacks.forEach(callback => callback(...args));
         return true;
     }
 }

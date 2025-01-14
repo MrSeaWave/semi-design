@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types, max-len */
 import React, { ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
@@ -7,6 +6,7 @@ import { isEqual, noop } from 'lodash';
 import { strings, cssClasses } from '@douyinfe/semi-foundation/autoComplete/constants';
 import AutoCompleteFoundation, { AutoCompleteAdapter, StateOptionItem, DataItem } from '@douyinfe/semi-foundation/autoComplete/foundation';
 import { numbers as popoverNumbers } from '@douyinfe/semi-foundation/popover/constants';
+import { getUuidShort } from '@douyinfe/semi-foundation/utils/uuid';
 import BaseComponent, { ValidateStatus } from '../_base/baseComponent';
 import { Position } from '../tooltip';
 import Spin from '../spin';
@@ -17,7 +17,8 @@ import Trigger from '../trigger';
 import Option from './option';
 import warning from '@douyinfe/semi-foundation/utils/warning';
 import '@douyinfe/semi-foundation/autoComplete/autoComplete.scss';
-import { Motion } from '../_base/base';
+import ReactDOM from 'react-dom';
+import { getDefaultPropsFromGlobalConfig } from "../_utils";
 
 const prefixCls = cssClasses.PREFIX;
 const sizeSet = strings.SIZE;
@@ -33,7 +34,7 @@ const statusSet = strings.STATUS;
  */
 
 export interface BaseDataItem extends DataItem {
-    label?: React.ReactNode;
+    label?: React.ReactNode
 }
 
 export type AutoCompleteItems = BaseDataItem | string | number;
@@ -48,7 +49,8 @@ export interface AutoCompleteProps<T extends AutoCompleteItems> {
     autoAdjustOverflow?: boolean;
     autoFocus?: boolean;
     className?: string;
-    children?: ReactNode | undefined;
+    clearIcon?: ReactNode;
+    children?: ReactNode;
     data?: T[];
     disabled?: boolean;
     defaultOpen?: boolean;
@@ -63,7 +65,7 @@ export interface AutoCompleteProps<T extends AutoCompleteItems> {
     insetLabelId?: string;
     id?: string;
     loading?: boolean;
-    motion?: Motion;
+    motion?: boolean;
     maxHeight?: string | number;
     mouseEnterDelay?: number;
     mouseLeaveDelay?: number;
@@ -76,6 +78,7 @@ export interface AutoCompleteProps<T extends AutoCompleteItems> {
     onChangeWithObject?: boolean;
     onSelectWithObject?: boolean;
     onDropdownVisibleChange?: (visible: boolean) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     prefix?: React.ReactNode;
     placeholder?: string;
     position?: Position;
@@ -89,11 +92,11 @@ export interface AutoCompleteProps<T extends AutoCompleteItems> {
     stopPropagation?: boolean | string;
     value?: string | number;
     validateStatus?: ValidateStatus;
-    zIndex?: number;
+    zIndex?: number
 }
 
 interface KeyboardEventType {
-    onKeyDown?: React.KeyboardEventHandler;
+    onKeyDown?: React.KeyboardEventHandler
 }
 
 interface AutoCompleteState {
@@ -104,7 +107,7 @@ interface AutoCompleteState {
     focusIndex: number;
     selection: Map<any, any>;
     rePosKey: number;
-    keyboardEventSet?: KeyboardEventType;
+    keyboardEventSet?: KeyboardEventType
 }
 
 class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoCompleteProps<T>, AutoCompleteState> {
@@ -118,6 +121,7 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
         autoFocus: PropTypes.bool,
         autoAdjustOverflow: PropTypes.bool,
         className: PropTypes.string,
+        clearIcon: PropTypes.node,
         children: PropTypes.node,
         data: PropTypes.array,
         defaultOpen: PropTypes.bool,
@@ -137,6 +141,7 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
         onBlur: PropTypes.func,
         onFocus: PropTypes.func,
         onChange: PropTypes.func,
+        onKeyDown: PropTypes.func,
         position: PropTypes.oneOf(positionSet),
         placeholder: PropTypes.string,
         prefix: PropTypes.node,
@@ -162,7 +167,9 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
 
     static Option = Option;
 
-    static defaultProps = {
+    static __SemiComponentName__ = "AutoComplete";
+
+    static defaultProps = getDefaultPropsFromGlobalConfig(AutoComplete.__SemiComponentName__, {
         stopPropagation: true,
         motion: true,
         zIndex: popoverNumbers.DEFAULT_Z_INDEX,
@@ -185,14 +192,16 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
         validateStatus: 'default' as const,
         autoFocus: false,
         emptyContent: null as null,
+        onKeyDown: noop,
         // onPressEnter: () => undefined,
         // defaultOpen: false,
-    };
+    });
 
     triggerRef: React.RefObject<HTMLDivElement> | null;
     optionsRef: React.RefObject<HTMLDivElement> | null;
+    optionListId: string;
 
-    private clickOutsideHandler: () => void | null;
+    private clickOutsideHandler: (e: Event) => void | null;
 
     constructor(props: AutoCompleteProps<T>) {
         super(props);
@@ -214,6 +223,7 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
         this.triggerRef = React.createRef();
         this.optionsRef = React.createRef();
         this.clickOutsideHandler = null;
+        this.optionListId = '';
 
         warning(
             'triggerRender' in this.props && typeof this.props.triggerRender === 'function',
@@ -238,6 +248,30 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
             },
             updateFocusIndex: (focusIndex: number): void => {
                 this.setState({ focusIndex });
+            },
+            updateScrollTop: (index?: number) => {
+                let optionClassName;
+                /**
+                 * Unlike Select which needs to process renderOptionItem separately, when renderItem is enabled in autocomplete
+                 *  the content passed by the user is still wrapped in the selector of .semi-autocomplete-option
+                 * so the selector does not need to be judged separately.
+                 */
+                optionClassName = `.${prefixCls}-option-selected`;
+                if (index !== undefined) {
+                    optionClassName = `.${prefixCls}-option:nth-child(${index + 1})`;
+                }
+
+                let destNode = document.querySelector(`#${prefixCls}-${this.optionListId} ${optionClassName}`) as HTMLDivElement;
+                if (Array.isArray(destNode)) {
+                    destNode = destNode[0];
+                }
+                if (destNode) {
+                    const destParent = destNode.parentNode as HTMLDivElement;
+                    destParent.scrollTop = destNode.offsetTop -
+                        destParent.offsetTop -
+                        (destParent.clientHeight / 2) +
+                        (destNode.clientHeight / 2);
+                }
             },
         };
         return {
@@ -283,16 +317,45 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
             notifyBlur: (event: React.FocusEvent) => {
                 this.props.onBlur(event);
             },
+            notifyKeyDown: e => {
+                this.props.onKeyDown(e);
+            },
             rePositionDropdown: () => {
                 let { rePosKey } = this.state;
                 rePosKey = rePosKey + 1;
                 this.setState({ rePosKey });
+            },
+            registerClickOutsideHandler: cb => {
+                const clickOutsideHandler = (e: Event) => {
+                    const optionInstance = this.optionsRef && this.optionsRef.current;
+                    const triggerDom = this.triggerRef && this.triggerRef.current;
+                    const optionsDom = ReactDOM.findDOMNode(optionInstance);
+                    const target = e.target as Element;
+                    const path = e.composedPath && e.composedPath() || [target];
+                    if (
+                        optionsDom &&
+                        (!optionsDom.contains(target) || !optionsDom.contains(target.parentNode)) &&
+                        triggerDom &&
+                        !triggerDom.contains(target) &&
+                        !(path.includes(triggerDom) || path.includes(optionsDom))
+                    ) {
+                        cb(e);
+                    }
+                };
+                this.clickOutsideHandler = clickOutsideHandler;
+                document.addEventListener('mousedown', clickOutsideHandler, false);
+            },
+            unregisterClickOutsideHandler: () => {
+                if (this.clickOutsideHandler) {
+                    document.removeEventListener('mousedown', this.clickOutsideHandler, false);
+                }
             },
         };
     }
 
     componentDidMount() {
         this.foundation.init();
+        this.optionListId = getUuidShort();
     }
 
     componentWillUnmount() {
@@ -341,6 +404,7 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
             autoFocus,
             value,
             id,
+            clearIcon
         } = this.props;
         const { inputValue, keyboardEventSet, selection } = this.state;
 
@@ -362,13 +426,14 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
             id,
             ...keyboardEventSet,
             // tooltip give tabindex 0 to children by default, autoComplete just need the input get focus, so outer div's tabindex set to -1
-            tabIndex: -1
+            tabIndex: -1,
+            ...this.getDataAttr(this.props)
         };
 
         const innerProps = {
             disabled,
             placeholder,
-            autofocus: autoFocus,
+            autoFocus: autoFocus,
             onChange: this.onSearch,
             onClear: this.onInputClear,
             'aria-label': this.props['aria-label'],
@@ -386,6 +451,7 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
             size,
             onBlur: this.onBlur,
             onFocus: this.onFocus,
+            clearIcon,
         };
 
         return (
@@ -458,7 +524,12 @@ class AutoComplete<T extends AutoCompleteItems> extends BaseComponent<AutoComple
             ...dropdownStyle,
         };
         return (
-            <div className={listCls} role="listbox" style={style}>
+            <div
+                className={listCls}
+                role="listbox"
+                style={style}
+                id={`${prefixCls}-${this.optionListId}`}
+            >
                 {!loading ? optionsNode : this.renderLoading()}
             </div>
         );

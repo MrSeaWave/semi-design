@@ -10,7 +10,6 @@ $types: "ghost", "solid", "light";
 
 .#{$module} {
     box-sizing: border-box;
-    display: inline-block;
     border-radius: $radius-tag;
     background-color: transparent;
     position: relative;
@@ -19,6 +18,8 @@ $types: "ghost", "solid", "light";
     overflow: hidden;
     white-space: nowrap;
     vertical-align: bottom;
+    @include all-center;
+    display: inline-flex;
 
     &-default,
     &-small {
@@ -28,6 +29,13 @@ $types: "ghost", "solid", "light";
         &:focus-visible {
             outline: $width-tag-outline solid $color-tag-outline-focus;
         }
+    }
+
+    &-square {
+        border-radius: $radius-tag;
+    }
+    &-circle {
+        border-radius: $radius-tag_circle;
     }
 
     &-large {
@@ -43,10 +51,31 @@ $types: "ghost", "solid", "light";
         display: none;
     }
 
-    &-content {
+    &-prefix-icon {
         display: flex;
-        @include all-center;
-        height: 100%;
+        padding-right: $spacing-tag_prefix_icon_paddingRight;
+    }
+
+    &-suffix-icon {
+        display: flex;
+        padding-left: $spacing-tag_suffix_icon_paddingLeft;
+    }
+
+    &-content {
+        flex: 1;
+
+        &-ellipsis {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        &-center {
+            display: flex;
+            @include all-center;
+            height: 100%;
+            min-width: 0;
+        }
     }
 
     &-close {
@@ -54,6 +83,14 @@ $types: "ghost", "solid", "light";
         color: $color-tag_close-icon-default;
         padding-left: $spacing-tag_close-paddingLeft;
         cursor: pointer;
+
+        &:hover {
+            color: $color-tag_close-icon-hover;
+        }
+
+        &:active {
+            color: $color-tag_close-icon-active;
+        }
     }
 
     &-closable {
@@ -102,7 +139,7 @@ $types: "ghost", "solid", "light";
     &-avatar-circle.#{$module}-small,
     &-avatar-circle.#{$module}-default {
         // when avatarShape=circle change tag border radius
-        border-radius: $height-tag_small / 2 + 1;
+        border-radius: $height-tag_small * 0.5 + 1;
 
         .#{$prefix}-avatar {
             width: $width-tag_avatar_circle_small;
@@ -111,7 +148,7 @@ $types: "ghost", "solid", "light";
     }
 
     &-avatar-circle.#{$module}-large {
-        border-radius: $height-tag_large / 2 + 1;
+        border-radius: $height-tag_large * 0.5 + 1;
 
         .#{$prefix}-avatar {
             width: $width-tag_avatar_circle_large;
@@ -122,13 +159,12 @@ $types: "ghost", "solid", "light";
 
 .#{$module}-group {
     display: block;
+    height: auto;
 
     .#{$module} {
         margin-bottom: $spacing-tag_group-marginBottom;
         margin-right: $spacing-tag_group-marginRight;
     }
-
-    height: auto;
 
     &-max.#{$module}-group-small {
         height: ($height-tag_small + 2);
@@ -191,6 +227,15 @@ $types: "ghost", "solid", "light";
 .#{$module}-solid {
     .#{$module}-close {
         color: $color-tag_close-icon_deep-default;
+        opacity: .8;
+
+        &:hover {
+            opacity: 1.0;
+        }
+
+        &:active {
+            opacity: .9;
+        }
     }
 }
 

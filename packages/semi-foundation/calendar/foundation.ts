@@ -32,11 +32,10 @@ import {
     parseRangeAllDayEvent,
     DateObj,
     checkWeekend,
-    weeekStartsOnEnum
 } from './eventUtil';
+import type { weekStartsOnEnum } from './eventUtil';
 
-
-export { weeekStartsOnEnum };
+export { weekStartsOnEnum };
 export interface EventObject {
     [x: string]: any;
     key: string;
@@ -44,38 +43,38 @@ export interface EventObject {
     start?: Date;
     end?: Date;
     // children?: React.ReactNode;
-    children?: any;
+    children?: any
 }
 
 export interface ParsedEventsWithArray {
     day: Array<any>;
-    allDay: Array<any>;
+    allDay: Array<any>
 }
 
 export interface ParsedEvents {
     day?: Map<string, Array<EventObject>>;
-    allDay?: Map<string, Array<EventObject>>;
+    allDay?: Map<string, Array<EventObject>>
 }
 
 export interface ParsedRangeEvent extends EventObject {
     leftPos?: number;
     width?: number;
-    topInd?: number;
+    topInd?: number
 }
 
 export interface MonthlyEvent {
     day: ParsedRangeEvent[][];
-    display: ParsedRangeEvent[];
+    display: ParsedRangeEvent[]
 }
 
 export interface RangeData {
     month: string;
-    week: any[];
+    week: any[]
 }
 
 export interface WeeklyData {
     month: string;
-    week: DateObj[];
+    week: DateObj[]
 }
 
 export type MonthData = Record<number, DateObj[]>;
@@ -104,7 +103,7 @@ export interface CalendarAdapter<P = Record<string, any>, S = Record<string, any
     getMonthlyData?: () => MonthData;
     notifyClose?: (e: any, key: string) => void;
     openCard?: (key: string, spacing: boolean) => void;
-    setItemLimit?: (itemLimit: number) => void;
+    setItemLimit?: (itemLimit: number) => void
 }
 
 export default class CalendarFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<CalendarAdapter<P, S>, P, S> {
@@ -115,7 +114,6 @@ export default class CalendarFoundation<P = Record<string, any>, S = Record<stri
         super({ ...adapter });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     init() {
 
     }
@@ -192,7 +190,7 @@ export default class CalendarFoundation<P = Record<string, any>, S = Record<stri
         const data = {} as WeeklyData;
         const { weekStartsOn } = this.getProps();
         data.month = format(value, 'LLL', { locale: dateFnsLocale, weekStartsOn });
-        data.week = calcWeekData(value, 'week', dateFnsLocale, weekStartsOn);
+        data.week = calcWeekData(value, null, 'week', dateFnsLocale, weekStartsOn);
         this._adapter.setWeeklyData(data);
         return data;
     }
@@ -202,7 +200,8 @@ export default class CalendarFoundation<P = Record<string, any>, S = Record<stri
         const { range, weekStartsOn } = this.getProps();
         const len = differenceInCalendarDays(range[1], range[0]);
         data.month = format(value, 'LLL', { locale: dateFnsLocale, weekStartsOn });
-        data.week = calcRangeData(value, range[0], len, 'week', dateFnsLocale, weekStartsOn);
+        const startDate = startOfDay(range[0]);
+        data.week = calcRangeData(value, startDate, len, 'week', dateFnsLocale, weekStartsOn);
         this._adapter.setRangeData(data);
         return data;
     }
@@ -213,7 +212,7 @@ export default class CalendarFoundation<P = Record<string, any>, S = Record<stri
         const { weekStartsOn } = this.getProps();
         const numberOfWeek = getWeeksInMonth(value, { weekStartsOn });
         [...Array(numberOfWeek).keys()].map(ind => {
-            data[ind] = calcWeekData(addDays(monthStart, ind * 7), 'month', dateFnsLocale, weekStartsOn);
+            data[ind] = calcWeekData(addDays(monthStart, ind * 7), monthStart, 'month', dateFnsLocale, weekStartsOn);
         });
         this._adapter.setMonthlyData(data);
         return data;
@@ -249,7 +248,27 @@ export default class CalendarFoundation<P = Record<string, any>, S = Record<stri
         if (!parsed.day) {
             parsed.day = [];
         }
+
         parsed.day = parsed.day.map(item => renderDailyEvent(item));
+        // 将 startPos & endPos 完全相同的事件编为一组
+        const sameTimeRangeGroup = parsed.day.reduce((acc, item) => {
+            const key = `${item.startPos}-${item.endPos}`;
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(item);
+            return acc;
+        }, {});
+
+        // 计算每个 item 的 left 值， 
+        const eventCountMap = {};
+        parsed.day = parsed.day.map(item => {
+            const key = `${item.startPos}-${item.endPos}`;
+            let curCount = eventCountMap[key];
+            eventCountMap[key] = curCount === undefined ? 0 : ++curCount;
+            item.left = curCount !== 0 ? `${(curCount / sameTimeRangeGroup[key].length * 100)}%` : 0;
+            return item;
+        });
         return parsed;
     }
 
@@ -321,13 +340,13 @@ export default class CalendarFoundation<P = Record<string, any>, S = Record<stri
 
     convertMapToArray(weekMap: Map<string, EventObject[]>, weekStart: Date) {
         const eventArray = [];
+        const map = new Map();
         for (const entry of weekMap.entries()) {
             const [key, value] = entry;
-            const map = new Map();
             map.set(key, value);
-            const weekEvents = this._parseWeeklyEvents(map, weekStart);
-            eventArray.push(...weekEvents);
         }
+        const weekEvents = this._parseWeeklyEvents(map, weekStart);
+        eventArray.push(...weekEvents);
         return eventArray;
     }
 

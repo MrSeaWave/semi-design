@@ -10,19 +10,23 @@ import { IconCopy, IconTick } from '@douyinfe/semi-icons';
 import { BaseProps } from '../_base/baseComponent';
 import { Locale } from '../locale/interface';
 import isEnterPress from '@douyinfe/semi-foundation/utils/isEnterPress';
+import { CopyableConfig } from './title';
 
 const prefixCls = cssClasses.PREFIX;
+
 export interface CopyableProps extends BaseProps {
     content?: string;
     copyTip?: React.ReactNode;
     duration?: number;
     forwardRef?: React.RefObject<any>;
     successTip?: React.ReactNode;
+    icon?: React.ReactNode;
     onCopy?: (e: React.MouseEvent, content: string, res: boolean) => void;
+    render?: (copied: boolean, doCopy: (e: React.MouseEvent) => void, configs: CopyableConfig) => React.ReactNode
 }
 interface CopyableState {
     copied: boolean;
-    item: string;
+    item: string
 }
 export class Copyable extends React.PureComponent<CopyableProps, CopyableState> {
     static propTypes = {
@@ -33,6 +37,7 @@ export class Copyable extends React.PureComponent<CopyableProps, CopyableState> 
         duration: PropTypes.number,
         style: PropTypes.object,
         className: PropTypes.string,
+        icon: PropTypes.node,
     };
 
     static defaultProps = {
@@ -105,13 +110,41 @@ export class Copyable extends React.PureComponent<CopyableProps, CopyableState> 
         );
     };
 
+    renderCopyIcon = () => {
+        const { icon } = this.props;
+        const copyProps = {
+            role: "button",
+            tabIndex: 0,
+            onClick: this.copy,
+            onKeyPress: e => isEnterPress(e) && this.copy(e as any),
+        };
+
+        {/* TODO: replace `a` tag with `span` in next major version
+            NOTE: may have effect on style */}
+        const defaultIcon = (
+            // eslint-disable-next-line jsx-a11y/anchor-is-valid
+            <a className={`${prefixCls}-action-copy-icon`}>
+                <IconCopy
+                    onClick={this.copy}
+                    {...copyProps}
+                />
+            </a>
+        );
+
+        return React.isValidElement(icon) ? React.cloneElement(icon, copyProps) : defaultIcon;
+    }
+
     render() {
-        const { style, className, forwardRef, copyTip } = this.props;
+        const { style, className, forwardRef, copyTip, render } = this.props;
         const { copied } = this.state;
         const finalCls = cls(className, {
             [`${prefixCls}-action-copy`]: !copied,
             [`${prefixCls}-action-copied`]: copied,
         });
+
+        if (render) {
+            return render(copied, this.copy, this.props);
+        }
 
         return (
             <LocaleConsumer componentName="Typography">
@@ -121,17 +154,7 @@ export class Copyable extends React.PureComponent<CopyableProps, CopyableState> 
                             this.renderSuccessTip()
                         ) : (
                             <Tooltip content={typeof copyTip !== 'undefined' ? copyTip : locale.copy}>
-                                {/* TODO: replace `a` tag with `span` in next major version
-                                NOTE: may have effect on style */}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                                <a className={`${prefixCls}-action-copy-icon`}>
-                                    <IconCopy
-                                        role="button"
-                                        tabIndex={0}
-                                        onClick={this.copy}
-                                        onKeyPress={e => isEnterPress(e) && this.copy(e as any)}
-                                    />
-                                </a>
+                                {this.renderCopyIcon()}
                             </Tooltip>
                         )}
                     </span>

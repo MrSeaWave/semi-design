@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable max-len */
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -16,7 +15,7 @@ const prefixCls = cssClasses.PREFIX;
 export interface MonthProps extends MonthFoundationProps, BaseProps {
     forwardRef: React.Ref<any>;
     locale: Locale['DatePicker'];
-    focusRecordsRef: React.RefObject<{ rangeStart: boolean; rangeEnd: boolean }>;
+    focusRecordsRef: React.RefObject<{ rangeStart: boolean; rangeEnd: boolean }>
 }
 
 export type MonthState = MonthFoundationState;
@@ -100,8 +99,9 @@ export default class Month extends BaseComponent<MonthProps, MonthState> {
     }
 
     getSingleDayStatus(options: Partial<MonthProps> & { fullDate: string; todayText: string }) {
+        const { rangeInputFocus } = this.props;
         const { fullDate, todayText, selected, disabledDate, rangeStart, rangeEnd } = options;
-        const disabledOptions = { rangeStart, rangeEnd };
+        const disabledOptions = { rangeStart, rangeEnd, rangeInputFocus };
         const isToday = fullDate === todayText;
         const isSelected = selected.has(fullDate);
 
@@ -149,7 +149,6 @@ export default class Month extends BaseComponent<MonthProps, MonthState> {
         const _isHoverDay = isSameDay(hoverDay, fullDate);
 
         // When one is selected
-        // eslint-disable-next-line one-var
         let _isHoverAfterStart, _isHoverBeforeEnd, isSelectedStart, isSelectedEnd, isHoverDayAroundOneSelected;
         if (rangeStart) {
             isSelectedStart = isSameDay(fullDate, rangeStart);
@@ -168,14 +167,12 @@ export default class Month extends BaseComponent<MonthProps, MonthState> {
             isHoverDayAroundOneSelected = _isHoverDay;
         }
 
-        // eslint-disable-next-line one-var
         let isHover;
         if (!_isOffsetDateRangeAnyExist) {
             isHover = _isHoverAfterStart || _isHoverBeforeEnd || _isHoverDay;
         }
 
         // Select all
-        // eslint-disable-next-line one-var
         let isInRange, isSelectedStartAfterHover, isSelectedEndBeforeHover, isHoverDayInStartSelection, isHoverDayInEndSelection, isHoverDayInRange;
         if (_isDateRangeSelected) {
             isInRange = isBetween(fullDate, { start: rangeStart, end: rangeEnd });

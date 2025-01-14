@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'tr-TR',
     dateFnsLocale: tr,
     Pagination: {
-        item: 'Makale',
         page: 'Sayfa',
-        pageSize: 'Makale / sayfa',
-        total: 'Toplam',
+        pageSize: 'Sayfa başı öğe: ${pageSize}',
+        total: 'Toplam sayfa: ${total}',
         jumpTo: 'Atlamak'
     },
     Modal: {
         confirm: 'Tamam',
         cancel: 'İptal'
+    },
+    Tabs: {
+        more: "Daha"
     },
     TimePicker: {
         placeholder: {
@@ -37,7 +39,9 @@ const local: Locale = {
             dateTime: 'Lütfen bir tarih ve saat seçin',
             dateRange: ['Başlangıç tarihi', 'Bitiş tarihi'],
             dateTimeRange: ['Başlangıç tarihi', 'Bitiş tarihi'],
+            monthRange: ['Başlangıç ​​ayı', 'Bitiş ayı']
         },
+        presets: 'Hızlı seçim',
         footer: {
             confirm: 'Tamam',
             cancel: 'İptal'
@@ -83,11 +87,11 @@ const local: Locale = {
             Wed: 'Çar',
             Thu: 'Perş',
             Fri: 'Cum',
-            Sat: 'Oturdu',
-            Sun: 'Güneş'
+            Sat: 'Cmt',
+            Sun: 'Paz'
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'yyyy-MM-dd',
+            FORMAT_SWITCH_DATE: 'dd.MM.yyyy',
         },
     },
     Navigation:
@@ -103,7 +107,11 @@ const local: Locale = {
     {
         emptyText: 'Henüz veri yok',
         pageText:
-            '${currentStart} öğesini görüntüle - ${currentEnd} öğe, toplam ${total} öğe '
+            '${currentStart} öğesini görüntüle - ${currentEnd} öğe, toplam ${total} öğe ',
+        descend: 'Azalan sıralama için tıklayın',
+        ascend: 'Artan sıralama için tıklayın',
+        cancelSort: 'Sıralamayı iptal et',
+    
     },
     Select: { emptyText: 'Henüz veri yok', createText: 'Oluştur' },
     Cascader: { emptyText: 'Henüz veri yok' },
@@ -147,11 +155,33 @@ const local: Locale = {
         clear: 'Boş',
         selectAll: 'Tümünü seç',
         clearSelectAll: 'Tümünün seçimini kaldır',
-        total: 'Toplam ${total} öğe',
-        selected: '${total} öğe seçildi'
+        total: 'Toplam öğe: ${total}',
+        selected: 'Seçilen öğeler: ${total}'
     },
     Form: {
         optional: '(isteğe bağlı)',
+    },
+    Image: {
+        preview: 'Ön izleme',
+        loading: 'Yükleniyor',
+        loadError: 'Yükleme başarısız',
+        prevTip: 'Önceki',
+        nextTip: 'Sonraki',
+        zoomInTip: 'Yakınlaştır',
+        zoomOutTip: 'uzaklaştır',
+        rotateTip: 'Döndür',
+        downloadTip: 'indir',
+        adaptiveTip: 'Sayfaya uyarla',
+        originTip: 'Orijinal boyut',
+    },
+    Chat: {
+        deleteConfirm: 'Bu sohbeti silmek istediğinize emin misiniz?',
+        clearContext: 'Bağlam temizlendi',
+        copySuccess: 'Başarıyla kopyalandı',
+        stop: 'Durmak',
+        copy: 'Kopyala',
+        copied: 'Kopyalama başarılı',
+        dropAreaText: 'Dosyayı buraya yerleştirin',
     },
 };
 

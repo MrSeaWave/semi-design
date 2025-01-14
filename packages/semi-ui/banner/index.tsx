@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
@@ -28,11 +27,11 @@ export interface BannerProps {
     closeIcon?: React.ReactNode;
     style?: React.CSSProperties;
     bordered?: boolean;
-    onClose?(e: React.MouseEvent):void;
+    onClose?(e: React.MouseEvent): void
 }
 
 export interface BannerState {
-    visible: boolean;
+    visible: boolean
 }
 
 export default class Banner extends BaseComponent<BannerProps, BannerState> {
@@ -43,8 +42,8 @@ export default class Banner extends BaseComponent<BannerProps, BannerState> {
         type: PropTypes.oneOf(types),
         title: PropTypes.node,
         description: PropTypes.node,
-        icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-        closeIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+        icon: PropTypes.node,
+        closeIcon: PropTypes.node,
         children: PropTypes.node,
         style: PropTypes.object,
         className: PropTypes.string,
@@ -53,7 +52,6 @@ export default class Banner extends BaseComponent<BannerProps, BannerState> {
     };
 
     static defaultProps = {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onClose: () => { },
         type: 'info',
         fullMode: true,
@@ -155,7 +153,7 @@ export default class Banner extends BaseComponent<BannerProps, BannerState> {
             [`${prefixCls}-bordered`]: !fullMode && bordered,
         });
         const banner = visible ? (
-            <div className={wrapper} style={style} role="alert">
+            <div className={wrapper} style={style} role="alert" {...this.getDataAttr(this.props)}>
                 <div className={`${prefixCls}-content-wrapper`}>
                     <div className={`${prefixCls}-content`}>
                         {this.renderIcon()}

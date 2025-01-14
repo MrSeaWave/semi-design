@@ -32,10 +32,13 @@ $color-radio_buttonRadio-text-disabled: var(--semi-color-disabled-text); // 按�
 $color-radio_addon_buttonRadio-bg-hover: var(--semi-color-fill-1); // 按钮样式单选悬浮态背景色
 $color-radio_addon_buttonRadio-text-checked: var(--semi-color-primary); // 按钮样式单选选中项文字颜色
 $color-radio_addon_buttonRadio-bg-checked: var(--semi-color-bg-3); // 按钮样式单选选中项背景颜色
+$color-radio_cardRadioGroup-bg-default: transparent; // 卡片样式单选默认背景色
 $color-radio_cardRadioGroup-bg-checked: var(--semi-color-primary-light-default); // 卡片样式单选选中态背景色
 $color-radio_cardRadioGroup_disabled-bg-checked: var(--semi-color-primary-light-default); // 卡片样式单选选中且禁用时的背景色
+$color-radio_cardRadioGroup_disabled-bg-active: transparent; // 卡片样式单选禁用时的背景色 - 按下态
 $color-radio_cardRadioGroup-bg-hover: var(--semi-color-fill-0); // 卡片样式单选悬浮态背景色
 $color-radio_cardRadioGroup-bg-active: var(--semi-color-fill-1); // 卡片样式单选按下态背景色
+$color-radio_cardRadioGroup_border-default: transparent; // 卡片样式单选默认描边颜色
 $color-radio_cardRadioGroup_border-active: var(--semi-color-primary); // 卡片样式单选选中态描边颜色
 $color-radio_cardRadioGroup_checked_border-active: var(--semi-color-primary-active); // 卡片样式单选选中态描边颜色 - 按下态
 $color-radio_cardRadioGroup_checked_border-hover: var(--semi-color-primary-hover); // 卡片样式单选选中态描边颜色 - 悬浮态
@@ -67,13 +70,14 @@ $width-radio_inner: $width-icon-medium; // 单选按钮宽度
 $spacing-radio_addon-paddingLeft: $spacing-tight; //单选标题到单选按钮左侧边距
 $spacing-radio_addon-marginLeft: $width-radio_inner; //单选标题左侧整体外边距
 $spacing-radio_addon_buttonRadio_large-paddingX: $spacing-loose; // 大尺寸按钮式单选按钮水平内边距
-$spacing-radio_addon_buttonRadio_large-paddingY: $spacing-base-tight / 2; // 大尺寸按钮式单选按钮垂直内边距
+$spacing-radio_addon_buttonRadio_large-paddingY: $spacing-base-tight * 0.5; // 大尺寸按钮式单选按钮垂直内边距
 $spacing-radio_addon_buttonRadio_small-paddingX: $spacing-base; // 小尺寸按钮式单选按钮水平内边距
 $spacing-radio_addon_buttonRadio_small-paddingY: $spacing-super-tight; // 中尺寸按钮式单选按钮垂直内边距
 $spacing-radio_addon_buttonRadio_middle-paddingX: $spacing-base; // 中尺寸按钮式单选按钮水平内边距
 $spacing-radio_addon_buttonRadio_middle-paddingY: $spacing-extra-tight; // 中尺寸按钮式单选按钮垂直内边距
 $spacing-radio_addon_buttonRadio_marginLeft: $spacing-none; // 按钮式单选按钮左侧外边距
 $spacing-radio_extra-paddingLeft: $width-radio_inner + $spacing-tight; // 单选副标题左侧内边距
+$spacing-radio_content-rowGap: 4px; // 内容行间距
 
 $spacing-radio_group_vertical-marginBottom: $spacing-base-tight; // 垂直布局单选框组底部外边距
 $spacing-radio_card_group_vertical-marginBottom: $spacing-base; // 垂直布局卡片式单选框组底部外边距

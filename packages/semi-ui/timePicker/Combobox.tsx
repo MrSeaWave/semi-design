@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable react/no-did-update-set-state */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { format as dateFnsFormat } from 'date-fns';
@@ -30,7 +28,7 @@ export type ComboboxProps = Pick<TimePickerProps, 'format' | 'prefixCls' | 'disa
     onChange?: (value: { isAM: boolean; value: string; timeStampValue: number }) => void;
     onCurrentSelectPanelChange?: (range: string) => void;
     isAM?: boolean;
-    timeStampValue?: any;
+    timeStampValue?: any
 };
 
 export interface ComboboxState {
@@ -39,13 +37,13 @@ export interface ComboboxState {
     showSecond: boolean;
     hourOptions: number[];
     minuteOptions: number[];
-    secondOptions: number[];
+    secondOptions: number[]
 }
 
 export type FormatOptionReturn = ReturnType<typeof formatOption>;
 export interface AMPMOptionItem {
     value: string;
-    text: string;
+    text: string
 }
 
 class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
@@ -120,8 +118,7 @@ class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
         });
     };
 
-    onItemChange = ({ type, value, disabled }: { type?: string; value: string; disabled?: boolean; }) => {
-        // eslint-disable-next-line prefer-const
+    onItemChange = ({ type, value, disabled }: { type?: string; value: string; disabled?: boolean }) => {
         let { onChange, use12Hours, isAM, format, timeStampValue } = this.props;
         const transformValue = this.foundation.getDisplayDateFromTimeStamp(timeStampValue);
         // TODO: foundation
@@ -195,9 +192,8 @@ class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
         return (
             <ScrollItem<FormatOptionReturn>
                 ref={current => this.cacheRefCurrent('hour', current)}
-                mode={'wheel'}
+                mode={'normal'}
                 transform={transformHour}
-                cycled={true}
                 className={className}
                 list={hourOptionsAdj.map(option => formatOption(option, disabledOptions))}
                 selectedIndex={hourOptionsAdj.indexOf(hourAdj)}
@@ -226,9 +222,8 @@ class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
         return (
             <ScrollItem<FormatOptionReturn>
                 ref={current => this.cacheRefCurrent('minute', current)}
-                mode={'wheel'}
+                mode={'normal'}
                 transform={transformMinute}
-                cycled={true}
                 list={minuteOptions.map(option => formatOption(option, disabledOptions))}
                 selectedIndex={minuteOptions.indexOf(minute)}
                 type="minute"
@@ -258,9 +253,8 @@ class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
         return (
             <ScrollItem<FormatOptionReturn>
                 ref={current => this.cacheRefCurrent('second', current)}
-                mode={'wheel'}
+                mode={'normal'}
                 transform={transformSecond}
-                cycled={true}
                 list={secondOptions.map(option => formatOption(option, disabledOptions))}
                 selectedIndex={secondOptions.indexOf(second)}
                 className={className}
@@ -295,9 +289,8 @@ class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
         return (
             <ScrollItem<AMPMOptionItem>
                 ref={current => this.cacheRefCurrent('ampm', current)}
-                mode={'wheel'}
+                mode={'normal'}
                 className={className}
-                cycled={false}
                 list={AMPMOptions}
                 selectedIndex={selected}
                 type="ampm"
@@ -319,7 +312,7 @@ class Combobox extends BaseComponent<ComboboxProps, ComboboxState> {
                 {(locale: Locale['TimePicker'], localeCode: Locale['code']) => (
                     <ScrollList
                         header={panelHeader}
-                        footer={panelFooter} 
+                        footer={panelFooter}
                         x-semi-header-alias="panelHeader"
                         x-semi-footer-alias="panelFooter"
                     >

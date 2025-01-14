@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 25
+order: 37
 category: Input
 title:  InputNumber
 subTitle: InputNumber
@@ -203,6 +203,7 @@ function Demo () {
 | ------------ | ----------------------------------------------------------------------------------------------- | --------------------------------- | --------- | ---------- |
 | autofocus    | Automatic access to focus                                                                       | boolean                           | false     |            |
 | className    | class name of InputNumber                                                               | string  | -      |
+| clearIcon    | Can be used to customize the clear button, valid when showClear is true                       | ReactNode                       |     | 2.25.0 |
 | defaultValue | Default                                                                                         | number                            |           |            |
 | disabled     | Disabled status                                                                                 | boolean                           | false     |            |
 | formatter    | Specifies the format of the input box to display the value                                      | (value: number\|string) => string | -         |            |
@@ -214,7 +215,7 @@ function Demo () {
 | min          | Limit minimum value                                                                             | number                            | -Infinity |            |
 | parser       | Specifies how to convert back number string from formatter and use them in conjunction with formatter | (value: string) => string         | -         |      |
 | precision    | Numerical precision                                                                             | number                            | -         |            |
-| prefixCls    | Prefix content                                                                                  | string\|ReactNode                 |           |            |
+| prefix    | Prefix content                                                                                  | string\|ReactNode                 |           |            |
 | pressInterval| How often will the click event be triggered when the button is long pressed, in milliseconds                                   | number                 |   250        |           |
 | pressTimeout | When the button is long pressed, how long will the click event be triggered after the delay, in milliseconds                                               | number                 |     250      |           |
 | preventScroll | Indicates whether the browser should scroll the document to display the newly focused element, acting on the focus method inside the component, excluding the component passed in by the user | boolean |  |  |
@@ -231,6 +232,8 @@ function Demo () {
 | onNumberChange | Number change callback                                                 | (value: number) => void   |   -         |     **1.9.0**      |
 
 ## Methods
+
+Some internal methods provided by InputNumber can be accessed through ref:
 
 | Name    | Description     |
 | ------- | --------------- |

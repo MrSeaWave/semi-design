@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 23
+order: 35
 category: 输入类
 title:  Form 表单
 icon: doc-form
@@ -75,16 +75,16 @@ import { IconHelpCircle } from '@douyinfe/semi-icons';
 
     return (
         <Form layout='horizontal' onValueChange={values=>console.log(values)}>
-            <Form.Input field='UserName' label='用户名' style={{ width:80 }}/>
+            <Form.Input field='UserName' label='用户名' style={{ width: 80 }}/>
             <Form.Input
                 field='Password'
                 label={{ 
                     text: '密码',
                     extra: <Tooltip content='详情'><IconHelpCircle style={{ color: 'var(--semi-color-text-2)' }}/></Tooltip> 
                 }}
-                style={{ width:176 }}
+                style={{ width: 176 }}
             />
-            <Form.Select field="Role" label={{ text: '角色', optional: true }} style={{ width:176 }}>
+            <Form.Select field="Role" label={{ text: '角色', optional: true }} style={{ width: 176 }}>
                 <Option value="admin">管理员</Option>
                 <Option value="user">普通用户</Option>
                 <Option value="guest">访客</Option>
@@ -144,13 +144,13 @@ import { Form } from '@douyinfe/semi-ui';
             {
                 ({ formState, values, formApi }) => (
                     <>
-                        <Form.Select field="Role" label='角色' style={{ width:176 }}>
+                        <Form.Select field="Role" label='角色' style={{ width: 176 }}>
                             <Form.Select.Option value="admin">管理员</Form.Select.Option>
                             <Form.Select.Option value="user">普通用户</Form.Select.Option>
                             <Form.Select.Option value="guest">访客</Form.Select.Option>
                         </Form.Select>
-                        <Form.Input field='UserName' label='用户名' style={{ width:80 }} />
-                        <Form.Input field='Password' label='密码' style={{ width:176 }}/>
+                        <Form.Input field='UserName' label='用户名' style={{ width: 80 }} />
+                        <Form.Input field='Password' label='密码' style={{ width: 176 }}/>
                         <code style={{ marginTop: 24 }}>{JSON.stringify(formState)}</code>
                     </>
                 )
@@ -171,9 +171,9 @@ import { Form } from '@douyinfe/semi-ui';
 () => {
     const fields = ({ formState, formApi, values }) => (
         <>
-            <Form.Input field='Role' style={{ width:176 }}/>
-            <Form.Input field='UserName' style={{ width:80 }}/>
-            <Form.Input field='Password' style={{ width:176 }}/>
+            <Form.Input field='Role' style={{ width: 176 }}/>
+            <Form.Input field='UserName' style={{ width: 80 }}/>
+            <Form.Input field='Password' style={{ width: 176 }}/>
             <code style={{ marginTop: 24 }}>{JSON.stringify(formState)}</code>
         </>
     );
@@ -183,267 +183,251 @@ import { Form } from '@douyinfe/semi-ui';
 
 ### 已支持的表单控件
 
-> Form.TreeSelect、Form.Cascader、Form.Rating 在 v0.22.0 及之后的版本开始提供；  
-> Form.AutoComplete 在 v0.28.0 及之后的版本开始提供  
-> Form.Upload 在 v1.0.0 及之后的版本开始提供  
-> Form.TagInput 在 v1.21.0 及之后的版本开始提供  
-
 ```jsx live=true dir="column"
 import React from 'react';
-import { Form, Col, Row, Button } from '@douyinfe/semi-ui';
+import { Form, Col, Row, Button, Space } from '@douyinfe/semi-ui';
 import { IconUpload } from '@douyinfe/semi-icons';
 
-class BasicDemoWithInit extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            initValues: {
-                name: 'semi',
-                business: ['ulikeCam'],
-                role: 'ued',
-                switch: true,
-                files: [
-                    {
-                        uid: '1',
-                        name: 'vigo.png',
-                        status: 'success',
-                        size: '130KB',
-                        preview: true,
-                        url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/vigo.png'
-                    },
-                    {
-                        uid: '2',
-                        name: 'resso.jpeg',
-                        status: 'validateFail',
-                        size: '222KB',
-                        percent: 50,
-                        preview: true,
-                        fileInstance:  new File([new ArrayBuffer(2048)], 'resso.jpeg', { type: 'image/jpeg' }),
-                        url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/Resso.png'
-                    },
-                    {
-                        uid: '3',
-                        name: 'dy.jpeg',
-                        status: 'uploading',
-                        size: '222KB',
-                        percent: 50,
-                        preview: true,
-                        fileInstance:  new File([new ArrayBuffer(2048)], 'dy.jpeg', { type: 'image/jpeg' }),
-                        url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/dy.png'
-                    }
-                ]
-            }
-        };
-        this.getFormApi = this.getFormApi.bind(this);
-    }
-
-    getFormApi(formApi) { this.formApi = formApi; }
-
-    render() {
-        const { Section, Input, InputNumber, AutoComplete, Select, TreeSelect, Cascader, DatePicker, TimePicker, TextArea, CheckboxGroup, Checkbox, RadioGroup, Radio, Slider, Rating, Switch, TagInput } = Form;
-        const { initValues } = this.state;
-        const plainOptions = ['A', 'B', 'C'];
-        const style = { width: '90%' };
-        const treeData = [
+() => {
+    const initValues = {
+        name: 'semi',
+        business: ['ulikeCam'],
+        role: 'ued',
+        switch: true,
+        files: [
             {
-                label: '亚洲',
-                value: 'Asia',
-                key: '0',
-                children: [
-                    {
-                        label: '中国',
-                        value: 'China',
-                        key: '0-0',
-                        children: [
-                            {
-                                label: '北京',
-                                value: 'Beijing',
-                                key: '0-0-0',
-                            },
-                            {
-                                label: '上海',
-                                value: 'Shanghai',
-                                key: '0-0-1',
-                            },
-                        ],
-                    },
-                ],
+                uid: '1',
+                name: 'vigo.png',
+                status: 'success',
+                size: '130KB',
+                preview: true,
+                url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/vigo.png'
             },
             {
-                label: '北美洲',
-                value: 'North America',
-                key: '1',
+                uid: '2',
+                name: 'resso.jpeg',
+                status: 'validateFail',
+                size: '222KB',
+                percent: 50,
+                preview: true,
+                fileInstance: new File([new ArrayBuffer(2048)], 'resso.jpeg', { type: 'image/jpeg' }),
+                url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/Resso.png'
+            },
+            {
+                uid: '3',
+                name: 'douyin.jpeg',
+                status: 'uploading',
+                size: '222KB',
+                percent: 50,
+                preview: true,
+                fileInstance: new File([new ArrayBuffer(2048)], 'dy.jpeg', { type: 'image/jpeg' }),
+                url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/dy.png'
             }
-        ];
+        ]
+    };
+    const { Section, Input, InputNumber, AutoComplete, Select, TreeSelect, Cascader, DatePicker, TimePicker, TextArea, CheckboxGroup, Checkbox, RadioGroup, Radio, Slider, Rating, Switch, TagInput } = Form;
+    const plainOptions = ['A', 'B', 'C'];
+    const style = { width: '90%' };
+    const treeData = [
+        {
+            label: '亚洲',
+            value: 'Asia',
+            key: '0',
+            children: [
+                {
+                    label: '中国',
+                    value: 'China',
+                    key: '0-0',
+                    children: [
+                        {
+                            label: '北京',
+                            value: 'Beijing',
+                            key: '0-0-0',
+                        },
+                        {
+                            label: '上海',
+                            value: 'Shanghai',
+                            key: '0-0-1',
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            label: '北美洲',
+            value: 'North America',
+            key: '1',
+        }
+    ];
 
-        return (
-            <Form
-                getFormApi={this.getFormApi}
-                initValues={initValues}
-                style={{ padding: 10, width: '100%' }}
-                onValueChange={(v)=>console.log(v)}
-            >
-                <Section text={'基本信息'}>
-                    <Row>
-                        <Col span={12}>
-                            <Input
-                                field="name"
-                                label="名称（Input）"
-                                initValue={'mikeya'}
-                                style={style}
-                                trigger='blur'
-                            />
-                        </Col>
-                        <Col span={12}>
-                            <DatePicker field="date" label='日期（DatePicker）' style={style} initValue={new Date()} placeholder='请选择生效日期' />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={12}>
-                            <Select field="role" style={style} label='角色（Select）' placeholder='请选择你的角色'>
-                                <Select.Option value="operate">运营</Select.Option>
-                                <Select.Option value="rd">开发</Select.Option>
-                                <Select.Option value="pm">产品</Select.Option>
-                                <Select.Option value="ued">设计</Select.Option>
-                            </Select>
-                        </Col>
-                        <Col span={12}>
-                            <Select
-                                field="business"
-                                multiple
-                                style={style}
-                                placeholder='请选择业务线'
-                                label="业务线（多选Select）"
-                                extraText={
-                                    <div style={{
-                                        color: 'rgba(var(--semi-blue-5), 1)',
-                                        fontSize: 14,
-                                        userSelect: 'none',
-                                        cursor: 'pointer'
-                                    }}>
-                                        没有找到合适的业务线？
-                                    </div>
-                                }
-                            >
-                                <Select.Option value="abc">Semi</Select.Option>
-                                <Select.Option value="ulikeCam">轻颜相机</Select.Option>
-                                <Select.Option value="toutiao">今日头条</Select.Option>
-                            </Select>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={12}>
-                            <Form.Cascader
-                                placeholder="请选择所在地区"
-                                treeData={treeData}
-                                field='area'
-                                label='地区（Cascader）'
-                                style={style}
-                            >
-                            </Form.Cascader>
-                        </Col>
-                        <Col span={12}>
-                            <Form.TreeSelect
-                                field="tree"
-                                style={style}
-                                label='节点（TreeSelect）'
-                                placeholder='请选择服务节点'
-                                treeData={treeData}
-                                filterTreeNode
-                            >
-                            </Form.TreeSelect>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={12}>
-                            <TagInput 
-                                field="product"
-                                label='产品（TagInput）'
-                                initValue={['abc','ulikeCam']}
-                                placeholder='请输入产品'
-                                style={style}
-                            />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={24}>
-                            <Form.Upload
-                                field='files'
-                                label='证明文件（Upload）'
-                                action='//semi.design/api/upload'
-                            >
-                                <Button icon={<IconUpload />} theme="light">
-                                    点击上传
-                                </Button>
-                            </Form.Upload>
-                        </Col>
-                    </Row>
-                </Section>
-                <Section text='资源详情'>
-                    <Row>
-                        <Col span={12}>
-                            <TextArea
-                                style={{ ...style, height: 120 }}
-                                field='description'
-                                label='申请理由（TextArea）'
-                                placeholder='请填写申请资源理由'
-                            />
-                        </Col>
-                        <Col span={12}>
-                            <CheckboxGroup
-                                field="type"
-                                direction='horizontal'
-                                label='申请类型（CheckboxGroup）'
-                                initValue={['user', 'admin']}
-                                rules={[
-                                    { required: true }
-                                ]}
-                            >
-                                <Checkbox value="admin">admin</Checkbox>
-                                <Checkbox value="user">user</Checkbox>
-                                <Checkbox value="guest">guest</Checkbox>
-                                <Checkbox value="root">root</Checkbox>
-                            </CheckboxGroup>
-                            <RadioGroup field="isMonopolize" label='是否独占资源（Radio）' rules={[
-                                { type: 'boolean' },
-                                { required: true, message: '必须选择是否独占 ' }
-                            ]}>
-                                <Radio value={true}>是</Radio>
-                                <Radio value={false}>否</Radio>
-                            </RadioGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={12}>
-                            <TimePicker field="time" label='截止时刻（TimePicker）' style={{ width: '90%' }}/>
-                        </Col>
-                        <Col span={12}>
-                            <InputNumber field='number' label='申请数量（InputNumber）' initValue={20} style={style}/>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={12}>
-                            <Slider field="range" label='资源使用报警阈值(%)（Slider）' initValue={10} style={{ width: '90%' }}/>
-                        </Col>
-                        <Col span={12}>
-                            <Switch field='switch' label='开关(Switch)'/>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={12}>
-                            <Rating field="rating" label='满意度(Rating)' initValue={2} style={{ width: '90%' }}/>
-                        </Col>
-                    </Row>
-                </Section>
-                <Checkbox value="false" field="agree" noLabel={true}>
-                    我已阅读并清楚相关规定（Checkbox）
-                </Checkbox>
+    return (
+        <Form
+            initValues={initValues}
+            style={{ padding: 10, width: '100%' }}
+            onValueChange={(v)=>console.log(v)}
+        >
+            <Section text={'基本信息'}>
+                <Row>
+                    <Col span={12}>
+                        <Input
+                            field="name"
+                            label="名称（Input）"
+                            initValue={'mikeya'}
+                            style={style}
+                            trigger='blur'
+                        />
+                    </Col>
+                    <Col span={12}>
+                        <DatePicker field="date" label='日期（DatePicker）' style={style} initValue={new Date()} placeholder='请选择生效日期' />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <Select field="role" style={style} label='角色（Select）' placeholder='请选择你的角色'>
+                            <Select.Option value="operate">运营</Select.Option>
+                            <Select.Option value="rd">开发</Select.Option>
+                            <Select.Option value="pm">产品</Select.Option>
+                            <Select.Option value="ued">设计</Select.Option>
+                        </Select>
+                    </Col>
+                    <Col span={12}>
+                        <Select
+                            field="business"
+                            multiple
+                            style={style}
+                            placeholder='请选择业务线'
+                            label="业务线（多选Select）"
+                            extraText={
+                                <div style={{
+                                    color: 'rgba(var(--semi-blue-5), 1)',
+                                    fontSize: 14,
+                                    userSelect: 'none',
+                                    cursor: 'pointer'
+                                }}>
+                                    没有找到合适的业务线？
+                                </div>
+                            }
+                        >
+                            <Select.Option value="abc">Semi</Select.Option>
+                            <Select.Option value="ulikeCam">轻颜相机</Select.Option>
+                            <Select.Option value="toutiao">今日头条</Select.Option>
+                        </Select>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <Form.Cascader
+                            placeholder="请选择所在地区"
+                            treeData={treeData}
+                            field='area'
+                            label='地区（Cascader）'
+                            style={style}
+                        >
+                        </Form.Cascader>
+                    </Col>
+                    <Col span={12}>
+                        <Form.TreeSelect
+                            field="tree"
+                            style={style}
+                            label='节点（TreeSelect）'
+                            placeholder='请选择服务节点'
+                            treeData={treeData}
+                            filterTreeNode
+                        >
+                        </Form.TreeSelect>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <TagInput 
+                            field="product"
+                            label='产品（TagInput）'
+                            initValue={['abc', 'ulikeCam']}
+                            placeholder='请输入产品'
+                            style={style}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        <Form.Upload
+                            field='files'
+                            label='证明文件（Upload）'
+                            action='//semi.design/api/upload'
+                        >
+                            <Button icon={<IconUpload />} theme="light">
+                                点击上传
+                            </Button>
+                        </Form.Upload>
+                    </Col>
+                </Row>
+            </Section>
+            <Section text='资源详情'>
+                <Row>
+                    <Col span={12}>
+                        <TextArea
+                            style={{ ...style, height: 120 }}
+                            field='description'
+                            label='申请理由（TextArea）'
+                            placeholder='请填写申请资源理由'
+                        />
+                    </Col>
+                    <Col span={12}>
+                        <CheckboxGroup
+                            field="type"
+                            direction='horizontal'
+                            label='申请类型（CheckboxGroup）'
+                            initValue={['user', 'admin']}
+                            rules={[
+                                { required: true }
+                            ]}
+                        >
+                            <Checkbox value="admin">admin</Checkbox>
+                            <Checkbox value="user">user</Checkbox>
+                            <Checkbox value="guest">guest</Checkbox>
+                            <Checkbox value="root">root</Checkbox>
+                        </CheckboxGroup>
+                        <RadioGroup field="isMonopolize" label='是否独占资源（Radio）' rules={[
+                            { type: 'boolean' },
+                            { required: true, message: '必须选择是否独占 ' }
+                        ]}>
+                            <Radio value={1}>是</Radio>
+                            <Radio value={0}>否</Radio>
+                        </RadioGroup>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <TimePicker field="time" label='截止时刻（TimePicker）' style={{ width: '90%' }}/>
+                    </Col>
+                    <Col span={12}>
+                        <InputNumber field='number' label='申请数量（InputNumber）' initValue={20} style={style}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <Slider field="range" label='资源使用报警阈值(%)（Slider）' initValue={10} style={{ width: '90%' }}/>
+                    </Col>
+                    <Col span={12}>
+                        <Switch field='switch' label='开关(Switch)'/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <Rating field="rating" label='满意度(Rating)' initValue={2} style={{ width: '90%' }}/>
+                    </Col>
+                </Row>
+            </Section>
+            <Checkbox value="false" field="agree" noLabel={true}>
+                我已阅读并清楚相关规定（Checkbox）
+            </Checkbox>
+            <Space>
                 <Button type="primary" htmlType="submit" className="btn-margin-right">提交(submit)</Button>
                 <Button htmlType="reset">重置(reset)</Button>
-            </Form>
-        );
-    }
-}
+            </Space>
+        </Form>
+    );
+};
 ```
 
 ### 表单控件值的绑定
@@ -514,7 +498,7 @@ import { Form, Toast, Button } from '@douyinfe/semi-ui';
                     <Form.Checkbox field='agree' noLabel>I have read and agree to the terms of service</Form.Checkbox>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <p>
-                            <span>Or</span><Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor:'pointer' }}>Sign up</Button>
+                            <span>Or</span><Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}>Sign up</Button>
                         </p>
                         <Button disabled={!values.agree} htmlType='submit' type="tertiary">Log in</Button>
                     </div>
@@ -647,7 +631,7 @@ import { Form, Col, Row } from '@douyinfe/semi-ui';
                     rules={[
                         { required: true, message: 'required error' },
                         { type: 'string', message: 'type error' },
-                        { validator: (rule, value) => value === 'semi', message: 'shoulde be semi' }
+                        { validator: (rule, value) => value === 'semi', message: 'should be semi' }
                     ]}
                 />
             </Col>
@@ -710,19 +694,19 @@ import { Form, Button, Space } from '@douyinfe/semi-ui';
 () => {
     const { Section, Input, DatePicker, TimePicker, Select, Switch, InputNumber, Checkbox, CheckboxGroup, RadioGroup, Radio } = Form;
     return (
-        <Form style={{ width:560 }}>
+        <Form style={{ width: 560 }}>
             <Section text={'基本信息'}>
                 <Input field='name' label='考试名称' initValue='TCS任务平台使用' style={{ width: 560 }}/>
             </Section>
             <Section text={'合格标准'} >
-                <div style={{ display:'flex' }}>
-                    <InputNumber field='pass' initValue={60} style={{ width:80 }} label={{ text:'及格正确率', required: true }}/>
-                    <InputNumber field='number' initValue={10} style={{ width:80 }} label={{ text:'合格人数', required: true }}/>
+                <div style={{ display: 'flex' }}>
+                    <InputNumber field='pass' initValue={60} style={{ width: 80 }} label={{ text: '及格正确率', required: true }}/>
+                    <InputNumber field='number' initValue={10} style={{ width: 80 }} label={{ text: '合格人数', required: true }}/>
                 </div>
             </Section>
             <Section text={'考试时间'} >
-                <DatePicker field='date' type='dateTime' initValue={new Date()} style={{ width:272 }} label={{ text:'开始时间', required: true }}/>
-                <div  style={{ display:'flex' }}>
+                <DatePicker field='date' type='dateTime' initValue={new Date()} style={{ width: 272 }} label={{ text: '开始时间', required: true }}/>
+                <div style={{ display: 'flex' }}>
                     <Input field='time' label='考试时长' style={{ width: 176 }} initValue={'60'} addonAfter='分钟'/>
                     <Checkbox initValue={true} noLabel field='auto' style={{ paddingTop: 30, marginLeft: 12 }}>到时间自动交卷</Checkbox>
                 </div>
@@ -746,7 +730,7 @@ import { Form, Button, Space } from '@douyinfe/semi-ui';
                 >
                     <Radio value="always">自动放出</Radio>
                     <Radio value="user">
-                        <div style={{ display:'inline-block' }}>
+                        <div style={{ display: 'inline-block' }}>
                             自定义放出时间
                             <Form.DatePicker type='dateTimeRange' noLabel field='customTime' style={{ width: 464, display: 'inline-block' }}/>
                         </div>
@@ -755,14 +739,14 @@ import { Form, Button, Space } from '@douyinfe/semi-ui';
             </Section>
             <Section text={'考试人员'}>
                 <div style={{ display: 'flex' }}>
-                    <Switch field='open'  label={{ text:'对外开放', required: true }} checkedText='开' uncheckedText='关'></Switch>
+                    <Switch field='open' label={{ text: '对外开放', required: true }} checkedText='开' uncheckedText='关'></Switch>
                 </div>
                 <Select
                     field='users'
-                    label={{ text:'考生', required: true }}
+                    label={{ text: '考生', required: true }}
                     style={{ width: 560 }}
                     multiple
-                    initValue={['1','2','3', '4']}
+                    initValue={['1', '2', '3', '4']}
                 >
                     <Select.Option value='1'>曲晨一</Select.Option>
                     <Select.Option value='2'>夏可曼</Select.Option>
@@ -881,8 +865,8 @@ class AssistComponent extends React.Component {
                 labelWidth={100}
             >
                 <Form.Input field='特效名称' style={{ width: 250 }}/>
-                <Form.Slot label={{ text: 'SlotA' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                <Form.Slot label={{ text: 'SlotA' }} error='我是SlotA的ErrorMessage'>
+                    <div style={{ display: 'flex', alignItems: 'center', height: 32, marginTop: 8 }}>
                         我是Semi Form SlotA, 我是自定义的ReactNode
                     </div>
                 </Form.Slot>
@@ -948,7 +932,7 @@ import { Form } from '@douyinfe/semi-ui';
                 validateStatus={validateStatus}
                 helpText={helpText}
                 extraText={
-                    <div 
+                    <div
                         style={{
                             color: 'var(--semi-color-link)',
                             fontSize: 14,
@@ -1071,7 +1055,7 @@ class ModalFormDemo extends React.Component {
         this.formApi = formApi;
     }
 
-    render(){
+    render() {
         const { visible } = this.state;
         let message = '该项为必填项';
         return (
@@ -1093,7 +1077,7 @@ class ModalFormDemo extends React.Component {
                                     field='region'
                                     label="国家/地区"
                                     placeholder='请选择'
-                                    style={{ width:'100%' }}
+                                    style={{ width: '100%' }}
                                     rules={[
                                         { required: true, message },
                                     ]}
@@ -1121,7 +1105,7 @@ class ModalFormDemo extends React.Component {
                                     field='area'
                                     label="投放区域"
                                     placeholder='请选择'
-                                    style={{ width:'100%' }}
+                                    style={{ width: '100%' }}
                                     rules={[
                                         { required: true, message },
                                     ]}
@@ -1156,52 +1140,52 @@ class ModalFormDemo extends React.Component {
 -   你可以通过`rules`为每个 Field 表单控件配置校验规则  
     Form 内部的校验库基于 async-validator，更多配置规则可查阅其[官方文档](https://github.com/yiminghe/async-validator)
 -   你可以通过 form 的`initValues`为整个表单统一设置初始值，也可以在每个 field 中通过`initValue`设置初始值（后者优先级更高）
+-   可以通过 trigger 为每个 Field 配置不同的校验触发时机，默认为 change（即onChange触发时，自动进行校验）。还支持 change、blur、mount、custom 或以上的组合。v2.42 后支持通过 FormProps 统一配置, 若都配置时，以 FieldProps 为准  
+-   可以通过 stopValidateWithError 开关，决定使用 rules 校验时，当碰到第一个检验不通过的 rules 后，是否继续触发后续 rules 的校验。v2.42 后支持通过 FormProps 统一配置，若都配置时，以 FieldProps 为准  
 
 ```jsx live=true dir="column" hideInDSM
 import React from 'react';
 import { Form, Button } from '@douyinfe/semi-ui';
 
-class BasicDemoWithInit extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            initValues: {
-                name: 'semi',
-                role: 'rd'
-            }
-        };
-        this.getFormApi = this.getFormApi.bind(this);
-    }
+() => {
+    
+    const initValues = {
+        name: 'semi',
+        shortcut: 'se'
+    };
+    
+    const style = { width: '100%' };
+    
+    const { Select, Input } = Form;
 
-    getFormApi(formApi) { this.formApi = formApi; }
-
-    render() {
-        const { Select, Input } = Form;
-        const style = { width: '100%' };
-        return (
-            <Form initValues={this.state.initValues}>
-                <Input
-                    field="name"
-                    label="名称（Input）"
-                    style={style}
-                    trigger='blur'
-                    rules={[
-                        { required: true, message: 'required error' },
-                        { type: 'string', message: 'type error' },
-                        { validator: (rule, value) => value === 'semi', message: 'should be semi' }
-                    ]}
-                />
-                <Select field="role" style={style} label='角色' placeholder='请选择你的角色' initValue={'pm'}>
-                    <Select.Option value="operate">运营</Select.Option>
-                    <Select.Option value="rd">开发</Select.Option>
-                    <Select.Option value="pm">产品</Select.Option>
-                    <Select.Option value="ued">设计</Select.Option>
-                </Select>
-                <Button htmlType='submit'>提交</Button>
-            </Form>
-        );
-    }
-}
+    return (
+        <Form initValues={initValues}>
+            <Input
+                field="name"
+                style={style}
+                trigger='blur'
+                rules={[
+                    { required: true, message: 'required error' },
+                    { type: 'string', message: 'type error' },
+                    { validator: (rule, value) => value === 'semi', message: 'should be semi' },
+                    { validator: (rule, value) => value && value.startsWith('se'), message: 'should startsWith se' }
+                ]}
+            />
+            <Input
+                field="shortcut"
+                style={style}
+                stopValidateWithError
+                rules={[
+                    { required: true, message: 'required error' },
+                    { type: 'string', message: 'type error' },
+                    { validator: (rule, value) => value === 'semi', message: 'should be semi' },
+                    { validator: (rule, value) => value && value.startsWith('se'), message: 'should startsWith se' }
+                ]}
+            />
+            <Button htmlType='submit'>提交</Button>
+        </Form>
+    );
+};
 ```
 
 ### 自定义校验(Form 级别)
@@ -1416,10 +1400,10 @@ class PartValidAndResetDemo extends React.Component {
                             <div>
                                 <Form.Input field="a[1]" validate={this.validate} trigger="blur" />
                                 <Form.Input field="a[0]" validate={this.validate} trigger="blur" />
-                                <Form.Input field="b.name[0]" validate={this.validate} trigger="blur"  />
+                                <Form.Input field="b.name[0]" validate={this.validate} trigger="blur" />
                                 <Form.Input field="b.name[1]" validate={this.validate} trigger="blur" />
                                 <Form.Input field="b.type" validate={this.validate} trigger="blur" />
-                                <Form.Input field="c" validate={this.validate} trigger="blur"  />
+                                <Form.Input field="c" validate={this.validate} trigger="blur" />
                                 <Form.Input field="d" validate={this.validate} trigger="blur" />
                             </div>
                             <div>
@@ -1502,10 +1486,11 @@ import { Form, Button } from '@douyinfe/semi-ui';
 );
 ```
 
-#### 数组类动态增删表单项-使用 ArrayField
+### 使用 ArrayField
 
 针对动态增删的数组类表单项，我们提供了 ArrayField 作用域来简化 add/remove 的操作  
 ArrayField 自带了 add、remove、addWithInitValue 等 api 用来执行新增行，删除行，新增带有初始值的行等操作  
+ArrayField 详细的 API请查阅下方 [ArrayField Props](#arrayfield-props)
 注意：ArrayField 的 initValue 类型必须是数组
 
 ```jsx live=true dir="column" hideInDSM
@@ -1517,15 +1502,15 @@ class ArrayFieldDemo extends React.Component {
     constructor() {
         super();
         this.state = {
-            menu: [
-                { name: '脸部贴纸', type: '2D' },
-                { name: '前景贴纸', type: '3D' },
+            data: [
+                { name: 'Semi D2C', role: 'Engineer' },
+                { name: 'Semi C2D', role: 'Designer' },
             ]
         };
     }
 
     render() {
-        let { menu } = this.state;
+        let { data } = this.state;
         const ComponentUsingFormState = () => {
             const formState = useFormState();
             return (
@@ -1533,30 +1518,38 @@ class ArrayFieldDemo extends React.Component {
             );
         };
         return (
-            <Form style={{ width: 500 }} labelPosition='left' labelWidth='220px' allowEmpty>
-                <ArrayField field='effects' initValue={menu}>
+            <Form style={{ width: 800 }} labelPosition='left' labelWidth='100px' allowEmpty>
+                <ArrayField field='rules' initValue={data}>
                     {({ add, arrayFields, addWithInitValue }) => (
                         <React.Fragment>
-                            <Button onClick={add} icon={<IconPlusCircle />} theme='light'>新增空白行</Button>
-                            <Button  icon={<IconPlusCircle />} onClick={() => {addWithInitValue({ name: '自定义贴纸', type: '2D' });}} style={{ marginLeft:8 }}>新增带有初始值的行</Button>
+                            <Button onClick={add} icon={<IconPlusCircle />} theme='light'>Add new line</Button>
+                            <Button icon={<IconPlusCircle />} onClick={() => {addWithInitValue({ name: 'Semi DSM', type: 'Designer' });}} style={{ marginLeft: 8 }}>Add new line with init value</Button>
                             {
                                 arrayFields.map(({ field, key, remove }, i) => (
                                     <div key={key} style={{ width: 1000, display: 'flex' }}>
                                         <Form.Input
                                             field={`${field}[name]`}
-                                            label={`特效类型：（${field}.name）`}
+                                            label={`${field}.name`}
                                             style={{ width: 200, marginRight: 16 }}
                                         >
                                         </Form.Input>
                                         <Form.Select
-                                            field={`${field}[type]`}
-                                            label={`素材类型：（${field}.type）`}
-                                            style={{ width: 90 }}
+                                            field={`${field}[role]`}
+                                            label={`${field}.role`}
+                                            style={{ width: 120 }}
+                                            optionList={[
+                                                { label: 'Engineer', value: 'Engineer' },
+                                                { label: 'Designer', value: 'Designer' },
+                                            ]}
                                         >
-                                            <Form.Select.Option value='2D'>2D</Form.Select.Option>
-                                            <Form.Select.Option value='3D'>3D</Form.Select.Option>
                                         </Form.Select>
-                                        <Button type='danger' theme='borderless' icon={<IconMinusCircle />} onClick={remove} style={{ margin: 12 }}></Button>
+                                        <Button
+                                            type='danger'
+                                            theme='borderless'
+                                            icon={<IconMinusCircle />}
+                                            onClick={remove}
+                                            style={{ margin: 12 }}
+                                        />
                                     </div>
                                 ))
                             }
@@ -1569,6 +1562,175 @@ class ArrayFieldDemo extends React.Component {
     }
 }
 ```
+
+
+#### 嵌套 ArrayField
+
+ArrayField 支持多级嵌套，如下是一个两级嵌套的例子
+
+```jsx live=true dir="column" noInline=true
+import { Form, ArrayField, Button, Card, Typography, } from "@douyinfe/semi-ui";
+import { IconPlusCircle, IconMinusCircle } from "@douyinfe/semi-icons";
+import React from "react";
+
+const selectOption = [
+    { label: '发件人地址', value: 'address' },
+    { label: '邮件主题', value: 'title' },
+    { label: '发送时间', value: 'sendTime' },
+    { label: '接收时间', value: 'receiveTime' },
+    { label: '正文', value: 'main' },
+    { label: '附件名称', value: 'attachmentName' },
+];
+
+const initValue = {
+    group: [
+        {
+            name: "收信规则1",
+            rules: [
+                { ruleType: "address", type: "include", text: "bytedance.com" },
+                { ruleType: "title", type: "exclude", text: "更新日志" },
+            ],
+        },
+        {
+            name: "收信规则2",
+            rules: [
+                { ruleType: "sendTime", type: "include", text: "2019" }
+            ],
+        },
+    ] 
+};
+
+const NestedField = (props) => {
+    const rowStyle = {
+        marginTop: 12,
+        marginLeft: 12,
+    };
+    return (
+        <ArrayField field={`${props.field}.rules`}>
+            {({ add, arrayFields, addWithInitValue }) => (
+                <React.Fragment>
+                    {arrayFields.map(({ field, key, remove }, i) => (
+                        <div style={{ display: "flex" }} key={key}>
+                            <Form.Select
+                                field={`${field}[ruleType]`}
+                                label={`${field}.ruleType`}
+                                noLabel
+                                optionList={selectOption}
+                                style={{ width: 120, marginRight: 12 }}
+                            ></Form.Select>
+                            <Form.Select
+                                field={`${field}[type]`}
+                                label={`${field}.type`}
+                                noLabel
+                                style={{ width: 100, marginRight: 12 }}
+                                optionList={[
+                                    { label: "包含", value: "include" },
+                                    { label: "不包含", value: "exclude" },
+                                ]}
+                            ></Form.Select>
+                            <Form.Input 
+                                field={`${field}[text]`}
+                                label={`${field}.text`}
+                                noLabel
+                                style={{ width: 200 }}
+                            ></Form.Input>
+                            <Button
+                                type="danger"
+                                theme="borderless"
+                                style={rowStyle}
+                                icon={<IconMinusCircle />}
+                                onClick={remove}
+                            />
+                            <Button
+                                icon={<IconPlusCircle />}
+                                style={rowStyle}
+                                disabled={i !== arrayFields.length - 1}
+                                onClick={() => {
+                                    addWithInitValue({
+                                        ruleType: `条件${arrayFields.length + 1}`,
+                                        type: "include",
+                                    });
+                                }}
+                            />
+                        </div>
+                    ))}
+                </React.Fragment>
+            )}
+        </ArrayField>
+    );
+};
+
+const NestArrayFieldDemo = () => {
+    return (
+        <Form
+            onValueChange={(values) => console.log(values)}
+            initValues={initValue}
+            labelPosition="left"
+            style={{ textAlign: "left" }}
+            allowEmpty
+        >
+            <ArrayField field="group" >
+                {({ add, arrayFields, addWithInitValue }) => (
+                    <React.Fragment>
+                        <Button
+                            icon={<IconPlusCircle />}
+                            theme="solid"
+                            onClick={() => {
+                                addWithInitValue({
+                                    name: "新规则名称",
+                                    rules: [
+                                        { ruleType: "main", type: "include", text: "" },
+                                        { ruleType: "attachmentName", type: "include", text: "" },
+                                    ],
+                                });
+                            }}
+                        >
+                            新增收信规则 
+                        </Button>
+                        {arrayFields.map(({ field, key, remove }, i) => (
+                            <div
+                                key={key}
+                                style={{ width: 1000, display: "flex", flexWrap: "wrap" }}
+                            >
+                                <Form.Input
+                                    field={`${field}[name]`}
+                                    labelPosition="top"
+                                    label={"规则名称"}
+                                    style={{ width: "600px" }}
+                                ></Form.Input>
+                                <Button
+                                    type="danger"
+                                    style={{ margin: "36px 0 0 12px" }}
+                                    icon={<IconMinusCircle />}
+                                    onClick={remove}
+                                />
+                                <Typography.Text strong style={{ flexBasis: "100%" }}>
+                                    当邮件到达，满足以下条件时：
+                                </Typography.Text>
+                                <Card
+                                    shadow="hover"
+                                    style={{
+                                        width: 620,
+                                        margin: "12px 0 0 24px",
+                                    }}
+                                >
+                                    <NestedField field={field} />
+                                </Card>
+                            </div>
+                        ))}
+                    </React.Fragment>
+                )}
+            </ArrayField>
+        </Form>
+    );
+};
+
+render(NestArrayFieldDemo);
+
+```
+
+
+
 
 ### Hooks 的使用
 
@@ -1801,8 +1963,8 @@ withField 主要做了以下事情
 withFieldOption 具体配置可参考 [withField Option](#withFieldOption)
 
 你的自定义受控组件需要做以下事情：  
-- 值发生变化时，调用props.onChange并且将最新的值作为入参  
-- 响应props.value的变化，并更新你的组件UI渲染结果  
+- 值发生变化时，调用props.onChange (或 onKeyChangeFnName 指定的其他回调函数) 并且将最新的值作为入参  
+- 响应props.value（或者 valueKey 指定的其他属性）的变化，并更新你的组件UI渲染结果  
 
 ```jsx
 withField(YourComponent, withFieldOption);
@@ -1857,7 +2019,7 @@ const MyComponent = (props) => {
     };
     return (
         <div className='customField'>
-            <Input insetLabel='名称' value={name} onChange={v => handleChange(v, 'name')} style={{ width: 180, marginRight:12 }} />
+            <Input insetLabel='名称' value={name} onChange={v => handleChange(v, 'name')} style={{ width: 180, marginRight: 12 }} />
             <Select
                 insetLabel='角色'
                 value={role}
@@ -1883,7 +2045,7 @@ class WithFieldDemo2 extends React.Component {
     render() {
         return (
             <Form>
-                <CustomField field='baseInfo' label={{ text:'基本信息', required: true }} />
+                <CustomField field='baseInfo' label={{ text: '基本信息', required: true }} />
                 <ComponentUsingFormState />
             </Form>
         );
@@ -1904,7 +2066,7 @@ render(WithFieldDemo2);
 | className         | form 标签的 classname                                                                                                                                                        | string                                        |
 | component         | 用于声明表单控件，不可与 render、props.children 同时使用                                                                                                                     | ReactNode                                     |            |
 | disabled          | 统一应用在每个 Field 的 disabled 属性                                                                                                            | boolean                                       | false      |
-| extraTextPosition  | 统一应用在每个 Field 上的extraTextPosition属性，控制extraText的显示位置，可选`middle`（垂直方向以Label、extraText、Field主体的顺序显示）、`bottom` (垂直方向以Label、Field主体、extraText的顺序显示)  <br/>**在 v1.9.0 开始提供**                                                                                                                       | string                                       | 'bottom'       |
+| extraTextPosition  | 统一应用在每个 Field 上的extraTextPosition属性，控制extraText的显示位置，可选`middle`（垂直方向以Label、extraText、Field主体的顺序显示）、`bottom` (垂直方向以Label、Field主体、extraText的顺序显示)                                                                                                                        | string                                       | 'bottom'       |
 | getFormApi        | form mounted 时会回调该函数，将 formAPI 作为参数传入。formApi 可用于修改 form 内部状态（值、校验状态、错误信息）                                                             | function(formApi:object)                      |            |
 | initValues        | 用于统一设置表单初始值（仅会在组件挂载时消费一次），例如{fieldA:'hello', fieldB:['arr1', 'arr2']}                                                                       | object                                        |            |
 | layout            | Form 表单控件间的布局，目前支持水平(horizontal)、垂直(vertical)两种                                                                                                          | string                                        | 'vertical' |
@@ -1914,12 +2076,16 @@ render(WithFieldDemo2);
 | labelWidth        | 统一配置label 宽度                                                                                                                                                                   | string\|number                                |            |
 | onChange          | form 更新时触发，包括表单控件挂载/卸载/值变更/blur/验证状态变更/错误提示变更, 入参为 formState                                                                               | function(formState:object)                    |            |
 | onValueChange     | form 的值被更新时触发，仅在表单控件值发生变化时触发。第一个入参为 formState.values，第二个入参为当前发生变化的 field                                                         | function(values:object, changedValue: object) |            |
+| onErrorChange     | form 的校验状态被更新时触发。第一个入参为 formState.errors，第二个入参为当前发生变化的 field 的名称与校验结果（v2.66后提供）                                                        | function(values:object, changedError: object) |            |
 | onReset           | 点击 reset 按钮或调用 `formApi.reset()`时的回调函数                                                                                                                          | function()                                    |            |
-| onSubmit          | 点击 submit 按钮或调用 `formApi.submitForm()`，数据验证成功后的回调函数                                                                                                      | function(values:object)                       |            |
-| onSubmitFail      | 点击 submit 按钮或调用 `formApi.submitForm()`，数据验证失败后的回调函数                                                                                                      | function(errors:object, values:object)        |            |
+| onSubmit          | 点击 submit 按钮或调用 `formApi.submitForm()`，数据验证成功后的回调函数                                                                                                      | function(values:object, e: event)                       |            |
+| onSubmitFail      | 点击 submit 按钮或调用 `formApi.submitForm()`，数据验证失败后的回调函数                                                                                                      | function(errors:object, values:object, e: event)        |            |
 | render            | 用于声明表单控件，不可与 component、props.children 同时使用                                                                                                                  | function                                      |
-| showValidateIcon  | Field 内的校验信息区块否自动添加对应状态的 icon 展示 <br/>**在 v1.0.0 开始提供**                                                                                                                         | boolean                                       | true       |
+| showValidateIcon  | Field 内的校验信息区块否自动添加对应状态的 icon 展示                                                                                                                         | boolean                                       | true       |
 | style             | 可将内联样式传入 form 标签                                                                                                                                                   | object                                        |
+| stopValidateWithError | 统一应用在每个 Field 的 stopValidateWithError，使用说明见 Field props中同名 API （v2.42后提供）                                                                            | boolean                             | false     |
+| stopPropagation | 是否阻止 submit或reset事件冒泡，用于嵌套 Form 场景下，内部 Form submit或reset时阻止事件往外传播，触发外部Form的事件。默认为 `{ reset: false, submit: false }`（v2.63后提供）                                                                            | object                             |      |
+| trigger    |  统一应用在每个 Field 的 trigger，使用说明详见 Field props中同名 API（v2.42后提供）                                                        | string\|array                            |  'change'  |
 | validateFields    | Form 级别的自定义校验函数，submit 时或 formApi.validate 时会被调用（配置Form级别校验器后，Field级别校验器在submit或formApi.validate()时不会再被触发）。支持同步校验、异步校验                                                                                   | function(values)                              |            |
 | wrapperCol        | 统一应用在每个 Field 上的布局，同[Col 组件](/zh-CN/basic/grid#Col)，设置`span`、`offset`值，如{span: 20, offset: 4}                                 | object                                        |
 
@@ -1951,22 +2117,24 @@ FormState 存储了所有 Form 内部的状态值，包括各表单控件的值�
     为了防止用户在读取 formState、values 等内部状态后，意外操作直接了修改 Form 组件的内部状态等情况，Semi 对于 formApi.setValue、setValues的入参、formApi.getFormState、getValue、getValues的返回结果都会自动进行 deepClone
 </Notice>
 
-| Function      | 说明                                                                                                                                                                                                                             | example                                                                                                                       |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| getFormState  | 获取 FormState                                                                                                                                                                                                                   | formApi.getFormState()                                                                                                        |
-| submitForm    | 可手动触发 submit 提交操作                                                                                                                                                                                                       | formApi.submitForm()                                                                                                        |
-| reset         | 可手动对 form 进行重置                                                                                                                                                                                                           | formApi.reset()                                                                                                          |
-| validate      | 可手动触发对表单的校验，不传参时默认触发整全体Field的校验（配置Form级别校验器后，Field级别校验器在submit或formApi.validate()时不会再被触发），若想触发部分field的校验，将目标field数组传入即可                                                                                                                                                                                                       | formApi.validate()<br/>.then(values=>{})<br/>.catch(errors=>{}) <br/>或 formApi.validate(\['fieldA','fieldB'\])<br/>                                                              |
-| setValues     | 设置整个表单的值。第二个参数中的 isOverride 默认为 false<br/>默认情况下只会从`newValues`中取 Form 中已存在的 field 的值更新到`formState.values`中。<br/>当 isOverride 为`true`时，会直接以 newValues 覆盖赋值给 formState.values | formApi.setValues(newValues: object, { isOverride: boolean })                                                                 |
-| setValue      | 提供直接修改 formState.values 方法，与 setValues 的区别是它仅修改单个 field                                                                                                                                                      | formApi.setValue(field: string, newFieldValue: any)                                                                           |
-| getValue      | 获取 单个 Field 的值                                                                                                                                                                                                             | formApi.getValue() <br/>formApi.getValue(field: string)                                                                        |
-| getValues     | 获取 所有 Field 的值                                                                                                                                                                         | formApi.getValues()                                                                                                           |
-| setTouched    | 修改 formState.touched                                                                                                                                                                                                           | formApi.setTouched(field: string, isTouched: boolean) <br/>                                                                   |
-| getTouched    | 获取 Field 的 touched 状态                                                                                                                                                                                                       | formApi.getTouched(field: string)                                                                                             |
-| setError      | 修改 某个 field 的 error 信息                                                                                                                                                                                                    | formApi.setError(field: string, fieldErrorMessage: string)                                                                    |
-| getError      | 获取 Field 的 error 状态                                                                                                                                                                                                         | formApi.getError(field: string)                                                                                               |
-| getFieldExist | 获取 Form 中是否存在对应的 field                                                                                                                                                                                                 | formApi.getFieldExist(field: string)                                                                                          |
-| scrollToField | 滚动至指定的 field                                                                                                                                                                                                                   | formApi.scrollToField(field: string, scrollOpts: object) |
+| Function      | 说明                                                                                                                                                                                                                             | example                                                                                                             |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |---------------------------------------------------------------------------------------------------------------------|
+| getFormProps  | 获取 Form 组件上当前所有props的值，例如可用于读取 disabled 等。v 2.57.0 后提供                                                    | formApi.getFormProps(propNames?: string[])                                                                                              |
+| getFormState  | 获取 FormState                                                                                                                                                                                                                   | formApi.getFormState()                                                                                              |
+| submitForm    | 可手动触发 submit 提交操作                                                                                                                                                                                                       | formApi.submitForm()                                                                                                |
+| reset         | 可手动对 form 进行重置                                                                                                                                                                                                           | formApi.reset(fields?: Array <string\>)                                                                             |
+| validate      | 可手动触发对表单的校验，不传参时默认触发整全体Field的校验（配置Form级别校验器后，Field级别校验器在submit或formApi.validate()时不会再被触发），若想触发部分field的校验，将目标field数组传入即可                                                                                                                                                                                                       | formApi.validate()<br/>.then(values=>{})<br/>.catch(errors=>{}) <br/>或 formApi.validate(\['fieldA','fieldB'\])<br/> |
+| setValues     | 设置整个表单的值。第二个参数中的 isOverride 默认为 false<br/>默认情况下只会从`newValues`中取 Form 中已存在的 field 的值更新到`formState.values`中。<br/>当 isOverride 为`true`时，会直接以 newValues 覆盖赋值给 formState.values | formApi.setValues(newValues: object, { isOverride: boolean })                                                       |
+| setValue      | 提供直接修改 formState.values 方法，与 setValues 的区别是它仅修改单个 field                                                                                                                                                      | formApi.setValue(field: string, newFieldValue: any)                                                                 |
+| getValue      | 获取 单个 Field 的值                                                                                                                                                                                                             | formApi.getValue() <br/>formApi.getValue(field: string)                                                             |
+| getValues     | 获取 所有 Field 的值                                                                                                                                                                         | formApi.getValues()                                                                                                 |
+| setTouched    | 修改 formState.touched                                                                                                                                                                                                           | formApi.setTouched(field: string, isTouched: boolean) <br/>                                                         |
+| getTouched    | 获取 Field 的 touched 状态                                                                                                                                                                                                       | formApi.getTouched(field: string)                                                                                   |
+| setError      | 修改 某个 field 的 error 信息                                                                                                                                                                                                    | formApi.setError(field: string, fieldErrorMessage: string)                                                          |
+| getError      | 获取 Field 的 error 状态                                                                                                                                                                                                         | formApi.getError(field: string)                                                                                     |
+| getFieldExist | 获取 Form 中是否存在对应的 field                                                                                                                                                                                                 | formApi.getFieldExist(field: string)                                                                                |
+| scrollToField | 滚动至指定的 field, 第二个入参将透传至scroll-into-view-if-needed | formApi.scrollToField(field: string, scrollOpts: [ScrollIntoViewOptions](https://github.com/stipsan/scroll-into-view-if-needed#options))                                                            |
+| scrollToError | 滚动至校验错误的field，可传指定 field 或者 index，传入 index 则滚动到第 index 个错误的 DOM，若不传参则滚动到DOM树中第一个校验出错的位置。 v2.61.0后提供  | formApi.scrollToError(<ApiType detail='{field?: string; index?: number; scrollOpts?: ScrollIntoViewOptions }'>ScrollToErrorOptions</ApiType>)                                                            |
 ### 如何获取 formApi
 
 -   Form 组件在 ComponentDidMount 阶段，会执行 props 传入的 getFormApi 回调，你可以在回调函数中保存 formApi 的引用，以便后续进行调用(**示例如下代码**)  
@@ -1976,6 +2144,23 @@ FormState 存储了所有 Form 内部的状态值，包括各表单控件的值�
 -   通过 [render props 方式声明表单](#支持的其他写法)，formApi 会作为参数注入
 -   通过 [useFormApi](#useFormApi) hook
 -   通过 [withFormApi](#HOC-withFormApi) HOC
+
+```jsx
+import React from 'react';
+import { Form, Button } from '@douyinfe/semi-ui';
+
+() => {
+    // 函数式组件通过useRef存储formApi
+    const api = useRef();
+
+    return (
+        <Form getFormApi={formApi => api.current = formApi}>
+            <Form.Input field='a' />
+            <Button onClick={()=>{console.log(api);}}>log</Button>
+        </Form>
+    );
+};
+```
 
 ```jsx
 import React from 'react';
@@ -2014,22 +2199,6 @@ class FormApiDemo extends React.Component {
 }
 ```
 
-```jsx
-import React from 'react';
-import { Form, Button } from '@douyinfe/semi-ui';
-
-() => {
-    // 函数式组件通过useRef存储formApi
-    const api = useRef();
-
-    return (
-        <Form getFormApi={formApi => api.current = formApi}>
-            <Form.Input field='a' />
-            <Button onClick={()=>{console.log(api);}}>log</Button>
-        </Form>
-    );
-};
-```
 
 ## Field Props
 
@@ -2048,7 +2217,7 @@ import { Form, Button } from '@douyinfe/semi-ui';
 | labelWidth            | 该表单控件的 label 文本的 width。在Form与Field上同时传入时，以Field props为准                                                                                                                         | string\|number                                                                                |
 | noLabel               | 当你不需要自动添加 label 时，可以将该值置为 true                                                                                                                                                                    | boolean                                                                                       |
 | noErrorMessage        | 当你不需要自动添加 ErrorMessage 模块时，可以将该值置为 true，注意此时 helpText 也不会被展示                                                                                                                         | boolean                                                                                       |
-| name                  | 控件名称，传入时会自动在对应 field 的 div 中追加对应的 className，如：abc => '.semi-form-field-abc'                                                                                                             | string                                                                                        |
+| name                  | 控件名称，传入时会自动在对应 field wrapper div 追加对应的 className，如：abc => '.semi-form-field-abc'。 v2.24 后，还会将 name 透传至底层组件消费，例如你可以用于配置 input的name属性                                                                                                            | string                                                                                        |
 | fieldClassName        | 整个 fieldWrapper 的 className，作用与 name 参数一致，区别是不会自动追加前缀                                                                                                                                        | string                                                                                        |
 | fieldStyle            | 整个 fieldWrapper 的 内联样式<br/> **v1.15.0开始提供**                                                                                                                                        | object                                                                                        |
 | initValue             | 该表单控件的初始值（仅在 Field mounted 时消费一次，后续更新无效），相比 Form 的 initValues 中的值，它的优先级更高                                                                                                   | any（类型取决于当前组件，详细见各组件的 api）                                                 |
@@ -2061,10 +2230,10 @@ import { Form, Button } from '@douyinfe/semi-ui';
 | transform             | 校验前转换字段值，转换后的值仅会在校验时被消费，对 formState 无影响<br/> 使用示例: (value) => Number                                                                                                                 | function(fieldValue)                                                                          |           |
 | allowEmptyString      | 是否允许值为空字符串。默认情况下值为''时，该 field 对应的 key 会从 values 中移除，如果你希望保留该 key，那么需要将 allowEmptyString 设为 true                                                                       | boolean                                                                                       | false     |
 | stopValidateWithError | 为 true 时，使用 rules 校验，碰到第一个检验不通过的 rules 后，将不再触发后续 rules 的校验                                                                                                  | boolean                                                                                       | false     |
-| helpText              | 自定义提示信息，与校验信息公用同一区块展示，两者均有值时，优先展示校验信息<br/>**v1.0.0 开始提供**                                                                                                                  | ReactNode                                                                                     |           |
-| extraText             | 额外的提示信息，当需要错误信息和提示文案同时出现时，可以使用这个，位于 helpText/errorMessage 后<br/>**v1.0.0 开始提供**                                                                                             | ReactNode                                                                                     |           |
-| pure                  | 是否仅接管数据流，为 true 时不会自动插入 ErrorMessage、Label、extraText 等模块，样式、DOM 结构与原始的组件保持一致<br/>**v1.1.0 开始提供**                                                                          | boolean                                                                                       | false     |
-| extraTextPosition     | 控制extraText的显示位置，可选`middle`（垂直方向以Label、extraText、Field主体的顺序显示）、`bottom` (垂直方向以Label、Field主体、extraText的顺序显示)；在Form与Field上同时传入时，以Field props为准<br/>**v1.9.0 开始提供**                                                                          | string                                                                                       | 'bottom'     |
+| helpText              | 自定义提示信息，与校验信息公用同一区块展示，两者均有值时，优先展示校验信息                                                                                                                | ReactNode                                                                                     |           |
+| extraText             | 额外的提示信息，当需要错误信息和提示文案同时出现时，可以使用这个，位于 helpText/errorMessage 后                                                                                           | ReactNode                                                                                     |           |
+| pure                  | 是否仅接管数据流，为 true 时不会自动插入 ErrorMessage、Label、extraText 等模块，样式、DOM 结构与原始的组件保持一致                                                                         | boolean                                                                                       | false     |
+| extraTextPosition     | 控制extraText的显示位置，可选`middle`（垂直方向以Label、extraText、Field主体的顺序显示）、`bottom` (垂直方向以Label、Field主体、extraText的顺序显示)；在Form与Field上同时传入时，以Field props为准                                                                          | string                                                                                       | 'bottom'     |
 | ...other              | 组件的其他可配置属性，与上面的属性平级一并传入即可，例如 Input 的 size/placeholder，**Field 会将其透传至组件本身**                                                                                                  |                                                                                               |
 
 
@@ -2127,9 +2296,20 @@ const { Label } = Form;
 | width     | label 宽度               | number/string    |        |  |
 | optional  | 是否自动在text后追加"（可选）"文字标识（根据Locale配置的不同语言自动切换相同语义文本）。当该项为true时，required的\*号将不再展示。若当表单项多数均为必填时，仅强调可选项会更使得整体视觉更简洁  | boolean    | false | v2.18.0 |
 
-## Form.Slot
+## Form.InputGroup
 
-> Form.Slot 在 v0.27.0 开始提供
+| 属性             | 说明                                                      | 类型                     | 默认值 | 版本 |
+| ---------------- | --------------------------------------------------------- | ------------------------ |--- |--- |
+| className        | 样式类名                                                  | string                   | |
+| style            | 内联样式                                                  | object                   ||
+| label            | InputGroup 的 label 标签文本                      |  Label \| string                 | |
+| labelPosition    | 该表单控件的 label 位置，可选'top'/'left'/'inset'。在 Form 与 InputGroup 同时传入时，以 InputGroup props为准 | string     | 'top'|
+| extraText        | 额外的提示信息，当需要错误信息和提示文案同时出现时，可以使用这个，位于 errorMessage 后 | ReactNode | | v2.29.0 |
+| extraTextPosition| 控制extraText的显示位置，可选`middle`（垂直方向以Label、extraText、Group的顺序显示）、`bottom` (垂直方向以Label、Group、extraText的顺序显示)| string | 'bottom' | v2.29.0|
+
+当 extraTextPositon 为 middle，且 labelPosition 为 left时。由于 extraText允许为 ReactNode，内容高度不定，Label将不再确保能与 Field / InputGroup 中的首行文本对齐。 
+
+## Form.Slot
 
 ```jsx
 import { Form } from '@douyinfe/semi-ui';
@@ -2143,10 +2323,9 @@ const { Slot } = Form;
 | className     | slot 样式类名                                                                                                                      | string         |
 | style         | slot 内联样式                                                                                                                      | object         |
 | children      | slot 的主体内容                                                                                                                    | ReactNode      |
+| error         | slot 的错误提示信息                                                                                                                 | ErrorMessage\|ReactNode      |
 
 ## Form.ErrorMessage
-
-> Form.ErrorMessage 在 v0.27.0 开始提供
 
 ```jsx
 import { Form } from '@douyinfe/semi-ui';
@@ -2163,6 +2342,8 @@ const { ErrorMessage } = Form;
 | style            | 内联样式                                                  | object                   |
 | showValidateIcon | 是否自动加上 validateStatus 对应的 icon                       | boolean                  |
 | validateStatus   | 信息所属的校验状态，可选 default/error/warning/success（success一般建议与default样式相同） | string                  |
+
+
 
 ## withFieldOption
 

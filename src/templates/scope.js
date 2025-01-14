@@ -26,16 +26,21 @@ import th_TH from '@douyinfe/semi-ui/locale/source/th_TH';
 import tr_TR from '@douyinfe/semi-ui/locale/source/tr_TR';
 import pt_BR from '@douyinfe/semi-ui/locale/source/pt_BR';
 import zh_TW from '@douyinfe/semi-ui/locale/source/zh_TW';
+import sv_SE from '@douyinfe/semi-ui/locale/source/sv_SE';
+import pl_PL from '@douyinfe/semi-ui/locale/source/pl_PL';
+import nl_NL from '@douyinfe/semi-ui/locale/source/nl_NL';
 import es from '@douyinfe/semi-ui/locale/source/es';
 import de from '@douyinfe/semi-ui/locale/source/de';
 import it from '@douyinfe/semi-ui/locale/source/it';
 import fr from '@douyinfe/semi-ui/locale/source/fr';
+import ro from '@douyinfe/semi-ui/locale/source/ro';
 import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc';
 import GraphemeSplitter from 'grapheme-splitter';
-
+export * as SemiMarkdownComponents from "@douyinfe/semi-ui/markdownRender/components";
 export * from '@douyinfe/semi-ui';
 export * from '@douyinfe/semi-foundation/utils';
 export * from '@douyinfe/semi-icons';
+// export * from '@douyinfe/semi-icons-lab';
 export * from '@douyinfe/semi-illustrations';
 
 export {
@@ -121,4 +126,111 @@ export {
 
 export { debounce, throttle, range, get, filter, map, some };
 
-export { zh_CN, en_GB, en_US, ko_KR, ja_JP, ar, vi_VN, ru_RU, id_ID, ms_MY, th_TH, tr_TR, pt_BR, zh_TW, es, de, it, fr };
+export { zh_CN, en_GB, en_US, ko_KR, ja_JP, ar, vi_VN, ru_RU, id_ID, ms_MY, th_TH, tr_TR, pt_BR, zh_TW, nl_NL, pl_PL, sv_SE, es, de, it, fr, ro };
+
+export {
+    useSortable,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    arrayMove,
+} from '@dnd-kit/sortable';
+  
+export { CSS as cssDndKit } from '@dnd-kit/utilities';
+  
+export {
+    closestCenter,
+    DragOverlay,
+    DndContext,
+    MouseSensor,
+    TouchSensor,
+    useSensor,
+    useSensors,
+    KeyboardSensor,
+    TraversalOrder,
+    PointerSensor
+} from '@dnd-kit/core';
+
+export { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+
+
+export {
+    IconAccessibility, 
+    IconAnchor,
+    IconAutocomplete,
+    IconAvatar,
+    // IconBackTop, 
+    IconBadge,
+    IconBadgeStar, 
+    IconBanner, 
+    IconBreadcrumb,
+    // IconButton,
+    // IconCalendar,
+    IconCard,
+    IconCascader,
+    IconCarousel,
+    IconChangelog, 
+    IconCheckbox,
+    IconConfig,
+    IconCollapse,
+    IconCollapsible,
+    IconColorPlatte,
+    IconColorPlatteNew,
+    IconDarkMode,
+    IconDatePicker,
+    IconDescriptions,
+    IconDivider,
+    IconDropdown,
+    IconEmpty,
+    IconFaq,
+    IconForm,
+    IconGettingStarted,
+    IconGrid, 
+    IconHeart,
+    IconHighlight,
+    // IconImage,
+    IconInput,
+    IconInputNumber,
+    IconIntro,
+    IconLayout,
+    // IconList,
+    IconLocaleProvider,
+    IconModal,
+    IconNavigation,
+    IconNotification,
+    IconOverflow,
+    IconPagination,
+    IconPopconfirm,
+    IconPopover,
+    IconProgress,
+    // IconRadio,
+    IconRating,
+    IconScrollList,
+    IconSelect,
+    IconSideSheet,
+    IconSkeleton,
+    IconSlider,
+    IconSpace,
+    // IconSpin,
+    IconSteps,
+    IconSwitch,
+    IconTable,
+    IconToken,
+    IconTabs,
+    IconTag,
+    IconTagInput, 
+    IconTimePicker,
+    IconTimeline,
+    IconToast, 
+    IconTooltip,
+    IconTransfer,
+    IconTree, 
+    IconTreeSelect,
+    IconTypography,
+    // IconUpload,
+    IconVersionTwo,
+    IconWheelChair
+} from '@douyinfe/semi-icons-lab';
+
+export { VChart } from "@visactor/react-vchart";
+export { initVChartSemiTheme } from '@visactor/vchart-semi-theme';

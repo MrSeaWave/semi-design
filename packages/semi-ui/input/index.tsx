@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, max-len, @typescript-eslint/no-unused-vars */
 import React from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
@@ -7,7 +6,7 @@ import { cssClasses, strings } from '@douyinfe/semi-foundation/input/constants';
 import { isSemiIcon } from '../_utils';
 import BaseComponent from '../_base/baseComponent';
 import '@douyinfe/semi-foundation/input/input.scss';
-import { isString, noop, isFunction } from 'lodash';
+import { isString, noop, isFunction, isUndefined } from 'lodash';
 import { IconClear, IconEyeOpened, IconEyeClosedSolid } from '@douyinfe/semi-icons';
 
 const prefixCls = cssClasses.PREFIX;
@@ -16,8 +15,8 @@ const sizeSet = strings.SIZE;
 const statusSet = strings.STATUS;
 const modeSet = strings.MODE;
 
-export { InputGroupProps } from './inputGroup';
-export { TextAreaProps } from './textarea';
+export type { InputGroupProps } from './inputGroup';
+export type { TextAreaProps } from './textarea';
 export type InputSize = 'small' | 'large' | 'default';
 export type InputMode = 'password';
 // still keep success as ValidateStatus optional value because form will pass success as props.validateStatus in sometime
@@ -25,7 +24,7 @@ export type InputMode = 'password';
 export type ValidateStatus = "default" | "error" | "warning" | "success";
 
 export interface InputProps extends
-    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'prefix' | 'size' | 'autoFocus' | 'placeholder' | 'onFocus' | 'onBlur'> {
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'prefix' | 'size' | 'placeholder' | 'onFocus' | 'onBlur'> {
     'aria-label'?: React.AriaAttributes['aria-label'];
     'aria-describedby'?: React.AriaAttributes['aria-describedby'];
     'aria-errormessage'?: React.AriaAttributes['aria-errormessage'];
@@ -34,6 +33,7 @@ export interface InputProps extends
     'aria-required'?: React.AriaAttributes['aria-required'];
     addonBefore?: React.ReactNode;
     addonAfter?: React.ReactNode;
+    borderless?: boolean;
     prefix?: React.ReactNode;
     suffix?: React.ReactNode;
     mode?: InputMode;
@@ -41,7 +41,6 @@ export interface InputProps extends
     defaultValue?: React.ReactText;
     disabled?: boolean;
     readonly?: boolean;
-    autofocus?: boolean;
     type?: string;
     showClear?: boolean;
     hideSuffix?: boolean;
@@ -50,6 +49,7 @@ export interface InputProps extends
     insetLabelId?: string;
     size?: InputSize;
     className?: string;
+    clearIcon?: React.ReactNode;
     style?: React.CSSProperties;
     validateStatus?: ValidateStatus;
     onClear?: (e: React.MouseEvent<HTMLDivElement>) => void;
@@ -65,6 +65,9 @@ export interface InputProps extends
     getValueLength?: (value: string) => number;
     forwardRef?: ((instance: any) => void) | React.MutableRefObject<any> | null;
     preventScroll?: boolean;
+    /** internal prop, DatePicker use it */
+    showClearIgnoreDisabled?: boolean;
+    onlyBorder?: number
 }
 
 export interface InputState {
@@ -72,11 +75,10 @@ export interface InputState {
     cachedValue: React.ReactText;
     disabled: boolean;
     props: Record<string, any>;
-    paddingLeft: string;
     isFocus: boolean;
     isHovering: boolean;
     eyeClosed: boolean;
-    minLength: number;
+    minLength: number
 }
 
 class Input extends BaseComponent<InputProps, InputState> {
@@ -89,6 +91,7 @@ class Input extends BaseComponent<InputProps, InputState> {
         'aria-required': PropTypes.bool,
         addonBefore: PropTypes.node,
         addonAfter: PropTypes.node,
+        clearIcon: PropTypes.node,
         prefix: PropTypes.node,
         suffix: PropTypes.node,
         mode: PropTypes.oneOf(modeSet),
@@ -96,7 +99,7 @@ class Input extends BaseComponent<InputProps, InputState> {
         defaultValue: PropTypes.any,
         disabled: PropTypes.bool,
         readonly: PropTypes.bool,
-        autofocus: PropTypes.bool,
+        autoFocus: PropTypes.bool,
         type: PropTypes.string,
         showClear: PropTypes.bool,
         hideSuffix: PropTypes.bool,
@@ -119,6 +122,7 @@ class Input extends BaseComponent<InputProps, InputState> {
         inputStyle: PropTypes.object,
         getValueLength: PropTypes.func,
         preventScroll: PropTypes.bool,
+        borderless: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -143,6 +147,7 @@ class Input extends BaseComponent<InputProps, InputState> {
         onKeyPress: noop,
         onEnterPress: noop,
         validateStatus: 'default',
+        borderless: false,
     };
 
     inputRef!: React.RefObject<HTMLInputElement>;
@@ -152,12 +157,12 @@ class Input extends BaseComponent<InputProps, InputState> {
 
     constructor(props: InputProps) {
         super(props);
+        const initValue = 'value' in props ? props.value : props.defaultValue;
         this.state = {
-            value: '',
-            cachedValue: null, // Cache current props.value value
+            value: initValue,
+            cachedValue: props.value, // Cache current props.value value
             disabled: false,
             props: {},
-            paddingLeft: '',
             isFocus: false,
             isHovering: false,
             eyeClosed: props.mode === 'password',
@@ -175,14 +180,12 @@ class Input extends BaseComponent<InputProps, InputState> {
             setValue: (value: string) => this.setState({ value }),
             setEyeClosed: (value: boolean) => this.setState({ eyeClosed: value }),
             toggleFocusing: (isFocus: boolean) => {
+                this.setState({ isFocus });
+            },
+            focusInput: () => {
                 const { preventScroll } = this.props;
                 const input = this.inputRef && this.inputRef.current;
-                if (isFocus) {
-                    input && input.focus({ preventScroll });
-                } else {
-                    input && input.blur();
-                }
-                this.setState({ isFocus });
+                input && input.focus({ preventScroll });
             },
             toggleHovering: (isHovering: boolean) => this.setState({ isHovering }),
             getIfFocusing: () => this.state.isFocus,
@@ -195,7 +198,6 @@ class Input extends BaseComponent<InputProps, InputState> {
             notifyKeyUp: (e: React.KeyboardEvent<HTMLInputElement>) => this.props.onKeyUp(e),
             notifyEnterPress: (e: React.KeyboardEvent<HTMLInputElement>) => this.props.onEnterPress(e),
             notifyClear: (e: React.MouseEvent<HTMLDivElement>) => this.props.onClear(e),
-            setPaddingLeft: (paddingLeft: string) => this.setState({ paddingLeft }),
             setMinLength: (minLength: number) => this.setState({ minLength }),
             isEventTarget: (e: React.MouseEvent) => e && e.target === e.currentTarget,
         };
@@ -216,6 +218,15 @@ class Input extends BaseComponent<InputProps, InputState> {
         const { mode } = this.props;
         if (prevProps.mode !== mode) {
             this.handleModeChange(mode);
+        }
+    }
+
+    componentDidMount(): void {
+        // autofocus is changed from the original support of input to the support of manually calling the focus method,
+        // so that preventScroll can still take effect under the setting of autofocus
+        const { disabled, autoFocus, preventScroll } = this.props;
+        if (!disabled && (autoFocus || this.props['autofocus'])) {
+            this.inputRef.current.focus({ preventScroll });
         }
     }
 
@@ -299,6 +310,7 @@ class Input extends BaseComponent<InputProps, InputState> {
 
     renderClearBtn() {
         const clearCls = cls(`${prefixCls}-clearbtn`);
+        const { clearIcon } = this.props;
         const allowClear = this.foundation.isAllowClear();
         // use onMouseDown to fix issue 1203
         if (allowClear) {
@@ -308,7 +320,7 @@ class Input extends BaseComponent<InputProps, InputState> {
                     className={clearCls}
                     onMouseDown={this.handleClear}
                 >
-                    <IconClear />
+                    {clearIcon ? clearIcon : <IconClear />}
                 </div>
             );
         }
@@ -369,12 +381,6 @@ class Input extends BaseComponent<InputProps, InputState> {
         );
     }
 
-    showClearBtn() {
-        const { value, isFocus, isHovering } = this.state;
-        const { disabled, showClear } = this.props;
-        return Boolean(value) && showClear && !disabled && (isFocus || isHovering);
-    }
-
     renderSuffix(suffixAllowClear: boolean) {
         const { suffix, hideSuffix } = this.props;
         if (!suffix) {
@@ -399,11 +405,28 @@ class Input extends BaseComponent<InputProps, InputState> {
         );
     }
 
+    getInputRef() {
+        const { forwardRef } = this.props;
+        if (!isUndefined(forwardRef)) {
+            if (typeof forwardRef === 'function') {
+                return (node: HTMLInputElement) => {
+                    forwardRef(node);
+                    this.inputRef = { current: node };
+                };
+            } else if (Object.prototype.toString.call(forwardRef) === '[object Object]') {
+                this.inputRef = forwardRef;
+                return forwardRef;
+            }
+        }
+        return this.inputRef;
+    }
+
     render() {
         const {
             addonAfter,
             addonBefore,
-            autofocus,
+            autoFocus,
+            clearIcon,
             className,
             disabled,
             defaultValue,
@@ -427,12 +450,15 @@ class Input extends BaseComponent<InputProps, InputState> {
             maxLength,
             getValueLength,
             preventScroll,
+            borderless,
+            showClearIgnoreDisabled,
+            onlyBorder,
             ...rest
         } = this.props;
-        const { value, paddingLeft, isFocus, minLength: stateMinLength } = this.state;
-        const suffixAllowClear = this.showClearBtn();
+        const { value, isFocus, minLength: stateMinLength } = this.state;
+        const suffixAllowClear = this.foundation.isAllowClear();
         const suffixIsIcon = isSemiIcon(suffix);
-        const ref = forwardRef || this.inputRef;
+        const ref = this.getInputRef();
         const wrapperPrefix = `${prefixCls}-wrapper`;
         const wrapperCls = cls(wrapperPrefix, className, {
             [`${prefixCls}-wrapper__with-prefix`]: prefix || insetLabel,
@@ -452,6 +478,8 @@ class Input extends BaseComponent<InputProps, InputState> {
             [`${wrapperPrefix}-modebtn`]: mode === 'password',
             [`${wrapperPrefix}-hidden`]: type === 'hidden',
             [`${wrapperPrefix}-${size}`]: size,
+            [`${prefixCls}-borderless`]: borderless,
+            [`${prefixCls}-only_border`]: onlyBorder!==undefined && onlyBorder!==null,
         });
         const inputCls = cls(prefixCls, {
             [`${prefixCls}-${size}`]: size,
@@ -462,8 +490,7 @@ class Input extends BaseComponent<InputProps, InputState> {
         const inputValue = value === null || value === undefined ? '' : value;
         const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
             ...rest,
-            style: { paddingLeft, ...inputStyle },
-            autoFocus: autofocus,
+            style: inputStyle,
             className: inputCls,
             disabled,
             readOnly: readonly,
@@ -487,11 +514,20 @@ class Input extends BaseComponent<InputProps, InputState> {
         if (validateStatus === 'error') {
             inputProps['aria-invalid'] = 'true';
         }
+
+        let wrapperStyle = { ...style };
+        if (onlyBorder!==undefined) {
+            wrapperStyle = {
+                borderWidth: onlyBorder,
+                ...style
+            };
+        }
+
         return (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
             <div
                 className={wrapperCls}
-                style={style}
+                style={wrapperStyle}
                 onMouseEnter={e => this.handleMouseOver(e)}
                 onMouseLeave={e => this.handleMouseLeave(e)}
                 onClick={e => this.handleClick(e)}

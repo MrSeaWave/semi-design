@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'zh-TW',
     dateFnsLocale: zhTW, // locale code to dateFns locale
     Pagination: {
-        item: '條',
+        pageSize: '每頁項目數：${pageSize}',
+        total: '總頁數：${total}',
+        jumpTo: '跳至',
         page: '頁',
-        pageSize: '條/頁',
-        total: '共',
-        jumpTo: '跳至'
     },
     Modal: {
         confirm: '確定',
         cancel: '取消',
+    },
+    Tabs: {
+        more: "更多"
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: '請選擇日期及時間',
             dateRange: ['開始日期', '結束日期'],
             dateTimeRange: ['開始日期', '結束日期'],
+            monthRange: ['開始月份', '結束月份'],
         },
+        presets: '快捷選擇',
         footer: {
             confirm: '確定',
             cancel: '取消',
@@ -98,6 +102,9 @@ const local: Locale = {
     Table: {
         emptyText: '暫無數據',
         pageText: '顯示第 ${currentStart} 條-第 ${currentEnd} 條，共 ${total} 條',
+        descend: '點擊降序',
+        ascend: '點擊升序',
+        cancelSort: '取消排序',
     },
     Select: {
         emptyText: '暫無數據',
@@ -148,11 +155,33 @@ const local: Locale = {
         clear: '清空',
         selectAll: '全選',
         clearSelectAll: '取消全選',
-        total: '共 ${total} 項',
-        selected: '已選 ${total} 項',
+        total: '總項目數：${total}',
+        selected: '選取的項目數：${total}',
     },
     Form: {
         optional: '（可選）',
+    },
+    Image: {
+        preview: '預覽',
+        loading: '加載中',
+        loadError: '加載失敗',
+        prevTip: '上一張',
+        nextTip: '下一張',
+        zoomInTip: '放大',
+        zoomOutTip: '縮小',
+        rotateTip: '旋轉',
+        downloadTip: '下載',
+        adaptiveTip: '適應頁面',
+        originTip: '原始尺寸',
+    },
+    Chat: {
+        deleteConfirm: '確認刪除該對話嗎？',
+        clearContext: '上下文已清除',
+        copySuccess: '複製成功',
+        stop: '停止',
+        copy: '複制',
+        copied: '複制成功',
+        dropAreaText: '將文件放到這裡',
     },
 };
 

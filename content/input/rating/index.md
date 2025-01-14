@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 27
+order: 40
 category: 输入类
 title:  Rating 评分
 icon: doc-rating
@@ -19,7 +19,7 @@ import { Rating } from '@douyinfe/semi-ui';
 
 最简单的用法，支持两种尺寸 `default`， `small`。  
 
-**v >= 0.35.0** 后支持传入 number 类型自定义尺寸。具体可以参考[自定义](#自定义)
+支持传入 number 类型自定义尺寸。具体可以参考[自定义](#自定义)
 
 ```jsx live=true
 import React from 'react';
@@ -37,7 +37,7 @@ import { Rating } from '@douyinfe/semi-ui';
 
 ### 半星
 
-通过设置 `allowHalf` 属性可以支持选择半星。`0.28.0` 版本之后，设置 `allowHalf` 属性支持**展示**除0.5以外的小数。
+通过设置 `allowHalf` 属性可以支持选择半星。 `allowHalf` 属性支持**展示**除0.5以外的小数。
 
 ```jsx live=true
 import React from 'react';
@@ -92,7 +92,7 @@ import React, { useState } from 'react';
 import { Rating } from '@douyinfe/semi-ui';
 
 () => {
-    const [value,  setValue] = useState(0);
+    const [value, setValue] = useState(0);
     const change = (val) => setValue(val);
     const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
     return (
@@ -110,7 +110,7 @@ import { Rating } from '@douyinfe/semi-ui';
 ### 自定义
 
 自定义评分字符、个数及尺寸。  
-> **v >= 0.35.0** 自定义尺寸需要配合自定义的字符才能生效。
+自定义尺寸需要配合自定义的字符才能生效。
 
 ```jsx live=true
 import React from 'react';
@@ -119,10 +119,10 @@ import { IconLikeHeart } from '@douyinfe/semi-icons';
 
 () => (
     <div>
-        <Rating style={{color:'red'}} character={(<IconLikeHeart size="extra-large" />)} defaultValue={3}/>
+        <Rating style={{ color: 'red' }} character={(<IconLikeHeart size="extra-large" />)} defaultValue={3}/>
         <br/>
         <br/>
-        <Rating style={{color:'red'}} size={48} allowHalf character={(<IconLikeHeart style={{ fontSize: 48 }} />)} defaultValue={3}/>
+        <Rating style={{ color: 'red' }} size={48} allowHalf character={(<IconLikeHeart style={{ fontSize: 48 }} />)} defaultValue={3}/>
         <br/>
         <br/>
         <Rating character={'赞'} size={18} defaultValue={3}/>

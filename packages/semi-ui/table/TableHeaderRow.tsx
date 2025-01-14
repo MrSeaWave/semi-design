@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -11,22 +10,27 @@ import {
     isLastLeftFixed,
     isFixedLeft,
     isFixedRight,
-    sliceColumnsByLevel
+    sliceColumnsByLevel,
+    getRTLAlign
 } from '@douyinfe/semi-foundation/table/utils';
 import BaseComponent from '../_base/baseComponent';
 import TableContext, { TableContextProps } from './table-context';
-import { TableComponents, OnHeaderRow, Fixed } from './interface';
+import { TableComponents, OnHeaderRow, Fixed, TableLocale } from './interface';
+import type { TableHeaderCell } from './TableHeader';
+import Tooltip from '../tooltip';
+import LocaleConsumer from '../locale/localeConsumer';
+import { getNextSortOrder } from './utils';
 
 export interface TableHeaderRowProps {
     components?: TableComponents;
-    row?: any[];
+    row?: TableHeaderCell[];
     prefixCls?: string;
     onHeaderRow?: OnHeaderRow<any>;
     index?: number;
     style?: React.CSSProperties;
     columns?: any[];
     fixed?: Fixed;
-    selectedRowKeysSet: Set<any>;
+    selectedRowKeysSet: Set<any>
 }
 
 export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, Record<string, any>> {
@@ -65,7 +69,7 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
 
     headerNode: HTMLElement;
     context: TableContextProps;
-    
+
     constructor(props: TableHeaderRowProps) {
         super(props);
         this.headerNode = null;
@@ -81,7 +85,7 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
             this.context.setHeadWidths(
                 map(heads, (head, headIndex) => {
                     let configWidth = get(row, [headIndex, 'column', 'width']);
-                    const key = get(row, [headIndex, 'column', 'key']);
+                    const key = get(row, [headIndex, 'column', 'key']) as any;
                     if (typeof configWidth !== 'number') {
                         configWidth = (head && head.getBoundingClientRect().width) || 0;
                     }
@@ -100,7 +104,8 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
 
     render() {
         const { components, row, prefixCls, onHeaderRow, index, style, columns } = this.props;
-        const { getCellWidths } = this.context;
+        const { getCellWidths, direction } = this.context;
+        const isRTL = direction === 'rtl';
         const slicedColumns = sliceColumnsByLevel(columns, index);
         const headWidths = getCellWidths(slicedColumns);
 
@@ -116,10 +121,24 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
                 typeof column.onHeaderCell === 'function' ? column.onHeaderCell(column, cellIndex, index) : {};
             let cellStyle = { ...customProps.style };
             if (column.align) {
-                cellStyle = { ...cellStyle, textAlign: column.align };
+                const textAlign = getRTLAlign(column.align, direction);
+                cellStyle = { ...cellStyle, textAlign };
                 customProps.className = classnames(customProps.className, column.className, {
-                    [`${prefixCls}-align-${column.align}`]: Boolean(column.align),
+                    [`${prefixCls}-align-${textAlign}`]: Boolean(textAlign),
                 });
+            }
+
+            let fixedLeft, fixedRight, fixedLeftLast, fixedRightFirst;
+            if (isRTL) {
+                fixedLeft = isFixedRight(column);
+                fixedRight = isFixedLeft(column);
+                fixedLeftLast = isFirstFixedRight(slicedColumns, column);
+                fixedRightFirst = isLastLeftFixed(slicedColumns, column);
+            } else {
+                fixedLeft = isFixedLeft(column);
+                fixedRight = isFixedRight(column);
+                fixedLeftLast = isLastLeftFixed(slicedColumns, column);
+                fixedRightFirst = isFirstFixedRight(slicedColumns, column);
             }
 
             customProps.className = classnames(
@@ -128,10 +147,12 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
                 customProps.className,
                 // `${prefixCls}-fixed-columns`,
                 {
-                    [`${prefixCls}-cell-fixed-left`]: isFixedLeft(column),
-                    [`${prefixCls}-cell-fixed-left-last`]: isLastLeftFixed(slicedColumns, column),
-                    [`${prefixCls}-cell-fixed-right`]: isFixedRight(column),
-                    [`${prefixCls}-cell-fixed-right-first`]: isFirstFixedRight(slicedColumns, column),
+                    [`${prefixCls}-cell-fixed-left`]: fixedLeft,
+                    [`${prefixCls}-cell-fixed-left-last`]: fixedLeftLast,
+                    [`${prefixCls}-cell-fixed-right`]: fixedRight,
+                    [`${prefixCls}-cell-fixed-right-first`]: fixedRightFirst,
+                    [`${prefixCls}-row-head-ellipsis`]: column.ellipsis,
+                    [`${prefixCls}-row-head-clickSort`]: column.clickToSort
                 }
             );
 
@@ -142,20 +163,24 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
                 );
                 if (indexOfSlicedColumns > -1) {
                     if (isFixedLeft(column)) {
+                        const xPositionKey = isRTL ? 'right' : 'left';
                         cellStyle = {
                             ...cellStyle,
                             position: 'sticky',
-                            left: arrayAdd(headWidths, 0, indexOfSlicedColumns),
+                            [xPositionKey]: arrayAdd(headWidths, 0, indexOfSlicedColumns),
                         };
                     } else if (isFixedRight(column)) {
+                        const xPositionKey = isRTL ? 'left' : 'right';
                         cellStyle = {
                             ...cellStyle,
                             position: 'sticky',
-                            right: arrayAdd(headWidths, indexOfSlicedColumns + 1),
+                            [xPositionKey]: arrayAdd(headWidths, indexOfSlicedColumns + 1),
                         };
                     }
                 }
             }
+
+            Object.assign(cellProps, { resize: column.resize });
 
             const props = omit({ ...cellProps, ...customProps }, [
                 'colStart',
@@ -169,19 +194,44 @@ export default class TableHeaderRow extends BaseComponent<TableHeaderRowProps, R
             if (rowSpan === 0 || colSpan === 0) {
                 return null;
             }
+            
+            if (typeof column.clickToSort === 'function') {
+                if (props.onClick) {
+                    props.onClick = (e: any) => {
+                        props.onClick(e);
+                        column.clickToSort(e);
+                    };
+                } else {
+                    props.onClick = column.clickToSort;
+                }
+            }
 
-            return (
-                <HeaderCell
-                    role="columnheader"
-                    aria-colindex={cellIndex + 1}
-                    {...props}
-                    style={cellStyle} 
-                    key={column.key || column.dataIndex || cellIndex} 
-                />
-            );
+            const headerCellNode = (<HeaderCell
+                role="columnheader"
+                aria-colindex={cellIndex + 1}
+                {...props}
+                style={cellStyle}
+                key={column.key || column.dataIndex || cellIndex}
+            />);
+            if (typeof column.clickToSort === 'function' && column.showSortTip === true) {
+                let content = getNextSortOrder(column.sortOrder);
+                return (<LocaleConsumer 
+                    componentName="Table" 
+                    key={column.key || column.dataIndex || cellIndex}
+                >
+                    {(locale: TableLocale, localeCode: string) => (
+                        <Tooltip content={locale[content]}>
+                            {headerCellNode}
+                        </Tooltip>
+                    )}
+                </LocaleConsumer>);
+            }
+
+            return headerCellNode;
         });
 
         return (
+            // @ts-ignore no need to do complex ts type checking and qualification
             <HeaderRow
                 role="row"
                 aria-rowindex={index + 1}

@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, isEmpty } from 'lodash';
+import { isHTMLElement } from '../_base/reactUtils';
 
 export interface ReactIntersectionObserverProps {
     onIntersect?: IntersectionObserverCallback;
@@ -9,7 +10,7 @@ export interface ReactIntersectionObserverProps {
     root?: IntersectionObserverInit['root'];
     threshold?: IntersectionObserverInit['threshold'];
     rootMargin?: IntersectionObserverInit['rootMargin'];
-    items?: Record<string, Element>;
+    items?: Record<string, Element>
 }
 
 export default class ReactIntersectionObserver extends React.PureComponent<ReactIntersectionObserverProps> {
@@ -80,7 +81,7 @@ export default class ReactIntersectionObserver extends React.PureComponent<React
         // observer callback is invoked immediately when observing new elements
         Object.keys(items).forEach(key => {
             const node = items[key];
-            if (!node) {
+            if (!(node && isHTMLElement(node))) {
                 return;
             }
             this.observer.observe(node);

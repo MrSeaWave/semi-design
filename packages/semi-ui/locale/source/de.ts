@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'de',
     dateFnsLocale: de,
     Pagination: {
-        item: 'Artikel',
-        pageSize: ' Artikel / Seite',
+        pageSize: 'Elemente pro Seite: ${pageSize}',
+        total: 'Seiten gesamt: ${total}',
+        jumpTo: 'Springen zu',
         page: ' Seiten',
-        total: '',
-        jumpTo: 'Springen zu'
     },
     Modal: {
         confirm: 'Bestätigen',
         cancel: 'Abbrechen',
+    },
+    Tabs: {
+        more: "Mehr"
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: 'Datum und Uhrzeit auswählen',
             dateRange: ['Startdatum', 'Enddatum'],
             dateTimeRange: ['Startdatum', 'Enddatum'],
+            monthRange: ['Startmonat', 'Endmonat'],
         },
+        presets: 'Schnellauswahl',
         footer: {
             confirm: 'Bestätigen',
             cancel: 'Abbrechen',
@@ -83,7 +87,7 @@ const local: Locale = {
             Sun: 'So.',
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'yyyy-MM-dd',
+            FORMAT_SWITCH_DATE: 'dd.MM.yyyy',
         },
     },
     Popconfirm: {
@@ -97,6 +101,9 @@ const local: Locale = {
     Table: {
         emptyText: 'Kein Ergebnis',
         pageText: 'Anzeigen ${currentStart} bis ${currentEnd} von ${total}',
+        descend: 'Klicken, um absteigend zu sortieren',
+        ascend: 'Klicken, um aufsteigend zu sortieren',
+        cancelSort: 'Sortierung abbrechen',
     },
     Select: {
         emptyText: 'Kein Ergebnis',
@@ -147,11 +154,33 @@ const local: Locale = {
         clear: 'Löschen',
         selectAll: 'Alles auswählen',
         clearSelectAll: 'Alles abwählen',
-        total: 'Gesamt ${total} Artikel',
-        selected: '${total} ausgewählte Artikel',
+        total: 'Elemente gesamt: ${total}',
+        selected: 'Elemente ausgewählt: ${total}',
     },
     Form: {
         optional: '(Optional)',
+    },
+    Image: {
+        preview: 'Vorschau',
+        loading: 'Wird geladen',
+        loadError: 'Laden fehlgeschlagen',
+        prevTip: 'Zurück',
+        nextTip: 'Weiter',
+        zoomInTip: 'Vergrößern',
+        zoomOutTip: 'herauszoomen',
+        rotateTip: 'Drehen',
+        downloadTip: 'herunterladen',
+        adaptiveTip: 'An die Seite anpassen',
+        originTip: 'Originalgröße',
+    },
+    Chat: {
+        deleteConfirm: 'Möchten Sie diesen Chat wirklich löschen?',
+        clearContext: 'Der Kontext wurde gelöscht',
+        copySuccess: 'Erfolgreich kopiert',
+        stop: 'stoppen',
+        copy: 'Kopieren',
+        copied: 'Kopiert',
+        dropAreaText: 'Datei hier ablegen',
     },
 };
 

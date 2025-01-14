@@ -7,13 +7,13 @@ const Demo = () => {
         <div>
             <div>
                 <div>tipFormatter</div>
-                <Slider showBoundary={true} tipFormatter={ (val:any) => `=====${val}=====` }></Slider>
+                <Slider showBoundary={true} tipFormatter={ (val: any) => `=====${val}=====` }></Slider>
             </div>
             <br/>
             <br/>
             <div>
                 <div>Range</div>
-                <Slider defaultValue={[20, 60]} range max={ 123456 } onChange={ (ev: any) => { console.log(ev) } }></Slider>
+                <Slider defaultValue={[20, 60]} range max={ 123456 } onChange={ (ev: any) => { console.log(ev); } }></Slider>
             </div>
             <br/>
             <br/>
@@ -22,7 +22,7 @@ const Demo = () => {
                 <Slider defaultValue={40} vertical></Slider>
             </div>`
         </div>
-    )
-}
+    );
+};
 
-export default Demo
+export default Demo;

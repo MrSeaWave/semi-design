@@ -5,7 +5,6 @@ import cls from 'classnames';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { IconClose } from '@douyinfe/semi-icons';
-// eslint-disable-next-line max-len
 import CalendarFoundation, { CalendarAdapter, EventObject, MonthData, MonthlyEvent, ParsedEventsType, ParsedEventsWithArray, ParsedRangeEvent } from '@douyinfe/semi-foundation/calendar/foundation';
 import { cssClasses } from '@douyinfe/semi-foundation/calendar/constants';
 import { DateObj } from '@douyinfe/semi-foundation/calendar/eventUtil';
@@ -32,7 +31,7 @@ export interface MonthCalendarState {
     itemLimit: number;
     showCard: Record<string, [boolean] | [boolean, string]>;
     parsedEvents: MonthlyEvent;
-    cachedKeys: Array<string>;
+    cachedKeys: Array<string>
 }
 
 export default class monthCalendar extends BaseComponent<MonthCalendarProps, MonthCalendarState> {
@@ -87,9 +86,10 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
             registerClickOutsideHandler: (key: string, cb: () => void) => {
                 const clickOutsideHandler = (e: MouseEvent) => {
                     const cardInstance = this.cardRef && this.cardRef.get(key);
-                    // eslint-disable-next-line react/no-find-dom-node
                     const cardDom = ReactDOM.findDOMNode(cardInstance);
-                    if (cardDom && !cardDom.contains(e.target as any)) {
+                    const target = e.target as Element;
+                    const path = e.composedPath && e.composedPath() || [target];
+                    if (cardDom && !cardDom.contains(target) && !path.includes(cardDom)) {
                         cb();
                     }
                 };
@@ -158,8 +158,8 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
                 itemLimitUpdate = true;
             }
         }
-        if (!isEqual(prevEventKeys, nowEventKeys) || itemLimitUpdate) {
-            this.foundation.parseMonthlyEvents((itemLimit || this.props.events) as any);
+        if (!isEqual(prevEventKeys, nowEventKeys) || itemLimitUpdate || !isEqual(prevProps.displayValue, this.props.displayValue)) {
+            this.foundation.parseMonthlyEvents(itemLimit);
         }
     }
 
@@ -202,6 +202,7 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
     };
 
     renderEvents = (events: ParsedRangeEvent[]) => {
+        const { itemLimit } = this.state;
         if (!events) {
             return undefined;
         }
@@ -212,15 +213,17 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
                 width: toPercent(width),
                 top: `${topInd}em`
             };
-            return (
-                <li
-                    className={`${cssClasses.PREFIX}-event-item ${cssClasses.PREFIX}-event-month`}
-                    key={key || `${ind}-monthevent`}
-                    style={style}
-                >
-                    {children}
-                </li>
-            );
+            if (topInd < itemLimit)
+                return (
+                    <li
+                        className={`${cssClasses.PREFIX}-event-item ${cssClasses.PREFIX}-event-month`}
+                        key={key || `${ind}-monthevent`}
+                        style={style}
+                    >
+                        {children}
+                    </li>
+                );
+            return null;
         });
         return list;
     };
@@ -290,7 +293,7 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
                 ref={ref => this.cardRef.set(key, ref)}
             >
                 <li key={date as any} className={listCls} onClick={e => this.handleClick(e, [date])}>
-                    {this.formatDayString(month, dayString)}
+                    {this.formatDayString(date, month, dayString)}
                     {shouldRenderCard ? text : null}
                     {this.renderCusDateGrid(date)}
                 </li>
@@ -298,7 +301,11 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
         );
     };
 
-    formatDayString = (month: string, date: string) => {
+    formatDayString = (dateObj: Date, month: string, date: string) => {
+        const { renderDateDisplay } = this.props;
+        if (renderDateDisplay) {
+            return renderDateDisplay(dateObj);
+        }
         if (date === '1') {
             return (
                 <LocaleConsumer componentName="Calendar">
@@ -313,7 +320,6 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
             );
         }
         return (
-            // eslint-disable-next-line max-len
             <span className={`${prefixCls}-date`}><span className={`${cssClasses.PREFIX}-today-date`}>{date}</span></span>
         );
     };
@@ -343,7 +349,7 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
                         const shouldRenderCollapsed = Boolean(day && day[ind] && day[ind].length > itemLimit);
                         const inner = (
                             <li role="gridcell" aria-label={date.toLocaleDateString()} aria-current={isToday ? "date" : false} key={`${date}-weeksk`} className={listCls} onClick={e => this.handleClick(e, [date])}>
-                                {this.formatDayString(month, dayString)}
+                                {this.formatDayString(date, month, dayString)}
                                 {this.renderCusDateGrid(date)}
                             </li>
                         );
@@ -384,7 +390,7 @@ export default class monthCalendar extends BaseComponent<MonthCalendarProps, Mon
         return (
             <LocaleConsumer componentName="Calendar">
                 {(locale: Locale['Calendar'], localeCode: string, dateFnsLocale: Locale['dateFnsLocale']) => (
-                    <div role="grid" className={monthCls} key={this.state.itemLimit} style={monthStyle}>
+                    <div role="grid" className={monthCls} key={this.state.itemLimit} style={monthStyle} {...this.getDataAttr(this.props)}>
                         <div role="presentation" className={`${prefixCls}-sticky-top`}>
                             {header}
                             {this.renderHeader(dateFnsLocale)}

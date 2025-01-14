@@ -2,12 +2,14 @@ import React from 'react';
 import BaseComponent from '../_base/baseComponent';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
+import { throttle } from 'lodash';
 import { cssClasses } from '@douyinfe/semi-foundation/backtop/constants';
 import BackTopFoundation, { BackTopAdapter } from '@douyinfe/semi-foundation/backtop/foundation';
 
 import '@douyinfe/semi-foundation/backtop/backtop.scss';
 import IconButton from '../iconButton';
 import { IconChevronUp } from '@douyinfe/semi-icons';
+import { getDefaultPropsFromGlobalConfig } from "../_utils";
 
 const prefixCls = cssClasses.PREFIX;
 
@@ -20,20 +22,23 @@ export interface BackTopProps {
     onClick?: (e: React.MouseEvent) => void;
     style?: React.CSSProperties;
     className?: string;
-    children?: React.ReactNode | undefined;
+    children?: React.ReactNode | undefined
 }
 
 export interface BackTopState {
-    visible?: boolean;
+    visible?: boolean
 }
 
 
 export default class BackTop extends BaseComponent<BackTopProps, BackTopState> {
-    static defaultProps = {
+
+    static __SemiComponentName__ = "BackTop";
+
+    static defaultProps = getDefaultPropsFromGlobalConfig(BackTop.__SemiComponentName__, {
         visibilityHeight: 400,
         target: getDefaultTarget,
         duration: 450,
-    };
+    })
 
     static propTypes = {
         target: PropTypes.func,
@@ -43,6 +48,8 @@ export default class BackTop extends BaseComponent<BackTopProps, BackTopState> {
         style: PropTypes.object,
         className: PropTypes.string,
     };
+
+    handler: (e: React.MouseEvent<HTMLDivElement>) => void;
 
     constructor(props: BackTopProps) {
         super(props);
@@ -54,6 +61,7 @@ export default class BackTop extends BaseComponent<BackTopProps, BackTopState> {
 
     componentDidMount() {
         this.foundation.init();
+        this.handler = throttle(this.handleClick, this.props.duration ?? BackTop.defaultProps.duration);
     }
 
     componentWillUnmount() {
@@ -87,13 +95,10 @@ export default class BackTop extends BaseComponent<BackTopProps, BackTopState> {
     }
 
     renderDefault() {
-        return (
-            <IconButton theme="light" icon={<IconChevronUp />} />
-        );
+        return <IconButton theme="light" icon={<IconChevronUp />} />;
     }
 
     render() {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { children, className, style, onClick, visibilityHeight, target, ...others } = this.props;
         const { visible } = this.state;
         const preCls = cls(
@@ -102,11 +107,12 @@ export default class BackTop extends BaseComponent<BackTopProps, BackTopState> {
         );
         const backtopBtn = children ? children : this.renderDefault();
         const content = visible ? (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
-                {...others} 
-                className={preCls} 
-                style={style} 
-                onClick={e => this.handleClick(e)} 
+                {...others}
+                className={preCls}
+                style={style}
+                onClick={e => this.handler(e)}
                 x-semi-prop="children"
             >
                 {backtopBtn}

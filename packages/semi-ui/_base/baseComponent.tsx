@@ -6,6 +6,7 @@ import React, { Component, ReactNode } from 'react';
 import log from '@douyinfe/semi-foundation/utils/log';
 import { DefaultAdapter } from '@douyinfe/semi-foundation/base/foundation';
 import { VALIDATE_STATUS } from '@douyinfe/semi-foundation/base/constants';
+import getDataAttr from '@douyinfe/semi-foundation/utils/getDataAttr';
 import { ArrayElement } from './base';
 
 const { hasOwnProperty } = Object.prototype;
@@ -15,7 +16,7 @@ export type ValidateStatus = ArrayElement<typeof VALIDATE_STATUS>;
 export interface BaseProps {
     style?: React.CSSProperties;
     className?: string;
-    children?: ReactNode | undefined | any;
+    children?: ReactNode | undefined | any
 }
 
 // eslint-disable-next-line
@@ -55,7 +56,7 @@ export default class BaseComponent<P extends BaseProps = {}, S = {}> extends Com
             getProps: () => this.props, // eslint-disable-line
             getState: key => this.state[key], // eslint-disable-line
             getStates: () => this.state, // eslint-disable-line
-            setState: (states, cb) => this.setState({ ...states }, cb), // eslint-disable-line
+            setState: (states, cb) => this.setState({ ...states } as S, cb), // eslint-disable-line
             getCache: key => key && this.cache[key], // eslint-disable-line
             getCaches: () => this.cache, // eslint-disable-line
             setCache: (key, value) => key && (this.cache[key] = value), // eslint-disable-line
@@ -66,6 +67,9 @@ export default class BaseComponent<P extends BaseProps = {}, S = {}> extends Com
                 } catch (error) {
 
                 }
+            },
+            persistEvent: (e: React.KeyboardEvent | React.MouseEvent) => {
+                e && e.persist && typeof e.persist === 'function' ? e.persist() : null;
             }
         };
     }
@@ -75,5 +79,15 @@ export default class BaseComponent<P extends BaseProps = {}, S = {}> extends Com
 
     log(text: string, ...rest: any): any {
         return log(text, ...rest);
+    }
+
+    getDataAttr(props: any = this.props) {
+        return getDataAttr(props);
+    }
+
+    setStateAsync = (state: Partial<S>)=>{
+        return new Promise<void>(resolve=>{
+            this.setState(state as any, resolve);
+        });
     }
 }

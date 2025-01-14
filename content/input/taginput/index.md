@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 31
+order: 44
 category: 输入类
 title: TagInput 标签输入框
 icon: doc-tagInput
@@ -24,7 +24,7 @@ import { TagInput } from '@douyinfe/semi-ui';
 
 () => (
     <TagInput
-        defaultValue={['抖音','火山','西瓜视频']}
+        defaultValue={['抖音', '火山', '西瓜视频']}
         placeholder='请输入...'
         onChange={v => console.log(v)}
     />
@@ -67,7 +67,7 @@ import { TagInput } from '@douyinfe/semi-ui';
 () => (
     <TagInput 
         showClear 
-        defaultValue={['抖音','火山']} 
+        defaultValue={['抖音', '火山']} 
         placeholder='请输入...'
         onChange={v => console.log(v)}
     />
@@ -84,7 +84,7 @@ import { TagInput } from '@douyinfe/semi-ui';
     <TagInput 
         disabled 
         showClear 
-        defaultValue={['抖音','火山','西瓜视频']} 
+        defaultValue={['抖音', '火山', '西瓜视频']} 
         placeholder='请输入...'
     />
 );
@@ -161,7 +161,7 @@ import { TagInput } from '@douyinfe/semi-ui';
 
 () => (
     <TagInput
-        defaultValue={['抖音','火山','西瓜视频']}
+        defaultValue={['抖音', '火山', '西瓜视频']}
         addOnBlur={true}
         placeholder='请输入...'
         onChange={v => console.log(v)}
@@ -179,7 +179,7 @@ import { TagInput } from '@douyinfe/semi-ui';
 
 () => (
     <TagInput
-        defaultValue={['抖音','火山','西瓜视频']}
+        defaultValue={['抖音', '火山', '西瓜视频']}
         allowDuplicates={false}
         placeholder='请输入...'
         onChange={v => console.log(v)}
@@ -235,7 +235,7 @@ import { TagInput } from '@douyinfe/semi-ui';
         maxTagCount={2}
         showRestTagsPopover={true}
         restTagsPopoverProps={{ position: 'top' }}
-        defaultValue={['抖音','火山','西瓜视频']}
+        defaultValue={['抖音', '火山', '西瓜视频']}
         onChange={v => console.log(v)}
     />
 );
@@ -293,7 +293,7 @@ class TagInputDemo extends React.Component {
         return (
             <TagInput
                 inputValue={this.state.value}
-                onInputChange={(v,e) => this.handleInputChange(v,e)}
+                onInputChange={(v, e) => this.handleInputChange(v, e)}
             />
         );
     }
@@ -315,8 +315,8 @@ import { TagInput } from '@douyinfe/semi-ui';
         onBlur={e => {console.log(`onBlur`);}} 
         onChange={tag => {console.log(`onChange,当前标签数组：${tag}`);}} 
         onAdd={tag => {console.log(`onAdd，新增：${tag}`);}} 
-        onRemove={(v,i) => {console.log(`onRemove，移除：${v}, 序号：${i}`);}} 
-        onInputChange={(input,e) => {console.log(`onInputChange，当前输入内容：${input}`);}} 
+        onRemove={(v, i) => {console.log(`onRemove，移除：${v}, 序号：${i}`);}} 
+        onInputChange={(input, e) => {console.log(`onInputChange，当前输入内容：${input}`);}} 
     />
 );
 ```
@@ -343,8 +343,8 @@ class TagInputDemo extends React.Component {
     render() {
         return (
             <>
-                <TagInput defaultValue={['抖音','火山']} ref={this.ref} />
-                <Button style={{ marginTop:10 }} onClick={this.handleTagInputFocus}>
+                <TagInput defaultValue={['抖音', '火山']} ref={this.ref} />
+                <Button style={{ marginTop: 10 }} onClick={this.handleTagInputFocus}>
                     点击按钮聚焦
                 </Button>
             </>
@@ -355,28 +355,29 @@ class TagInputDemo extends React.Component {
 
 ### 自定义标签渲染
 
-可以使用 `renderTagItem` 自定义标签渲染。
+可以使用 `renderTagItem` 自定义标签渲染。 `renderTagItem(value: string, index: number, onClose: function ) => React.ReactNode` 第三个参数 `onClose` 于 2.23.0 版本开始提供。
 
 ```jsx live=true
 import React from 'react';
 import { TagInput, Avatar } from '@douyinfe/semi-ui';
+import { IconClose } from '@douyinfe/semi-ui-icons';
 
 class CustomRender extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value : ['夏可漫']
+            value: ['夏可漫']
         };
         this.list = [
-            { "name": "夏可漫", "avatar":  "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/avatarDemo.jpeg" },
-            { "name": "申悦", "avatar":  "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/bf8647bffab13c38772c9ff94bf91a9d.jpg" },
-            { "name": "曲晨一", "avatar":  "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/dbf7351bb779433d17c4f50478cf42f7.jpg" },
-            { "name": "文嘉茂", "avatar":  "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/7abf810ff060ac3387bd027ead92c4e0.jpg" },
+            { "name": "夏可漫", "avatar": "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/avatarDemo.jpeg" },
+            { "name": "申悦", "avatar": "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/bf8647bffab13c38772c9ff94bf91a9d.jpg" },
+            { "name": "曲晨一", "avatar": "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/dbf7351bb779433d17c4f50478cf42f7.jpg" },
+            { "name": "文嘉茂", "avatar": "https://sf6-cdn-tos.douyinstatic.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/7abf810ff060ac3387bd027ead92c4e0.jpg" },
         ];
-        this.mapList = new Map(this.list.map( item => [item.name,item]));
+        this.mapList = new Map(this.list.map( item => [item.name, item]));
     }
 
-    renderTagItem(value,index) {
+    renderTagItem(value, index, onClose) {
         const data = this.mapList.get(value);
         return (
             <div 
@@ -391,6 +392,7 @@ class CustomRender extends React.Component {
                 <span style={{ marginLeft: 8 }}>
                     {`${value}@semi.com`}
                 </span>
+                <IconClose onClick={onClose} />
             </div>
         );
     }
@@ -401,12 +403,12 @@ class CustomRender extends React.Component {
             <TagInput 
                 value={value} 
                 onChange={value => this.setState({ value })}
-                renderTagItem={(value,index) => this.renderTagItem(value,index)}
+                renderTagItem={(value, index, onClose) => this.renderTagItem(value, index, onClose)}
             />
         );
     }
 }
-``` 
+```
 
 ### 拖拽排序
 
@@ -445,11 +447,11 @@ import { TagInput } from '@douyinfe/semi-ui';
 |maxTagCount  |标签的最大展示数量，超出后将以 +N 形式展示              |number                         | -        |1.21.0|
 |showRestTagsPopover  |当超过 maxTagCount，hover 到 +N 时，是否通过 Popover 显示剩余内容  |boolean     | true     |1.21.0|
 |restTagsPopoverProps |Popover 的配置属性，可以控制弹出方向、zIndex、trigger等，具体参考[Popover](/zh-CN/show/popover#API_参考)           |PopoverProps     | {}        |1.21.0|
-|showContentTooltip   |当标签长度过长发生截断时，hover 标签的时候，是否通过 Tooltip 显示全部内容     |boolean    | true        |1.21.0|
+|showContentTooltip   |当标签长度过长发生截断时，hover 标签的时候，是否通过 Tooltip 显示全部内容, 支持 Tooltip\|Popover；opts，其他需要透传给浮层组件的属性    |boolean\|{type: 'tooltip'\|'popover', opts: object}    | true        |1.21.0|
 |placeholder  |占位默认值                                         |string                         | -         |1.19.0|
 |prefix       |前缀标签                                           |ReactNode                      |-          |1.19.0|
 | preventScroll | 指示浏览器是否应滚动文档以显示新聚焦的元素，作用于组件内的 focus 方法 | boolean |  |  |
-|renderTagItem|自定义标签渲染                                      |(value: string, index: number) => React.ReactNode | -        |1.19.0|
+|renderTagItem|自定义标签渲染, 参数 onClose 于版本2.23.0版本提供     | <ApiType detail='(value: string, index: number, onClose: function) => React.ReactNode'>(params) => React.ReactNode</ApiType> | -  |1.19.0|
 |separator    |设置批量输入时的分隔符                               |string\|string[]                         |,    |1.19.0, string[]是从1.29.0开始支持|
 |showClear    |是否支持一键删除所有标签和输入内容                     |boolean                        |false      |1.19.0|
 |size         |设置输入框尺寸,可选: `small`、`large`、`default`     |string                          |`default` |1.19.0|
@@ -469,7 +471,9 @@ import { TagInput } from '@douyinfe/semi-ui';
 |onKeyDown    |keydown 回调                             |(e: React.KeyboardEvent) => void          | -        |2.1.0|
 |onRemove     |移除标签时的回调                                     |(removedValue: string, idx: number) => void     | -        |1.19.0|
 
-## 方法
+## Methods
+
+绑定在组件实例上的方法，可以通过 ref 调用实现某些特殊交互
 
 |名称    |描述   |版本     |
 |-------|------|---------|

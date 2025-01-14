@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 59
+order: 75
 category: 展示类
 title: SideSheet 滑动侧边栏
 icon: doc-sidesheet
@@ -118,7 +118,7 @@ import { SideSheet, RadioGroup, Radio, Button } from '@douyinfe/semi-ui';
 在 `0.29.0` 版本之后，当 `mask={false}`时允许对外部区域进行操作。
 
 <Notice title='注意'>
-当 SideSheet 是默认渲染在 body 中时（即不传入 getPopupContainer 参数），会在打开时自动给 body 添加 `overflow: hidden` 来禁止滚动，可以配合 `disableScroll={false}` 允许滚动。
+当 SideSheet 是默认渲染在 body 中时（即不传入 getPopupContainer 参数），会在打开时自动给 body 添加 overflow: hidden 来禁止滚动。如果你希望外部区域依然可滚动，可以将 disableScroll 设为false
 </Notice>
 
 ```jsx live=true
@@ -131,10 +131,14 @@ import { SideSheet, TextArea, Button } from '@douyinfe/semi-ui';
     return (
         <>
             <Button onClick={() => setVisible(true)}>Open SideSheet</Button>
-            <br />
-            <br />
-            <TextArea placeholder="Please enter something" onChange={value => setValue(value)} />
-            <SideSheet title="可操作外部的侧边栏" visible={visible} onCancel={() => setVisible(false)} mask={false}>
+            <TextArea placeholder="Please enter something" onChange={value => setValue(value)} style={{ marginTop: 12 }}/>
+            <SideSheet
+                title="可操作外部的侧边栏"
+                visible={visible}
+                onCancel={() => setVisible(false)}
+                mask={false}
+                disableScroll={false}
+            >
                 <p>这里是输入的内容：</p>
                 <p>{value}</p>
             </SideSheet>
@@ -252,7 +256,7 @@ class Demo extends React.Component {
                         />
                         <RadioGroup field="type" label="目标操作系统" direction="horizontal" initValue={'all'}>
                             <Radio value="all">全平台</Radio>
-                            <Radio value="ios">IOS</Radio>
+                            <Radio value="ios">iOS</Radio>
                             <Radio value="android">Android</Radio>
                             <Radio value="web">Web</Radio>
                         </RadioGroup>
@@ -298,31 +302,32 @@ class Demo extends React.Component {
 
 ## API 参考
 
-| 属性 | 说明 | 类型 | 默认值 | 版本 |
-| --- | --- | --- | --- | --- |
-| afterVisibleChange | 面板展示/隐藏时动画结束触发的回调 | (isVisble: boolean) => void | - | 1.0.0 |
-| bodyStyle | 面板内容的样式 | CSSProperties | - | - |
-| className | 类名 | string | - | - |
-| closable | 是否允许通过右上角的关闭按钮关闭 | boolean | true | - |
-| closeOnEsc | 允许通过键盘事件 Esc 触发关闭 | boolean | false | 1.0.0 |
-| disableScroll | 默认渲染在 document.body 层时是否禁止 body 的滚动，即给 body 添加 `overflow: hidden` | boolean | true | - |
-| footer | 侧边栏底部 | ReactNode | null | 1.3.0 |
-| getPopupContainer | 指定父级 DOM，弹层将会渲染至该 DOM 中，自定义需要设置 `position: relative` | () => HTMLElement | - | 0.29.0 |
-| headerStyle | 面板头部的样式 | CSSProperties | - | 1.0.0 |
-| height | 高度，位置为 `top` 或 `bottom` 时生效 | number \| string | 400 | - |
-| keepDOM | 关闭 SideSheet 时是否保留内部组件不销毁 | boolean | false | 1.18.0|
-| mask | 是否显示遮罩，在 `0.29.0` 版本之后，当 `mask={false}` 时允许对外部区域进行操作 | boolean | true | - |
-| maskClosable | 是否允许通过点击遮罩来关闭面板 | boolean | true | - |
-| maskStyle | 遮罩的样式 | CSSProperties | - | - |
-| motion | 是否允许动画 | object \| boolean | true | - |
-| placement | 侧边栏滑出位置，支持`top`, `bottom`, `left`, `right` | string | `right` | - |
+| 属性 | 说明                                                                            | 类型 | 默认值 | 版本 |
+| --- |-------------------------------------------------------------------------------| --- | --- | --- |
+| afterVisibleChange | 面板展示/隐藏时动画结束触发的回调                                                             | (isVisible: boolean) => void | - | 1.0.0 |
+| bodyStyle | 面板内容的样式                                                                       | CSSProperties | - | - |
+| className | 类名                                                                            | string | - | - |
+| closable | 是否允许通过右上角的关闭按钮关闭                                                              | boolean | true | - |
+| closeIcon | 关闭按钮的 icon                                                                 | ReactNode | <IconClose /\> | - |
+| closeOnEsc | 允许通过键盘事件 Esc 触发关闭                                                             | boolean | false | 1.0.0 |
+| disableScroll | 默认渲染在 document.body 层时是否禁止 body 的滚动，即给 body 添加 `overflow: hidden`             | boolean | true | - |
+| footer | 侧边栏底部                                                                         | ReactNode | null | 1.3.0 |
+| getPopupContainer | 指定父级 DOM，弹层将会渲染至该 DOM 中，自定义需要设置 `position: relative` 这会改变浮层 DOM 树位置，但不会改变视图渲染位置。                          | () => HTMLElement | - | 0.29.0 |
+| headerStyle | 面板头部的样式                                                                       | CSSProperties | - | 1.0.0 |
+| height | 高度，位置为 `top` 或 `bottom` 时生效                                                   | number \| string | 400 | - |
+| keepDOM | 关闭 SideSheet 时是否保留内部组件不销毁                                                     | boolean | false | 1.18.0|
+| mask | 是否显示遮罩，在 `0.29.0` 版本之后，当 `mask={false}` 时允许对外部区域进行操作                          | boolean | true | - |
+| maskClosable | 是否允许通过点击遮罩来关闭面板                                                               | boolean | true | - |
+| maskStyle | 遮罩的样式                                                                         | CSSProperties | - | - |
+| motion | 是否允许动画                                                                        | boolean | true | - |
+| placement | 侧边栏滑出位置，支持`top`, `bottom`, `left`, `right`                                    | string | `right` | - |
 | size | 尺寸，支持 `small`(448px)， `medium`(684px), `large`(920px)，仅在 `left` 或 `right` 时生效 | string | `small` | 0.29.0 |
-| style | 可用于设置样式 | CSSProperties | - | - |
-| title | 面板的标题 | ReactNode | - | - |
-| visible | 面板是否可见 | boolean | false | - |
-| width | 宽度，位置为 `left` 或 `right` 时生效 | number \| string | 448 | - |
-| zIndex | 弹层 z-index 值 | number | 1000 | 0.29.0 |
-| onCancel | 取消面板时的回调函数 | (e: MouseEvent) => void | - | - |
+| style | 可用于设置样式                                                                       | CSSProperties | - | - |
+| title | 面板的标题                                                                         | ReactNode | - | - |
+| visible | 面板是否可见                                                                        | boolean | false | - |
+| width | 宽度，位置为 `left` 或 `right` 时生效                                                   | number \| string | 448 | - |
+| zIndex | 弹层 z-index 值                                                                  | number | 1000 | 0.29.0 |
+| onCancel | 取消面板时的回调函数                                                                    | (e: MouseEvent) => void | - | - |
 
 ## Accessibility
 

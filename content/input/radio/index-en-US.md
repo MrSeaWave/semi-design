@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 26
+order: 39
 category: Input
 title: Radio
 subTitle: Radio
@@ -36,8 +36,6 @@ import { Radio } from '@douyinfe/semi-ui';
 ### Extra Info
 
 You can use `extra` to add extra information, which can be any type of ReactNode.
-
-> `extra` >= v0.25.0
 
 ```jsx live=true
 import React from 'react';
@@ -262,13 +260,13 @@ import { RadioGroup, Radio } from '@douyinfe/semi-ui';
 
 () => (
     <RadioGroup type='card' defaultValue={1} direction='vertical' aria-label="RadioGroup demo" name="demo-radio-group-card">
-        <Radio value={1} extra='Radio description' style={{width:280}}>
+        <Radio value={1} extra='Radio description' style={{ width: 280 }}>
             Radio Title
         </Radio>
-        <Radio value={2} disabled extra='Radio description' style={{width:280}}>
+        <Radio value={2} disabled extra='Radio description' style={{ width: 280 }}>
             Radio Title
         </Radio>
-        <Radio value={3} extra='Radio description' style={{width:280}}>
+        <Radio value={3} extra='Radio description' style={{ width: 280 }}>
             Radio Title
         </Radio>
     </RadioGroup>
@@ -288,13 +286,13 @@ import { RadioGroup, Radio } from '@douyinfe/semi-ui';
 
 () => (
     <RadioGroup type='pureCard' defaultValue={1} direction='vertical' aria-label="RadioGroup demo" name="demo-radio-group-pureCard">
-        <Radio value={1} extra='Radio description' style={{width:280}}>
+        <Radio value={1} extra='Radio description' style={{ width: 280 }}>
             Radio Title
         </Radio>
-        <Radio value={2} disabled extra='Radio description' style={{width:280}}>
+        <Radio value={2} disabled extra='Radio description' style={{ width: 280 }}>
             Radio Title
         </Radio>
-        <Radio value={3} extra='Radio description' style={{width:280}}>
+        <Radio value={3} extra='Radio description' style={{ width: 280 }}>
             Radio Title
         </Radio>
     </RadioGroup>
@@ -379,18 +377,18 @@ class App extends React.Component {
 | addonId | id of addon node, aria-labelledby refers to this id, if not set, it will generate an id randomly  <br/>**provided after v2.11.0**                                 | string            |       |
 | addonStyle | inline style of content wrapper<br/>**provided after v1.16.0** | object |  |
 | aria-label      | Label of Radio                                                            | string           | -  |
-| name         | The `name` attribute passed to `input[type="radio"]` in the Radio component, Radios with the same `name` belong to the same RadioGroup,The `name` attribute can refer to [MDN Radio](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input/radio#value)   | string         | -  |
 | autoFocus | Automatically focus the form control when the page is loaded | boolean | false |
 | checked | Specify whether it is currently selected | boolean | false |
-| type | Set the type of radio, one of `default`, `button`, `card`, `pureCard` <br/>**This api is provided after v2.18.0**| string | `default` |
 | className | Class name | string |  |
 | defaultChecked | Checked by default | boolean | false |
 | disabled | Disable the radio | boolean | false |
-| extra | Extra information displayed <br/>**provided after v0.25.0** | ReactNode | - |
+| extra | Extra information displayed | ReactNode | - |
 | extraId        | id of extra node. aria-describedby refers to this id, if not set, it will randomly generate an id <br/>**provided after v2.11.0**                     | ReactNode         | -      |
 | mode | In advanced mode, options can be clicked to uncheck, one of `advanced` | string | - |
+| name | The `name` attribute passed to `input[type="radio"]` in the Radio component, Radios with the same `name` belong to the same RadioGroup,The `name` attribute can refer to [MDN Radio](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input/radio#value)   | string         | -  |
 | preventScroll | Indicates whether the browser should scroll the document to display the newly focused element, acting on the focus method inside the component, excluding the component passed in by the user | boolean |  |  |
 | style | Inline style | CSSProperties |  |
+| type | Set the type of radio, one of `default`, `button`, `card`, `pureCard` <br/>**This api is provided after v2.18.0**| string | `default` |
 | value | Compared based on value to determine whether the option is selected | string \| number | - |
 | onChange | Callback function when the selected option changes | Function (e: Event) | - |
 | onMouseEnter | The callback function when the mouse moves into the option   | function(e:Event) | -   |
@@ -412,7 +410,7 @@ class App extends React.Component {
 | value | Used to set the currently selected value | string \| number | - |
 | type | Set the type of radio, one of `default`, `button`, `card`, `pureCard` <br/>**This api is provided after v1.26.0, and card and pureCard are in v1.30.0 Provided after ** | string | `default` |
 | onChange | Callback function when the selected option changes | Function (e: Event) | - |
-## Method
+## Methods
 
 ### Radio
 
@@ -445,6 +443,9 @@ WAI-ARIA: https://www.w3.org/WAI/ARIA/apg/patterns/radiobutton/
 ```material
 123
 ``` -->
+
+## Related Material
+<semi-material-list code="123"></semi-material-list>
 
 ## Content Guidelines
 

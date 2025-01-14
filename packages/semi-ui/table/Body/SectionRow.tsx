@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable eqeqeq */
 import React, { PureComponent, isValidElement, ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -40,35 +37,41 @@ export interface SectionRowProps {
     renderExpandIcon?: (record: Record<string, any>, isNested: boolean, groupKey: string | number) => ReactNode | null;
     className?: string;
     store?: Store;
-    rowKey?: RowKey<any>;
+    rowKey?: RowKey<any>
 }
+
+/**
+ * avoid affected by https://www.npmjs.com/package/babel-plugin-transform-react-remove-prop-types
+ */
+export const sectionRowPropTypes = {
+    record: PropTypes.object,
+    index: PropTypes.number,
+    columns: PropTypes.array,
+    group: PropTypes.object.isRequired,
+    groupKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    data: PropTypes.array,
+    renderGroupSection: PropTypes.func, // render group title
+    onGroupedRow: PropTypes.func,
+    clickGroupedRowToExpand: PropTypes.bool,
+    components: PropTypes.object,
+    expanded: PropTypes.bool,
+    prefixCls: PropTypes.string,
+    onExpand: PropTypes.func,
+    virtualized: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+    style: PropTypes.object,
+    renderExpandIcon: PropTypes.func, // passing to baseRow
+    className: PropTypes.string,
+    store: PropTypes.object,
+    rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
+};
 
 /**
  * Grouping component title row
  */
 class SectionRow extends PureComponent<SectionRowProps> {
     static contextType = TableContext;
-    static propTypes = {
-        record: PropTypes.object,
-        index: PropTypes.number,
-        columns: PropTypes.array,
-        group: PropTypes.object.isRequired,
-        groupKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-        data: PropTypes.array,
-        renderGroupSection: PropTypes.func, // render group title
-        onGroupedRow: PropTypes.func,
-        clickGroupedRowToExpand: PropTypes.bool,
-        components: PropTypes.object,
-        expanded: PropTypes.bool,
-        prefixCls: PropTypes.string,
-        onExpand: PropTypes.func,
-        virtualized: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-        style: PropTypes.object,
-        renderExpandIcon: PropTypes.func, // passing to baseRow
-        className: PropTypes.string,
-        store: PropTypes.object,
-        rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.func]),
-    };
+    static propTypes = sectionRowPropTypes;
+
     static defaultProps = {
         prefixCls: cssClasses.PREFIX,
         components: {

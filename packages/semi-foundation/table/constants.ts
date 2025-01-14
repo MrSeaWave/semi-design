@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { BASE_CLASS_PREFIX } from '../base/constants';
 
 const cssClasses = {
@@ -21,6 +20,7 @@ const strings = {
     SORT_DIRECTIONS: ['ascend', 'descend'],
     FIXED_SET: [false, true, 'left', 'right'],
     ALIGNS: ['left', 'right', 'center'],
+    JUSTIFY_CONTENT: ['flex-start', 'flex-end', 'center'],
     SCROLL_HORIZONTAL_POSITIONS: ['left', 'middle', 'right'],
     DEFAULT_KEY_COLUMN_SELECTION: 'column-selection',
     DEFAULT_KEY_COLUMN_EXPAND: 'column-expand',

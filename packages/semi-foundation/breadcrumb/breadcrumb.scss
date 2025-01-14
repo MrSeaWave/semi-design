@@ -1,8 +1,8 @@
 //@import '../theme/variables.scss';
 // @import '../theme/mixin.scss';
 // @import '../theme/_font.scss';
-@import './variables.scss';
 @import "./animation.scss";
+@import './variables.scss';
 
 $module: #{$prefix}-breadcrumb;
 
@@ -15,10 +15,12 @@ $module: #{$prefix}-breadcrumb;
 
         &-loose {
             @include font-size-regular;
+            font-size: $font-breadcrumb_loose-fontSize;
         }
 
         &-compact {
             @include font-size-small;
+            font-size: $font-breadcrumb_compact-fontSize;
         }
     }
 
@@ -67,6 +69,10 @@ $module: #{$prefix}-breadcrumb;
             color: $color-breadcrumb_active-text-active;
             cursor: default;
         }
+
+        .#{$prefix}-typography {
+            font-weight: $font-breadcrumb_active-fontWeight;
+        }
     }
 
     &-item-icon {
@@ -80,14 +86,14 @@ $module: #{$prefix}-breadcrumb;
         }
     }
 
-    &-item-icon+&-item-title {
-        margin-left: $spacing-breadcrumb_item_text-marginLeft;
-    }
+    // &-item-icon+&-item-title {
+    //     margin-left: $spacing-breadcrumb_item_text-marginLeft;
+    // }
 
     &-item-link {
         display: inline-flex;
         align-items: center;
-        column-gap: 4px;
+        column-gap: $spacing-breadcrumb_item_text-marginLeft;
         text-decoration: inherit;
         transition: color $transition_duration-breadcrumb_link-text $transition-function_breadcrumb_link-text $transition_delay-breadcrumb_link-text;
         transform: scale($transform_scale-breadcrumb_link-text);

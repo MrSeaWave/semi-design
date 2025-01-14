@@ -1,10 +1,12 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
 import { cssClasses } from '@douyinfe/semi-foundation/sideSheet/constants';
 import Button from '../iconButton';
 import { noop } from 'lodash';
 import { IconClose } from '@douyinfe/semi-icons';
+import { SideSheetProps } from "@douyinfe/semi-foundation/sideSheet/sideSheetFoundation";
+import getDataAttr from '@douyinfe/semi-foundation/utils/getDataAttr';
 
 let uuid = 0;
 const prefixCls = cssClasses.PREFIX;
@@ -12,25 +14,32 @@ const prefixCls = cssClasses.PREFIX;
 
 export interface SideSheetContentProps {
     onClose?: (e: React.MouseEvent) => void;
+    closeIcon?: ReactNode;
     mask?: boolean;
     maskStyle?: CSSProperties;
     maskClosable?: boolean;
+    maskClassName?: string;
     title?: React.ReactNode;
     closable?: boolean;
     headerStyle?: CSSProperties;
-    width: CSSProperties['width'];
+    width?: CSSProperties['width'];
     height: CSSProperties['height'];
     style: CSSProperties;
+    size: SideSheetProps['size'];
     bodyStyle?: CSSProperties;
     className: string;
+    dialogClassName?: string;
     children?: React.ReactNode;
     footer?: React.ReactNode;
     'aria-label'?: string;
+    maskExtraProps?: {[key: string]: any};
+    wrapperExtraProps?: {[key: string]: any}
 }
 
 export default class SideSheetContent extends React.PureComponent<SideSheetContentProps> {
     static propTypes = {
         onClose: PropTypes.func,
+        closeIcon: PropTypes.node,
     };
 
     static defaultProps = {
@@ -70,9 +79,10 @@ export default class SideSheetContent extends React.PureComponent<SideSheetConte
                 <div
                     aria-hidden={true}
                     key="mask"
-                    className={`${prefixCls}-mask`}
+                    className={cls(`${prefixCls}-mask`, this.props.maskClassName ?? "")}
                     style={maskStyle}
                     onClick={maskClosable ? this.onMaskClick : null}
+                    {...this.props.maskExtraProps}
                 />
             );
         }
@@ -84,6 +94,7 @@ export default class SideSheetContent extends React.PureComponent<SideSheetConte
             title,
             closable,
             headerStyle,
+            closeIcon,
         } = this.props;
         let header, closer;
         if (title) {
@@ -94,13 +105,14 @@ export default class SideSheetContent extends React.PureComponent<SideSheetConte
             );
         }
         if (closable) {
+            const iconType = closeIcon || <IconClose/>;
             closer = (
                 <Button
                     className={`${prefixCls}-close`}
                     key="close-btn"
                     onClick={this.close}
                     type="tertiary"
-                    icon={<IconClose/>}
+                    icon={iconType}
                     theme="borderless"
                     size="small"
                 />
@@ -133,9 +145,10 @@ export default class SideSheetContent extends React.PureComponent<SideSheetConte
                 key="dialog-element"
                 role="dialog"
                 tabIndex={-1}
-                className={`${prefixCls}-inner ${prefixCls}-inner-wrap`}
+                className={cls(`${prefixCls}-inner`, `${prefixCls}-inner-wrap`, this.props.dialogClassName??"", `${prefixCls}-size-${props.size}`)}
                 // onMouseDown={this.onDialogMouseDown}
                 style={{ ...props.style, ...style }}
+                {...this.props.wrapperExtraProps}
                 // id={this.dialogId}
             >
                 <div className={`${prefixCls}-content`}>
@@ -159,16 +172,37 @@ export default class SideSheetContent extends React.PureComponent<SideSheetConte
             mask,
             className,
             width,
+            onClose,
+            maskStyle,
+            maskClosable,
+            maskClassName,
+            title,
+            closable,
+            headerStyle,
+            height,
+            style,
+            size,
+            bodyStyle,
+            dialogClassName,
+            children,
+            footer,
+            maskExtraProps,
+            wrapperExtraProps,
+            ...rest
         } = this.props;
         const wrapperCls = cls(className, {
             [`${prefixCls}-fixed`]: !mask,
+            [`${prefixCls}-size-${this.props.size}`]: !mask
         });
         const wrapperStyle: CSSProperties = {};
         if (!mask && width) {
             wrapperStyle.width = width;
         }
+
+        const dataAttr = getDataAttr(rest);
+
         return (
-            <div className={wrapperCls} style={wrapperStyle}>
+            <div className={wrapperCls} style={wrapperStyle} {...dataAttr}>
                 {this.getMaskElement()}
                 {this.getDialogElement()}
             </div>

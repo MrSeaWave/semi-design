@@ -13,7 +13,7 @@ import '../styles/layout.scss';
 import 'typeface-inter';
 import 'typeface-inconsolata';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useStaticQuery, graphql } from 'gatsby';
 import { IntlProvider } from 'react-intl';
@@ -32,6 +32,8 @@ import SideNav from './side-nav';
 import Footer from './Footer';
 import { itemsArr } from 'utils/category';
 import { getLocale, _t } from 'utils/locale';
+import { useIde } from './useIde';
+import "prismjs/components/prism-vala.js";
 
 
 const insertScript = scriptText => {
@@ -43,29 +45,65 @@ const insertScript = scriptText => {
 
 const AppLayout = ({ type, location, children }) => {
     const [showBanner, setShowBanner] = useState(false);
+    const wrapperRef = useRef(null);
+    
+    const isIde = useIde({ wrapperRef });
 
     // ----------------START insert static code to document-------------------------
     useEffect(() => {
         if (window.insertSlardarAndHornbill) {
             return;
         }
+
+        // remove the tabIndex of the gatsby-focus-wrapper div, to prevent the focus from starting after a mouse click 
+        const gatsbyFocusWrapper = document.getElementById('gatsby-focus-wrapper');
+        if (gatsbyFocusWrapper) {
+            gatsbyFocusWrapper.removeAttribute('tabIndex');
+        }
     
         Promise.resolve()
             .then(() => {
                 // eslint-disable-next-line
-                insertScript(`(function(i,s,o,g,r,a,m){i["SlardarMonitorObject"]=r;(i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)}),(i[r].l=1*new Date());(a=s.createElement(o)),(m=s.getElementsByTagName(o)[0]);a.async=1;a.src=g;a.crossOrigin="anonymous";m.parentNode.insertBefore(a,m);i[r].globalPreCollectError=function(){i[r]("precollect","error",arguments)};if(typeof i.addEventListener==="function"){i.addEventListener("error",i[r].globalPreCollectError,true)}if('PerformanceLongTaskTiming'in i){var g=i[r].lt={e:[]};g.o=new PerformanceObserver(function(l){g.e=g.e.concat(l.getEntries())});g.o.observe({entryTypes:['longtask']})}})(window,document,"script","https://i.snssdk.com/slardar/sdk.js?bid=patrol_445","Slardar");`);
+                insertScript(`;(function (w, d, u, b, n, pc, ga, ae, po, s, p, e, t, pp) {pc = 'precollect';ga
+                = 'getAttribute';ae = 'addEventListener';po = 'PerformanceObserver';s = function
+                (m) {p = [].slice.call(arguments);p.push(Date.now(), location.href);(m == pc ?
+                s.p.a : s.q).push(p)};s.q = [];s.p = { a: [] };w[n] = s;e =
+                document.createElement('script');e.src = u + '?bid=' + b + '&globalName=' +
+                n;e.crossOrigin = u.indexOf('sdk-web') > 0 ? 'anonymous' :
+                'use-credentials';d.getElementsByTagName('head')[0].appendChild(e);if (ae in w)
+                {s.pcErr = function (e) {e = e || w.event;t = e.target || e.srcElement;if (t
+                instanceof Element || t instanceof HTMLElement) {if (t[ga]('integrity'))
+                {w[n](pc, 'sri', t[ga]('href') || t[ga]('src'))} else {w[n](pc, 'st', { tagName:
+                t.tagName, url: t[ga]('href') || t[ga]('src') })}} else {w[n](pc, 'err', e.error
+                || e.message)}};s.pcRej = function (e) {e = e || w.event;w[n](pc, 'err',
+                e.reason || (e.detail && e.detail.reason))};w[ae]('error', s.pcErr,
+                true);w[ae]('unhandledrejection', s.pcRej,
+                true);};if('PerformanceLongTaskTiming' in w) {pp = s.pp = { entries: []
+                };pp.observer = new PerformanceObserver(function (l) {pp.entries =
+                pp.entries.concat(l.getEntries())});pp.observer.observe({ entryTypes:
+                ['longtask', 'largest-contentful-paint','layout-shift']
+                })}})(window,document,'https://lf3-short.ibytedapm.com/slardar/fe/sdk-web/browser.cn.js','patrol_445','Slardar')`);
                 insertScript(`
-                    window.Slardar && window.Slardar("config",{
+                window.Slardar && window.Slardar('init', { 
                         bid: 'patrol_445',
-                        sampleRate: 1,
-                        ignoreAjax: [/.*/],
-                        ignoreStatic: [/.*/],
-                        ignoreErrors: [/.*/],
-                        enableCatchJSError: false,
-                        enableFPSJankTimesMonitor: false,
-                        enableCrash: false,
-                        performanceAuto: true
-                    });`);
+                        sample: {
+                            sample_rate: 1,
+                        },
+                        plugins: {
+                            ajax: {
+                                ignoreUrls: [/.*/],
+                            },
+                            fetch: {
+                                ignoreUrls: [/.*/],
+                            },
+                            resourceError: {
+                                ignoreUrls: [/.*/],
+                            },
+                            jsError: false,
+                        },
+                    })
+                    window.Slardar && window.Slardar('start')`
+                );
 
             })
             .then(() => {
@@ -78,7 +116,8 @@ const AppLayout = ({ type, location, children }) => {
     // -----------------------------------------------------------------------------
 
     const showSideNav =
-        location.pathname.replace(/(zh\-CN\/?|en\-US\/?)/, '') !== '/' && !/(showcase|resources|customers|contribute|teams)/g.test(location.pathname);
+        location.pathname.replace(/(zh\-CN\/?|en\-US\/?)/, '') !== '/' && !/(showcase|resources|customers|contribute|teams)/g.test(location.pathname) && !isIde;
+    
     const data = useStaticQuery(graphql`
         query {
             allMdx(
@@ -97,6 +136,7 @@ const AppLayout = ({ type, location, children }) => {
                             localeCode
                             icon
                             order
+                            showNew
                         }
                     }
                 }
@@ -138,26 +178,44 @@ const AppLayout = ({ type, location, children }) => {
         sideNavStyle.marginTop = 92;
     }
 
+    useEffect(() => {
+        setTimeout(()=>{
+            console.clear();
+        }, 1000);
+    }, []);
+
     // TODO import semi common footer
     return (
         <>
             <IntlProvider locale={locale} messages={messages}>
                 <LocaleProvider locale={semiLocaleSource}>
-                    <div style={{ position: 'fixed', width: '100%', top: 0, zIndex: 999 }}>
-                        <SemiSiteBanner ref={bannerRef} type="black" style={{ height: 32 }} icon={null} />
-                        {/* ssr, can't use location directly, get location from layout and pass to children */}
-                        <Header style={headerStyle} location={location} localeCode={locale} />
-                    </div>
-                    <div className="content-area" style={contentAeraStyle}>
-                        {children}
-                        {!/showcase|teams/.test(location.pathname) && <Footer />}
-                    </div>
+                    {
+                        !isIde && (<div style={{ position: 'fixed', width: '100%', top: 0, zIndex: 999 }}>
+                            <div className="skip-to-content">
+                                <div>{locale === "zh-CN" ? '跳转到:' : 'skip to:'}</div>
+                                <ol>
+                                    {
+                                        showSideNav ? (<li><a className="skip-to-content-link" href='#side-nav'>{locale === "zh-CN" ? '跳转到侧边导航' : 'skip to navigation'}</a></li>) : null
+                                    }
+                                    <li><a className="skip-to-content-link" href='#main-content'>{locale === "zh-CN" ? '跳转到主内容' : 'skip to main content'}</a></li>
+                                    <li><a className="skip-to-content-link" href='#footer'>{locale === "zh-CN" ? '跳转到页脚' : 'skip to footer'}</a></li>
+                                </ol>
+                            </div>
+                            <SemiSiteBanner ref={bannerRef} type="black" style={{ height: 32 }} icon={null} />
+                            {/* ssr, can't use location directly, get location from layout and pass to children */}
+                            <Header style={headerStyle} location={location} localeCode={locale} />
+                        </div>)
+                    }
                     {showSideNav ? (
                         <>
                             <SideNav hasBanner={showBanner} type={type} style={sideNavStyle} location={location} edges={data.allMdx.edges} itemsArr={itemsArr} />
                             {/* {footer} */}
                         </>
                     ) : null}
+                    <div className="content-area" style={contentAeraStyle} id="main-content" ref={wrapperRef}>
+                        {children}
+                        {!/showcase|teams/.test(location.pathname) && <Footer />}
+                    </div>
                 </LocaleProvider>
             </IntlProvider>
         </>

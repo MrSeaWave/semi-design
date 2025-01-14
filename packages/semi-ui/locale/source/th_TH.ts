@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'th-TH',
     dateFnsLocale: th,
     Pagination: {
-        item: 'บทความ',
+        pageSize: 'รายการต่อหน้า: ${pageSize}',
+        total: 'หน้าทั้งหมด: ${total}',
+        jumpTo: 'ข้ามไปที่',
         page: 'หน้า',
-        pageSize: 'บทความ / หน้า',
-        total: 'ธรรมดา',
-        jumpTo: 'ข้ามไปที่'
     },
     Modal: {
         confirm: 'ตกลง',
         cancel: 'ยกเลิก',
+    },
+    Tabs: {
+        more: "มากกว่า"
     },
     TimePicker: {
         placeholder: {
@@ -37,7 +39,9 @@ const local: Locale = {
             dateTime: 'โปรดเลือกวันที่และเวลา',
             dateRange: ['วันที่เริ่มต้น', 'วันที่สิ้นสุด'],
             dateTimeRange: ['วันที่เริ่มต้น', 'วันที่สิ้นสุด'],
+            monthRange: ['เดือนเริ่มต้น', 'เดือนสิ้นสุด'],
         },
+        presets: 'การเลือกด่วน',
         footer: {
             confirm: 'ตกลง',
             cancel: 'ยกเลิก',
@@ -87,7 +91,7 @@ const local: Locale = {
             Sun: 'อา',
         },
         localeFormatToken: {
-            FORMAT_SWITCH_DATE: 'yyyy-MM-dd',
+            FORMAT_SWITCH_DATE: 'dd/MM/yyyy',
         },
     },
     Navigation: {
@@ -101,6 +105,9 @@ const local: Locale = {
     Table: {
         emptyText: 'ไม่มีข้อมูล',
         pageText: 'แสดงรายการ ${currentStart} - ${currentEnd} จาก ${total}',
+        descend: 'คลิกเพื่อเรียงจากมากไปหาน้อย',
+        ascend: 'คลิกเพื่อเรียงจากน้อยไปหามาก',
+        cancelSort: 'ยกเลิกการเรียงลำดับ',
     },
     Select: {
         emptyText: 'ไม่มีข้อมูล',
@@ -151,11 +158,33 @@ const local: Locale = {
         clear: 'ว่าง',
         selectAll: 'เลือกทั้งหมด',
         clearSelectAll: 'ยกเลิกการเลือกทั้งหมด',
-        total: 'รวม ${total} รายการ',
-        selected: 'เลือก ${total} รายการ',
+        total: 'รายการทั้งหมด: ${total}',
+        selected: 'รายการที่เลือก: ${total}',
     },
     Form: {
         optional: '(ไม่จำเป็น)',
+    },
+    Image: {
+        preview: 'ดูตัวอย่าง',
+        loading: 'กำลังโหลด',
+        loadError: 'โหลดไม่สำเร็จ',
+        prevTip: 'ก่อนหน้า',
+        nextTip: 'ถัดไป',
+        zoomInTip: 'ซูมเข้า',
+        zoomOutTip: 'ซูมออก',
+        rotateTip: 'หมุน',
+        downloadTip: 'ดาวน์โหลด',
+        adaptiveTip: 'ปรับให้เข้ากับหน้า',
+        originTip: 'ขนาดเดิม',
+    },
+    Chat: {
+        deleteConfirm: 'คุณต้องการลบการสนทนานี้ใช่หรือไม่?',
+        clearContext: 'ล้างความเข้าใจเรียบร้อยแล้ว',
+        copySuccess: 'คัดลอกสำเร็จ',
+        stop: 'หยุด',
+        copy: 'สำเนา"',
+        copied: 'คัดลอกสำเร็จ',
+        dropAreaText: 'วางไฟล์ที่นี่',
     },
 };
 

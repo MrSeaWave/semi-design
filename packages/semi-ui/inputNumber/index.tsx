@@ -1,9 +1,4 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-depth */
-/* eslint-disable react/no-did-update-set-state */
-/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -23,6 +18,7 @@ import { ArrayElement } from '../_base/base';
 export interface InputNumberProps extends InputProps {
     autofocus?: boolean;
     className?: string;
+    clearIcon?: React.ReactNode;
     defaultValue?: number | string;
     disabled?: boolean;
     formatter?: (value: number | string) => string;
@@ -52,10 +48,9 @@ export interface InputNumberProps extends InputProps {
     onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
     onKeyDown?: React.KeyboardEventHandler;
     onNumberChange?: (value: number, e?: React.ChangeEvent) => void;
-    onUpClick?: (value: string, e: React.MouseEvent<HTMLButtonElement>) => void;
+    onUpClick?: (value: string, e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface InputNumberState extends BaseInputNumberState {}
 
 class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
@@ -67,6 +62,7 @@ class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
         'aria-describedby': PropTypes.string,
         'aria-required': PropTypes.bool,
         autofocus: PropTypes.bool,
+        clearIcon: PropTypes.node,
         className: PropTypes.string,
         defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         disabled: PropTypes.bool,
@@ -222,7 +218,7 @@ class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
             },
             updateStates: (states, callback) => {
                 this.setState(states, callback);
-            }
+            },
         };
     }
 
@@ -262,7 +258,7 @@ class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
             } else {
                 let valueStr = value;
                 if (typeof value === 'number') {
-                    valueStr = value.toString();
+                    valueStr = this.foundation.doFormat(value);
                 }
 
                 const parsedNum = this.foundation.doParse(valueStr, false, true, true);
@@ -307,7 +303,7 @@ class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
                          * We need to set the status to false after trigger focus event
                          */
                         if (this.clickUpOrDown) {
-                            obj.value = this.foundation.doFormat(valueStr, true);
+                            obj.value = this.foundation.doFormat(obj.number, true);
                             newValue = obj.value;
                         }
                         this.foundation.updateStates(obj, () => this.adapter.restoreCursor());
@@ -317,8 +313,7 @@ class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
                         this.foundation.updateStates({ value: newValue });
                     } else {
                         // Update input content when controlled input NaN
-                        newValue = this.foundation.doFormat(valueStr, false);
-                        this.foundation.updateStates({ value: newValue });
+                        this.foundation.updateStates({ value: valueStr });
                     }
                 } else if (this.foundation.isValidNumber(parsedNum)) {
                     newValue = this.foundation.doFormat(parsedNum);
@@ -329,7 +324,7 @@ class InputNumber extends BaseComponent<InputNumberProps, InputNumberState> {
                     this.foundation.updateStates({ number: null, value: newValue });
                 }
             }
-            if (isString(newValue) && newValue !== String(this.props.value)) {
+            if (newValue && isString(newValue) && newValue !== String(this.props.value)) {
                 this.foundation.notifyChange(newValue, null);
             }
         }

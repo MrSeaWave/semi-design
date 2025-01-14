@@ -4,7 +4,7 @@ import isNullOrUndefined from '../utils/isNullOrUndefined';
 export interface TimeInputAdapter extends DefaultAdapter{
     notifyChange: (e: any) => void;
     notifyFocus: (e: any) => void;
-    notifyBlur: (e: any) => void;
+    notifyBlur: (e: any) => void
 }
 
 class TimePickerFoundation extends BaseFoundation<TimeInputAdapter> {
@@ -13,10 +13,8 @@ class TimePickerFoundation extends BaseFoundation<TimeInputAdapter> {
         super({ ...adapter });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     init() {}
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy() {}
 
     handleFocus(e: any) {

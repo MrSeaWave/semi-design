@@ -9,6 +9,8 @@ $col: #{$form}-col;
 $checkboxGroup: #{$prefix}-checkboxGroup;
 $radioGroup: #{$prefix}-radioGroup;
 $buttonRadioGroup: #{$prefix}-radioGroup-buttonRadio;
+$horizontalCardRadioGroup: #{$prefix}-radioGroup-horizontal-card;
+$verticalCardRadioGroup: #{$prefix}-radioGroup-vertical-card;
 
 $switch: #{$prefix}-switch;
 $rating: #{$prefix}-rating;
@@ -66,6 +68,20 @@ $rating: #{$prefix}-rating;
                 }
             }
         }
+
+        .#{$field}-group {
+            .#{$col} {
+                &-right {
+                    display: flex;
+                    justify-content: flex-end;
+                }
+                &-left {
+                    display: flex;
+                    justify-content: flex-start;
+                }
+            }
+        }
+
         .#{$field}-pure {
             // padding-top: 0;
             // padding-bottom: 0;
@@ -74,12 +90,12 @@ $rating: #{$prefix}-rating;
     }
 
     &-field-label {
-        // padding-left: $spacing-base;
         box-sizing: border-box;
-        padding-right: $spacing-form_label-paddingRight;
         font-weight: $font-form_label-fontWeight;
         color: $color-form_label-text-default;
         margin-bottom: $spacing-form_label-marginBottom;
+        margin-top: $spacing-form_label-marginTop;
+        padding-right: $spacing-form_label-paddingRight;
         display: inline-block;
         vertical-align: middle;
         @include font-size-regular;
@@ -132,6 +148,7 @@ $rating: #{$prefix}-rating;
         @include font-size-regular;
         display: flex;
         align-items: center;
+        // TODO help text margin token?
         margin-top: $spacing-form_message-marginTop;
         .#{$prefix}-icon-alert_triangle {
             color: $color-form_alertIcon-icon-default;
@@ -156,11 +173,17 @@ $rating: #{$prefix}-rating;
             padding-top: $spacing-form_label_posTop-paddingTop;
             padding-bottom: $spacing-form_label_posTop-paddingBottom;
         }
+        // no need to adjust height for button radio & card radio
+        .#{$buttonRadioGroup},
+        .#{$horizontalCardRadioGroup},
+        .#{$verticalCardRadioGroup} {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
         .#{$field}-label-with-extra {
             display: flex;
             align-items: center;
         }
-
     }
 
     &[x-label-pos="left"] {
@@ -177,34 +200,40 @@ $rating: #{$prefix}-rating;
             display: flex;
             align-items: center;
         }
+        // labelAlign = right
+        .#{$field}-label-with-extra.#{$field}-label-right{
+            justify-content: flex-end;
+        }
         .#{$checkboxGroup},
         .#{$radioGroup} {
             padding-top: $spacing-form_label-paddingTop;
             padding-bottom: $spacing-form_label-paddingTop;
         }
-        // no need to adjust height for button radio, already 32px
-        .#{$buttonRadioGroup} {
+        // no need to adjust height for button radio, already 32px, no need to consider height of card radio
+        .#{$buttonRadioGroup},
+        .#{$horizontalCardRadioGroup},
+        .#{$verticalCardRadioGroup} {
             padding-top: 0;
             padding-bottom: 0;
         }
         .#{$switch},
         .#{$rating} {
             vertical-align: middle;
-            margin-top: $spacing-form_label_small-paddingTop;
-            margin-bottom: $spacing-form_label_small-paddingTop;
+            margin-top: $spacing-form_switch_rating_marginY;
+            margin-bottom: $spacing-form_switch_rating_marginY;
         }
     }
 
     &[x-extra-pos="middle"] {
         .#{$field}-extra {
-            margin-top: $spacing-form_label_extra_posMid-marginTop;
-            margin-bottom: $spacing-form_label_extra_posMid-marginBottom;
+            margin-top: $spacing-form_extra_posMid-marginTop;
+            margin-bottom: $spacing-form_extra_posMid-marginBottom;
         }
     }
 
     &[x-extra-pos="bottom"] {
         .#{$field}-extra {
-            margin-top: $spacing-form_label_extra_posBottom-marginTop;
+            margin-top: $spacing-form_extra_posBottom-marginTop;
         }
     }
 
@@ -234,19 +263,20 @@ $rating: #{$prefix}-rating;
 
 .#{$form}-vertical {
     .#{$form}-field-group {
-        .#{$field} {
-            margin-top: 0;
-            margin-bottom: 0;
-        }
         margin-top: 0;
         margin-bottom: 0;
         padding-top: $spacing-form_field_group_vertical-paddingTop;
         padding-bottom: $spacing-form_field_group_vertical-paddingBottom;
+        overflow: hidden;
+        
+        .#{$field} {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
     }
 }
 
 .#{$form}-field-group {
-
     &[x-label-pos="top"] {
     }
 
@@ -271,11 +301,13 @@ $rating: #{$prefix}-rating;
         margin-block-start: 0;
         margin-block-end: 0;
         @include font-size-header-5;
-        font-weight: 600;
+        font-weight: $font-weight-bold;
         width: 100%;
         padding-bottom: $spacing-form_section_text-paddingBottom;
+        padding-top: $spacing-form_section_text-paddingTop;
         border-bottom: $width-form_section-border solid $color-form_section-border-default;
         margin-bottom: $spacing-form_section_text-marginBottom;
+        margin-top: $spacing-form_section_text-marginTop;
         color: $color-form_section-text-default;
     }
 
