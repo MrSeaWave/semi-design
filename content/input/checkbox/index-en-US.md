@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 21
+order: 32
 category: Input
 title:  Checkbox
 subTitle: Checkbox
@@ -34,7 +34,7 @@ import React from 'react';
 import { Checkbox } from '@douyinfe/semi-ui';
 
 () => (
-    <Checkbox aria-label="Checkbox demo" onChange={checked => console.log(checked)}>
+    <Checkbox aria-label="Checkbox demo" onChange={e => console.log(e)}>
         Semi Design
     </Checkbox>
 );
@@ -47,7 +47,7 @@ import { Checkbox } from '@douyinfe/semi-ui';
 () => (
     <Checkbox
         defaultChecked
-        onChange={checked => console.log(checked)}
+        onChange={e => console.log(e)}
         aria-label="Checkbox demo"
     >
         Semi Design
@@ -136,9 +136,9 @@ class App extends React.Component {
         const plainOptions = ['semi', 'vigo', 'helo'];
         const options = [
             { label: 'Aim for the highest', value: '1', extra: "Raise the bar. Wait for bigger gains. Find the best solutions by widening your perspective. Be attentive. Distill ideas down to their fundamental truths. Keep learning and growing" },
-            { label: 'Be grounded & courageous', value: '2', extra:"Make your own discoveries. Dive deep into facts. Stay level-headed. Focus on impact. Assume ownership, take risks, break the mold. Rapid iterations, multiple possibilities." },
+            { label: 'Be grounded & courageous', value: '2', extra: "Make your own discoveries. Dive deep into facts. Stay level-headed. Focus on impact. Assume ownership, take risks, break the mold. Rapid iterations, multiple possibilities." },
             { label: 'Be open & humble', value: '3', extra: "Trust yourself, trust each other. Be willing to offer and ask for help. Collaboration creates value. Approach problems with the big picture in mind. Be mindful and check your ego; stay open to different ideas." },
-            { label: 'Be candid & clear', value: '4', extra: "Dare to share your honest opinions. It's okay to make mistakes. Own it when you do. Stick to the facts, identify issues, and avoid \'leader-pleasing.\' Be accurate and forthright; be methodical and focused."}
+            { label: 'Be candid & clear', value: '4', extra: "Dare to share your honest opinions. It's okay to make mistakes. Own it when you do. Stick to the facts, identify issues, and avoid \'leader-pleasing.\' Be accurate and forthright; be methodical and focused." }
         ];
         const optionsWithDisabled = [
             { label: 'Photography', value: 'Photography' },
@@ -295,7 +295,7 @@ import { Checkbox, CheckboxGroup } from '@douyinfe/semi-ui';
                 </Checkbox>
             </div>
             <CheckboxGroup
-                style={{marginTop:6}}
+                style={{ marginTop: 6 }}
                 options={plainOptions}
                 value={checkedList}
                 onChange={onChange}
@@ -319,16 +319,16 @@ import { CheckboxGroup, Checkbox } from '@douyinfe/semi-ui';
 
 () => (
     <CheckboxGroup type='card' defaultValue={['1', '3']} direction='vertical' aria-label="Checkbox demo">
-        <Checkbox value={'1'} disabled extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'1'} disabled extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
-        <Checkbox value={'2'} disabled extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'2'} disabled extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
-        <Checkbox value={'3'} extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'3'} extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
-        <Checkbox value={'4'} extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'4'} extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
     </CheckboxGroup>
@@ -346,16 +346,16 @@ import { CheckboxGroup, Checkbox } from '@douyinfe/semi-ui';
 
 () => (
     <CheckboxGroup type='pureCard' defaultValue={['1', '3']} direction='vertical' aria-label="Checkbox demo">
-        <Checkbox value={'1'} disabled extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'1'} disabled extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
-        <Checkbox value={'2'} disabled extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'2'} disabled extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
-        <Checkbox value={'3'} extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'3'} extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
-        <Checkbox value={'4'} extra='Checkbox Description' style={{width:280}}>
+        <Checkbox value={'4'} extra='Checkbox Description' style={{ width: 280 }}>
             Checkbox Title
         </Checkbox>
     </CheckboxGroup>
@@ -425,9 +425,10 @@ import { CheckboxGroup, Checkbox, Row, Col } from '@douyinfe/semi-ui';
 | value        | Specify selected options                                                | any\[]              | \[]        |
 | onChange     | Callback function when selected options change                          | function(checkedValue) | -          |
 
-### Method
+## Methods
 
-#### Checkbox
+Some internal methods provided by Checkbox can be accessed through ref:
+### Checkbox
 
 | Name    | Description  |
 | ------- | ------------ |
@@ -473,3 +474,5 @@ import { CheckboxGroup, Checkbox, Row, Col } from '@douyinfe/semi-ui';
 ```material
 45, 64, 73, 89, 123
 ``` -->
+## Related Material
+<semi-material-list code="123"></semi-material-list>

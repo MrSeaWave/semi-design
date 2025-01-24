@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'ko-KR',
     dateFnsLocale: ko,
     Pagination: {
-        item: '기사',
+        pageSize: '페이지당 항목: ${pageSize}',
+        total: '총 페이지: ${total}',
+        jumpTo: '이동',
         page: '페이지',
-        pageSize: '기사 / 페이지',
-        total: '',
-        jumpTo: '이동'
     },
     Modal: {
         confirm: '확인',
         cancel: '취소',
+    },
+    Tabs: {
+        more: "더"
     },
     TimePicker: {
         placeholder: {
@@ -35,7 +37,9 @@ const local: Locale = {
             dateTime: '날짜 및 시간 선택',
             dateRange: ['시작 날짜', '종료일'],
             dateTimeRange: ['시작 날짜', '종료일'],
+            monthRange: ['시작 월', '종료 월'],
         },
+        presets: '빠른 선택',
         footer: {
             confirm: '확인',
             cancel: '취소',
@@ -98,6 +102,9 @@ const local: Locale = {
     Table: {
         emptyText: '결과 없음',
         pageText: '${total} 중 ${currentStart}-${currentEnd}',
+        descend: '내림차순을 보려면 클릭하세요',
+        ascend: '오름차순을 보려면 클릭하세요',
+        cancelSort: '정렬 취소',
     },
     Select: {
         emptyText: '결과 없음',
@@ -148,11 +155,33 @@ const local: Locale = {
         clear: '비우기',
         selectAll: '모두 선택',
         clearSelectAll: '모두 선택 취소',
-        total: '총 {total} 개 항목',
-        selected: '선택된 {Total} 개 항목',
+        total: '총 항목: ${total}',
+        selected: '선택한 항목: ${total}',
     },
     Form: {
         optional: '(선택 과목)',
+    },
+    Image: {
+        preview: '시사',
+        loading: '로딩 중',
+        loadError: '불러 오지 못했습니다',
+        prevTip: '이전',
+        nextTip: '다음',
+        zoomInTip: '확대',
+        zoomOutTip: '축소',
+        rotateTip: '회전',
+        downloadTip: '다운로드',
+        adaptiveTip: '페이지에 맞게 조정',
+        originTip: '원래 크기',
+    },
+    Chat: {
+        deleteConfirm: '이 대화를 삭제하시겠습니까?',
+        clearContext: '컨텍스트가 지워졌습니다',
+        copySuccess: '복사 성공',
+        stop: '중지',
+        copy: '복사',
+        copied: '복사했습니다',
+        dropAreaText: '파일을 여기에 놓으세요',
     },
 };
 

@@ -9,10 +9,10 @@ export interface BasicOptionProps {
     disabled?: boolean;
     showTick?: boolean;
     className?: string;
-    style?: Record<string, any>;
+    style?: Record<string, any>
 }
 export interface OptionDefaultAdapter extends Partial<DefaultAdapter> {
-    notifyClick(option: BasicOptionProps): void;
+    notifyClick(option: BasicOptionProps): void
 }
 
 
@@ -22,10 +22,8 @@ export default class OptionFoundation extends BaseFoundation<OptionDefaultAdapte
         super({ ...adapter });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     init() {}
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy() {}
 
     onOptionClick(option: BasicOptionProps) {

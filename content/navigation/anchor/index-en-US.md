@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 36
+order: 49
 category: Navigation
 title:  Anchor
 subTitle: Anchor
@@ -63,7 +63,7 @@ import { Anchor } from '@douyinfe/semi-ui';
                 getContainer={getContainer}
                 offsetTop={100}
                 targetOffset={100} // v>=1.9
-                style={{ position: 'fixed', right: '20px', top: '100px', width: '200px', zIndex: 3}} >
+                style={{ position: 'fixed', right: '20px', top: '100px', width: '200px', zIndex: 3 }} >
                 <Anchor.Link href="#Basic_Usage" title="Fixed Anchor" />
                 <Anchor.Link href="#Integrated_Usage" title="Integrated Usage" />
                 <Anchor.Link href="#Size" title="Size" />
@@ -332,7 +332,7 @@ import { Anchor } from '@douyinfe/semi-ui';
 | ------------ | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------- | --------- | - |
 | autoCollapse | Dynamically display child link                                                                                      | boolean                             | false     | |
 | className    | Class name                                                                                                          | string                              | -         | |
-| defaultAnchor | Default highlight anchor                                     | string                              | -         | 1.20.0 |
+| defaultAnchor | Default highlight anchor                                     | string                              | -         |  |
 | getContainer | Scroll container                                                                                                    | () => HTMLElement                   | window    | |
 | maxHeight    | max-height of Anchor                                                                                                | string \| number                    | `750px`   | |
 | maxWidth     | max-width of Anchor                                                                                                 | string \| number                    | `200px`   | |
@@ -342,7 +342,7 @@ import { Anchor } from '@douyinfe/semi-ui';
 | position     | Tooltip position，same as `position` property of Tooltip component                                                  | string                              | -         | |
 | railTheme    | Style of scroll rail，one of `primary`，`tertiary`，`muted`                                                         | string                              | `primary` | |
 | scrollMotion | Animation of scroll behavior                                                                                        | boolean                             | false     | |
-| showTooltip  | Show Tooltip                                                                                                        | boolean                             | false     | |
+| showTooltip  | Toggle whether to show tooltip, if passed in as object: type，type of component to show tooltip, support Tooltip and Popover, the default is Tooltip; opts, properties that will be passed directly to the component. The object form setting is provided since version 2.36.0   | boolean \| {type: 'tooltip'\|'popover', opts: object}                             | false     | |
 | size         | Size of Anchor，one of `small`，`default`                                                                           | string                              | `default` | |
 | style        | Style object                                                                                                        | object                              | -         | |
 | targetOffset | Anchor offset from top of target                                                                     | number                              | 0         | 1.9.0 |

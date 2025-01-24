@@ -1,8 +1,8 @@
-/* eslint-disable max-lines-per-function, react-hooks/rules-of-hooks, prefer-const, max-len */
-import React, { useState, useLayoutEffect, useMemo, useRef, forwardRef } from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useState, useLayoutEffect, useEffect, useMemo, useRef, forwardRef } from 'react';
 import classNames from 'classnames';
 import { cssClasses } from '@douyinfe/semi-foundation/form/constants';
-import { isValid, generateValidatesFromRules, mergeOptions, mergeProps, getDisplayName } from '@douyinfe/semi-foundation/form/utils';
+import { isValid, generateValidatesFromRules, mergeOptions, mergeProps, getDisplayName, transformTrigger, transformDefaultBooleanAPI } from '@douyinfe/semi-foundation/form/utils';
 import * as ObjectUtil from '@douyinfe/semi-foundation/utils/object';
 import isPromise from '@douyinfe/semi-foundation/utils/isPromise';
 import warning from '@douyinfe/semi-foundation/utils/warning';
@@ -12,12 +12,16 @@ import ErrorMessage from '../errorMessage';
 import { isElement } from '../../_base/reactUtils';
 import Label from '../label';
 import { Col } from '../../grid';
-import { CallOpts, WithFieldOption } from '@douyinfe/semi-foundation/form/interface';
-import { CommonFieldProps, CommonexcludeType } from '../interface';
-import { Subtract } from 'utility-types';
+import type { CallOpts, WithFieldOption } from '@douyinfe/semi-foundation/form/interface';
+import type { CommonFieldProps, CommonexcludeType } from '../interface';
+import type { Subtract } from 'utility-types';
 import { noop } from "lodash";
 
 const prefix = cssClasses.PREFIX;
+
+// To avoid useLayoutEffect warning when ssr, refer: https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+// Fix issue 1140
+const useIsomorphicEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /**
  * withFiled is used to inject components
@@ -94,6 +98,27 @@ function withField<
             return null;
         }
 
+        let formProps = updater.getFormProps([
+            'labelPosition',
+            'labelWidth',
+            'labelAlign',
+            'labelCol',
+            'wrapperCol',
+            'disabled',
+            'showValidateIcon',
+            'extraTextPosition',
+            'stopValidateWithError',
+            'trigger'
+        ]);
+        let mergeLabelPos = labelPosition || formProps.labelPosition;
+        let mergeLabelWidth = labelWidth || formProps.labelWidth;
+        let mergeLabelAlign = labelAlign || formProps.labelAlign;
+        let mergeLabelCol = labelCol || formProps.labelCol;
+        let mergeWrapperCol = wrapperCol || formProps.wrapperCol;
+        let mergeExtraPos = extraTextPosition || formProps.extraTextPosition || 'bottom';
+        let mergeStopValidateWithError = transformDefaultBooleanAPI(stopValidateWithError, formProps.stopValidateWithError, false);
+        let mergeTrigger = transformTrigger(trigger, formProps.trigger);
+
         // To prevent user forgetting to pass the field, use undefined as the key, and updater.getValue will get the wrong value.
         let initValueInFormOpts = typeof field !== 'undefined' ? updater.getValue(field) : undefined; // Get the init value of form from formP rops.init Values Get the initial value set in the initValues of Form
         let initVal = typeof initValue !== 'undefined' ? initValue : initValueInFormOpts;
@@ -112,7 +137,7 @@ function withField<
 
         // FIXME typeof initVal
         const [value, setValue, getVal] = useStateWithGetter(typeof initVal !== undefined ? initVal : null);
-        const validateOnMount = trigger.includes('mount');
+        const validateOnMount = mergeTrigger.includes('mount');
 
         allowEmpty = allowEmpty || updater.getFormProps().allowEmpty;
 
@@ -122,8 +147,10 @@ function withField<
         const [cursor, setCursor, getCursor] = useStateWithGetter(0);
         const [status, setStatus] = useState(validateStatus); // use props.validateStatus to init
 
+        const isUnmounted = useRef(false);
         const rulesRef = useRef(rules);
         const validateRef = useRef(validate);
+        const validatePromise = useRef<Promise<any> | null>(null);
 
         // notNotify is true means that the onChange of the Form does not need to be triggered
         // notUpdate is true means that this operation does not need to trigger the forceUpdate
@@ -133,6 +160,9 @@ function withField<
         };
 
         const updateError = (errors: any, callOpts?: CallOpts) => {
+            if (isUnmounted.current) {
+                return;
+            }
             if (errors === getError()) {
                 // When the inspection result is unchanged, no need to update, saving a forceUpdate overhead
                 // When errors is an array, deepEqual is not used, and it is always treated as a need to update
@@ -178,28 +208,32 @@ function withField<
                 [field]: val,
             };
 
-            return new Promise((resolve, reject) => {
+            const rootPromise = new Promise((resolve, reject) => {
                 validator
                     .validate(
                         model,
                         {
-                            first: stopValidateWithError,
+                            first: mergeStopValidateWithError,
                         },
-                        // eslint-disable-next-line @typescript-eslint/no-empty-function
                         (errors, fields) => {}
                     )
                     .then(res => {
+                        if (isUnmounted.current || validatePromise.current !== rootPromise) {
+                            return;
+                        }
                         // validation passed
                         setStatus('success');
                         updateError(undefined, callOpts);
                         resolve({});
                     })
                     .catch(err => {
+                        if (isUnmounted.current || validatePromise.current !== rootPromise) {
+                            return;
+                        }
                         let { errors, fields } = err;
                         if (errors && fields) {
                             let messages = errors.map((e: any) => e.message);
                             if (messages.length === 1) {
-                                // eslint-disable-next-line prefer-destructuring
                                 messages = messages[0];
                             }
                             updateError(messages, callOpts);
@@ -216,11 +250,16 @@ function withField<
                         }
                     });
             });
+
+            validatePromise.current = rootPromise;
+
+            return rootPromise;
         };
 
         // execute custom validate function
-        const _validate = (val: any, values: any, callOpts: CallOpts) =>
-            new Promise(resolve => {
+        const _validate = (val: any, values: any, callOpts: CallOpts) => {
+
+            const rootPromise = new Promise(resolve => {
                 let maybePromisedErrors;
                 // let errorThrowSync;
                 try {
@@ -234,6 +273,11 @@ function withField<
                     updateError(undefined, callOpts);
                 } else if (isPromise(maybePromisedErrors)) {
                     maybePromisedErrors.then((result: any) => {
+                        // If the async validate is outdated (a newer validate occurs), the result should be discarded
+                        if (isUnmounted.current || validatePromise.current !== rootPromise) {
+                            return;
+                        }
+
                         if (isValid(result)) {
                             // validate success，no need to do anything with result
                             updateError(undefined, callOpts);
@@ -254,6 +298,11 @@ function withField<
                     }
                 }
             });
+            
+            validatePromise.current = rootPromise;
+
+            return rootPromise;
+        };
 
         const fieldValidate = (val: any, callOpts?: CallOpts) => {
             let finalVal = val;
@@ -322,7 +371,7 @@ function withField<
             updateTouched(true, { notNotify: true, notUpdate: true });
             updateValue(val);
             // only validate when trigger includes change
-            if (trigger.includes('change')) {
+            if (mergeTrigger.includes('change')) {
                 fieldValidate(val);
             }
         };
@@ -334,7 +383,7 @@ function withField<
             if (!touched) {
                 updateTouched(true);
             }
-            if (trigger.includes('blur')) {
+            if (mergeTrigger.includes('blur')) {
                 let val = getVal();
                 fieldValidate(val);
             }
@@ -358,25 +407,28 @@ function withField<
         };
 
         // avoid hooks capture value, fixed issue 346
-        useLayoutEffect(() => {
+        useIsomorphicEffect(() => {
             rulesRef.current = rules;
             validateRef.current = validate;
         }, [rules, validate]);
 
-        // exec validate once when trigger inlcude 'mount'
-        useLayoutEffect(() => {
+        useIsomorphicEffect(() => {
+            isUnmounted.current = false;
+            // exec validate once when trigger include 'mount'
             if (validateOnMount) {
                 fieldValidate(value);
             }
+            return () => {
+                isUnmounted.current = true;
+            };
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []);
 
         // register when mounted，unregister when unmounted
         // register again when field change
-        useLayoutEffect(() => {
+        useIsomorphicEffect(() => {
             // register
             if (typeof field === 'undefined') {
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 return () => {};
             }
             // log('register: ' + field);
@@ -406,23 +458,6 @@ function withField<
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [field]);
 
-        let formProps = updater.getFormProps([
-            'labelPosition',
-            'labelWidth',
-            'labelAlign',
-            'labelCol',
-            'wrapperCol',
-            'disabled',
-            'showValidateIcon',
-            'extraTextPosition',
-        ]);
-        let mergeLabelPos = labelPosition || formProps.labelPosition;
-        let mergeLabelWidth = labelWidth || formProps.labelWidth;
-        let mergeLabelAlign = labelAlign || formProps.labelAlign;
-        let mergeLabelCol = labelCol || formProps.labelCol;
-        let mergeWrapperCol = wrapperCol || formProps.wrapperCol;
-        let mergeExtraPos = extraTextPosition || formProps.extraTextPosition || 'bottom';
-
         // id attribute to improve a11y
         const a11yId = id ? id : field;
         const labelId = `${a11yId}-label`;
@@ -430,14 +465,14 @@ function withField<
         const extraTextId = `${a11yId}-extraText`;
         const errorMessageId = `${a11yId}-errormessage`;
 
-        let FieldComponent = (() => {
+        const FieldComponent = () => {
             // prefer to use validateStatus which pass by user throught props
             let blockStatus = validateStatus ? validateStatus : status;
 
             const extraCls = classNames(`${prefix}-field-extra`, {
                 [`${prefix}-field-extra-string`]: typeof extraText === 'string',
                 [`${prefix}-field-extra-middle`]: mergeExtraPos === 'middle',
-                [`${prefix}-field-extra-botttom`]: mergeExtraPos === 'bottom',
+                [`${prefix}-field-extra-bottom`]: mergeExtraPos === 'bottom',
             });
 
             const extraContent = extraText ? <div className={extraCls} id={extraTextId} x-semi-prop="extraText">{extraText}</div> : null;
@@ -454,6 +489,10 @@ function withField<
                 'aria-required': required,
                 'aria-labelledby': labelId,
             };
+
+            if (name) {
+                newProps['name'] = name;
+            }
 
             if (helpText) {
                 newProps['aria-describedby'] = extraText ? `${helpTextId} ${extraTextId}` : helpTextId;
@@ -576,7 +615,7 @@ function withField<
                     )}
                 </div>
             );
-        })();
+        };
 
         // !important optimization
         const shouldUpdate = [
@@ -589,10 +628,10 @@ function withField<
         ];
         if (options.shouldMemo) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            return useMemo(() => FieldComponent, [...shouldUpdate]);
+            return useMemo(FieldComponent, [...shouldUpdate]);
         } else {
             // Some Custom Component with inner state shouldn't be memo, otherwise the component will not updated when the internal state is updated
-            return FieldComponent;
+            return FieldComponent();
         }
     };
     SemiField = forwardRef(SemiField);

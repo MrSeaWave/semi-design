@@ -4,10 +4,17 @@ import { BASE_CLASS_PREFIX } from '@douyinfe/semi-foundation/base/constants';
 import DefaultLocale from '../locale/source/zh_CN';
 import Context, { ContextValue } from './context';
 
-// eslint-disable-next-line
 export interface ConfigProviderProps extends ContextValue {}
 
+export const ConfigConsumer = Context.Consumer;
+
 export default class ConfigProvider extends React.Component<ConfigProviderProps> {
+
+    constructor(props: ConfigProviderProps) {
+        super(props);
+    }
+
+
     static propTypes = {
         locale: PropTypes.object,
         timeZone: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -20,7 +27,9 @@ export default class ConfigProvider extends React.Component<ConfigProviderProps>
         direction: 'ltr',
     };
 
-    renderChilren() {
+
+
+    renderChildren() {
         const { direction, children } = this.props;
         if (direction === 'rtl') {
             return (
@@ -41,7 +50,7 @@ export default class ConfigProvider extends React.Component<ConfigProviderProps>
                     ...rest,
                 }}
             >
-                {this.renderChilren()}
+                {this.renderChildren()}
             </Context.Provider>
         );
     }

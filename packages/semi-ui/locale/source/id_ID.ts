@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'id-ID',
     dateFnsLocale: id,
     Pagination: {
-        item: 'item',
-        pageSize: ' item / halaman',
+        pageSize: 'Item per halaman: ${pageSize}',
+        total: 'Total halaman: ${total}',
+        jumpTo: 'Langsung ke',
         page: ' halaman',
-        total: '',
-        jumpTo: 'Langsung ke'
     },
     Modal: {
         confirm: 'Konfirmasi',
         cancel: 'Batalkan',
+    },
+    Tabs: {
+        more: "Lagi"
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: 'Pilih tanggal dan waktu',
             dateRange: ['Tanggal mulai', 'Tanggal akhir'],
             dateTimeRange: ['Tanggal mulai', 'Tanggal akhir'],
+            monthRange: ['Bulan pertama', 'Bulan terakhir'],
         },
+        presets: 'Pilihan cepat',
         footer: {
             confirm: 'Konfirmasi',
             cancel: 'Batalkan',
@@ -96,7 +100,10 @@ const local: Locale = {
     },
     Table: {
         emptyText: 'Tidak ada Hasil',
-        pageText: 'Tampilkan halaman ${currentStart} sampai ${currentEnd} dari ${total}',
+        pageText: 'Menampilkan ${currentStart}-${currentEnd} dari ${total}',
+        descend: 'Klik untuk menurun',
+        ascend: 'Klik untuk menaik',
+        cancelSort: 'Batalkan penyortiran',
     },
     Select: {
         emptyText: 'Tidak ada Hasil',
@@ -147,11 +154,33 @@ const local: Locale = {
         clear: 'Bersihkan',
         selectAll: 'Pilih Semua',
         clearSelectAll: 'Nyahpilih Semua',
-        total: 'Total ${total} proyek',
-        selected: '${total} item dipilih',
+        total: 'Total item: ${total}',
+        selected: 'Item dipilih: ${total}',
     },
     Form: {
         optional: '(opsional)',
+    },
+    Image: {
+        preview: 'Pratinjau',
+        loading: 'Memuat',
+        loadError: 'Gagal untuk memuat',
+        prevTip: 'Sebelumnya',
+        nextTip: 'Selanjutnya',
+        zoomInTip: 'Memperbesar',
+        zoomOutTip: 'memperkecil',
+        rotateTip: 'Putar',
+        downloadTip: 'unduh',
+        adaptiveTip: 'Beradaptasi dengan halaman',
+        originTip: 'Ukuran asli',
+    },
+    Chat: {
+        deleteConfirm: 'Apakah Anda yakin ingin menghapus sesi ini?？',
+        clearContext: 'Konteks telah dihapus',
+        copySuccess: 'Berhasil disalin',
+        stop: 'Berhenti',
+        copy: 'Salin',
+        copied: 'Disalin',
+        dropAreaText: 'Letakkan file di sini',
     },
 };
 

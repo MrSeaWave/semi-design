@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React, { CSSProperties } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -11,20 +10,21 @@ import { cssClasses, strings } from '@douyinfe/semi-foundation/toast/constants';
 import BaseComponent from '../_base/baseComponent';
 import Toast from './toast';
 import '@douyinfe/semi-foundation/toast/toast.scss';
-import ToastTransition from './ToastTransition';
 import getUuid from '@douyinfe/semi-foundation/utils/uuid';
 import useToast from './useToast';
 import { ConfigProps, ToastInstance, ToastProps, ToastState } from '@douyinfe/semi-foundation/toast/toastFoundation';
-import { Motion } from '../_base/base';
+import CSSAnimation from '../_cssAnimation';
+import cls from 'classnames';
 
-export { ToastTransitionProps } from './ToastTransition';
+
 export interface ToastReactProps extends ToastProps{
+    id?: string;
     style?: CSSProperties;
     icon?: React.ReactNode;
-    content: React.ReactNode;
+    content: React.ReactNode
 }
 
-export {
+export type {
     ConfigProps,
     ToastListProps,
     ToastListState,
@@ -34,7 +34,7 @@ export {
 const createBaseToast = () => class ToastList extends BaseComponent<ToastListProps, ToastListState> {
     static ref: ToastList;
     static useToast: typeof useToast;
-    static defaultOpts: ToastReactProps & { motion: Motion } = {
+    static defaultOpts: ToastReactProps & { motion: boolean } = {
         motion: true,
         zIndex: 1010,
         content: '',
@@ -45,16 +45,22 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
         onClose: PropTypes.func,
         icon: PropTypes.node,
         direction: PropTypes.oneOf(strings.directions),
+        stack: PropTypes.bool,
     };
 
     static defaultProps = {};
     static wrapperId: null | string;
+    stack: boolean = false;
+
+    innerWrapperRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     constructor(props: ToastListProps) {
         super(props);
         this.state = {
             list: [],
             removedItems: [],
+            updatedItems: [],
+            mouseInSide: false
         };
         this.foundation = new ToastListFoundation(this.adapter);
     }
@@ -62,14 +68,35 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
     get adapter(): ToastListAdapter {
         return {
             ...super.adapter,
-            updateToast: (list: ToastInstance[], removedItems: ToastInstance[]) => {
-                this.setState({ list, removedItems });
+            updateToast: (list: ToastInstance[], removedItems: ToastInstance[], updatedItems: ToastInstance[]) => {
+                this.setState({ list, removedItems, updatedItems });
             },
+            handleMouseInSideChange: (mouseInSide: boolean) => {
+                this.setState({ mouseInSide });
+            },
+            getInputWrapperRect: () => {
+                return this.innerWrapperRef.current?.getBoundingClientRect();
+            }
         };
     }
 
+    handleMouseEnter = (e: React.MouseEvent) => {
+        if (this.stack) {
+            this.foundation.handleMouseInSideChange(true);
+        } 
+    }
+
+    handleMouseLeave = (e: React.MouseEvent) => {
+        if (this.stack) {
+            const height = this.foundation.getInputWrapperRect()?.height;
+            if (height) {
+                this.foundation.handleMouseInSideChange(false);
+            } 
+        }
+    }
+
     static create(opts: ToastReactProps) {
-        const id = getUuid('toast');
+        const id = opts.id ?? getUuid('toast');
         // this.id = id;
         if (!ToastList.ref) {
             const div = document.createElement('div');
@@ -93,13 +120,14 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
             } else {
                 document.body.appendChild(div);
             }
-            ReactDOM.render(React.createElement(
+            ReactDOM.render(React.createElement( 
                 ToastList,
                 { ref: instance => (ToastList.ref = instance) }
             ),
             div,
             () => {
                 ToastList.ref.add({ ...opts, id });
+                ToastList.ref.stack = Boolean(opts.stack);
             });
         } else {
             const node = document.querySelector(`#${this.wrapperId}`) as HTMLElement;
@@ -108,7 +136,14 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
                     node.style[pos] = typeof opts[pos] === 'number' ? `${opts[pos]}px` : opts[pos];
                 }
             });
-            ToastList.ref.add({ ...opts, id });
+            if (Boolean(opts.stack) !== ToastList.ref.stack) {
+                ToastList.ref.stack = Boolean(opts.stack);
+            }
+            if (ToastList.ref.has(id)) {
+                ToastList.ref.update(id, { ...opts, id });
+            } else {
+                ToastList.ref.add({ ...opts, id });
+            }
         }
         return id;
     }
@@ -167,6 +202,9 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
             }
         });
 
+        if (typeof opts.theme === 'string' && strings.themes.includes(opts.theme)) {
+            ToastList.defaultOpts.theme = opts.theme;
+        }
         if (typeof opts.zIndex === 'number') {
             ToastList.defaultOpts.zIndex = opts.zIndex;
         }
@@ -178,8 +216,16 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
         }
     }
 
+    has(id: string) {
+        return this.foundation.hasToast(id);
+    }
+
     add(opts: ToastInstance) {
         return this.foundation.addToast(opts);
+    }
+
+    update(id: string, opts: ToastInstance) {
+        return this.foundation.updateToast(id, opts);
     }
 
     remove(id: string) {
@@ -192,28 +238,37 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
 
     render() {
         let { list } = this.state;
-        const { removedItems } = this.state;
+        const { removedItems, updatedItems } = this.state;
         list = Array.from(new Set([...list, ...removedItems]));
+        const updatedIds = updatedItems.map(({ id }) => id);
+
+        const refFn: React.LegacyRef<Toast> = (toast) => {
+            if (toast?.foundation?._id && updatedIds.includes(toast.foundation._id)) {
+                toast.foundation.restartCloseTimer();
+            }
+        };
 
         return (
             <React.Fragment>
-                {list.map((item, index) =>
-                    (item.motion ? (
-                        <ToastTransition key={item.id || index} motion={item.motion}>
-                            {removedItems.find(removedItem => removedItem.id === item.id) ?
-                                null :
-                                transitionStyle => (
-                                    <Toast
-                                        {...item}
-                                        style={{ ...transitionStyle, ...item.style }}
-                                        close={id => this.remove(id)}
-                                    />
-                                )}
-                        </ToastTransition>
-                    ) : (
-                        <Toast {...item} style={{ ...item.style }} close={id => this.remove(id)} />
-                    ))
-                )}
+                <div className={cls({
+                    [`${cssClasses.PREFIX}-innerWrapper`]: true,
+                    [`${cssClasses.PREFIX}-innerWrapper-hover`]: this.state.mouseInSide
+                })} ref={this.innerWrapperRef} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+                    {list.map((item, index) =>{
+                        const isRemoved = removedItems.find(removedItem=>removedItem.id===item.id) !== undefined;
+                        return <CSSAnimation key={item.id} motion={item.motion} animationState={isRemoved?"leave":"enter"} startClassName={isRemoved?`${cssClasses.PREFIX}-animation-hide`:`${cssClasses.PREFIX}-animation-show`}>
+                            {
+                                ({ animationClassName, animationEventsNeedBind, isAnimating })=>{
+                                    return (isRemoved && !isAnimating) ? null : <Toast {...item} stack={this.stack} stackExpanded={this.state.mouseInSide} positionInList={{ length: list.length, index }} className={cls({
+                                        [item.className]: Boolean(item.className),
+                                        [animationClassName]: true
+                                    })} {...animationEventsNeedBind} style={{ ...item.style }} close={id => this.remove(id)} ref={refFn} />;
+                                }
+                            }
+                        </CSSAnimation>;
+                    }
+                    )}
+                </div>
             </React.Fragment>
         );
     }

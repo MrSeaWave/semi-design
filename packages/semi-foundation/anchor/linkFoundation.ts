@@ -3,7 +3,7 @@ import { AnchorAdapter } from './foundation';
 
 export interface LinkAdapter extends DefaultAdapter {
     addLink: AnchorAdapter['addLink'];
-    removeLink: AnchorAdapter['removeLink'];
+    removeLink: AnchorAdapter['removeLink']
 }
 
 export default class LinkFoundation extends BaseFoundation<LinkAdapter> {
@@ -16,7 +16,6 @@ export default class LinkFoundation extends BaseFoundation<LinkAdapter> {
         // this.setInitValue();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy() {}
 
     handleAddLink() {

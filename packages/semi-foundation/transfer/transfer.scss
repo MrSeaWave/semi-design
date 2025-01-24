@@ -1,5 +1,6 @@
-@import "./variables.scss";
 @import "./animation.scss";
+@import "./variables.scss";
+
 
 $module: #{$prefix}-transfer;
 
@@ -42,7 +43,7 @@ $module: #{$prefix}-transfer;
         min-width: inherit;
         height: inherit;
     }
-    
+
     &-header {
         @include font-size-small;
         @include ver-center;
@@ -52,6 +53,7 @@ $module: #{$prefix}-transfer;
         margin-bottom: $spacing-transfer_header-marginBottom;
         margin-left: $spacing-transfer_header-marginLeft;
         color: $color-transfer_header-text;
+        flex-shrink: 0;
 
         &-all {
             font-weight: $font-transfer_header_all-fontWeight;
@@ -164,9 +166,22 @@ $module: #{$prefix}-transfer;
                 word-break: break-all;
             }
 
-            &-drag-handler {
-                margin-right: $spacing-transfer_right_item_drag_handler-marginRight;
-                flex-shrink: 0;
+            &-drag {
+                &-handler {
+                    margin-right: $spacing-transfer_right_item_drag_handler-marginRight;
+                    flex-shrink: 0;
+                    cursor: move;
+                }
+
+                &-item-move {
+                    z-index: $z-transfer_right_item_drag_item_move;
+                }            
+            }
+
+            &-sortable-item {
+                &-active {
+                    opacity: 0;
+                }
             }
         }
 

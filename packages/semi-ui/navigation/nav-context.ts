@@ -1,14 +1,16 @@
 import React from 'react';
 
-import { NavProps } from './index';
+import type { NavProps, ItemKey } from './index';
 import { Locale } from '../locale/interface';
+ 
+import type { DropdownProps } from '../dropdown';
 export interface NavContextType {
     isCollapsed?: boolean;
     mode?: NavProps['mode'];
-    openKeys?: string[];
+    openKeys?: ItemKey[];
     onCollapseChange?: NavProps['onCollapseChange'];
     prefixCls?: string;
-    selectedKeys?: string[];
+    selectedKeys?: ItemKey[];
     toggleIconPosition?: string;
     selectedKeysIsControlled?: boolean;
     openKeysIsControlled?: boolean;
@@ -19,6 +21,10 @@ export interface NavContextType {
     subNavCloseDelay?: NavProps['subNavCloseDelay'];
     subNavOpenDelay?: NavProps['subNavOpenDelay'];
     canUpdateOpenKeys?: boolean;
+    renderWrapper?: NavProps['renderWrapper'];
+    getPopupContainer?: DropdownProps['getPopupContainer'];
+    tooltipShowDelay?: number;
+    tooltipHideDelay?: number
 }
 
 const NavContext = React.createContext<NavContextType>({

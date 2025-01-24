@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 48
+order: 61
 category: Show
 title: Carousel
 subTitle: Carousel
@@ -44,7 +44,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }} />   
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }} />   
         );
     };
 
@@ -57,7 +57,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
     const textList = [
         ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
         ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-        ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+        ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
     ];
 
     return (
@@ -65,7 +65,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
             {
                 imgList.map((src, index) => {
                     return (
-                        <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                        <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                             <Space vertical align='start' spacing='medium' style={titleStyle}>
                                 {renderLogo()}
                                 <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -112,7 +112,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -125,7 +125,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
     const textList = [
         ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
         ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-        ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+        ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
     ];
     
     return (
@@ -134,7 +134,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -151,7 +151,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
             <br/>
             <Space> 
                 <div>theme</div>
-                <RadioGroup onChange={e => setTheme(e.target.value)} value={theme}>
+                <RadioGroup onChange={e => setTheme(e.target.value)} value={theme} type="button">
                     <Radio value='primary'>primary</Radio>
                     <Radio value='light'>light</Radio>
                     <Radio value='dark'>dark</Radio>
@@ -196,7 +196,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -209,7 +209,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
     const textList = [
         ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
         ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-        ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+        ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
     ];
 
     return (
@@ -218,7 +218,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -236,7 +236,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
             <Space vertical align='start'>
                 <Space> 
                     <div>type</div>
-                    <RadioGroup onChange={e => setType(e.target.value)} value={type}>
+                    <RadioGroup onChange={e => setType(e.target.value)} value={type} type="button">
                         <Radio value='dot'>dot</Radio>
                         <Radio value='line'>line</Radio>
                         <Radio value='columnar'>columnar</Radio>
@@ -244,7 +244,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 </Space>
                 <Space> 
                     <div>position</div>
-                    <RadioGroup onChange={e => setPosition(e.target.value)} value={position}>
+                    <RadioGroup onChange={e => setPosition(e.target.value)} value={position} type="button">
                         <Radio value='left'>left</Radio>
                         <Radio value='center'>center</Radio>
                         <Radio value='right'>right</Radio>
@@ -252,7 +252,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 </Space>
                 <Space> 
                     <div>size</div>
-                    <RadioGroup onChange={e => setSize(e.target.value)} value={size}>
+                    <RadioGroup onChange={e => setSize(e.target.value)} value={size} type="button">
                         <Radio value='small'>small</Radio>
                         <Radio value='medium'>medium</Radio>
                     </RadioGroup>
@@ -274,7 +274,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
 () => {
     const { Title, Paragraph } = Typography;
-    const [arrowType, setArrowTypew] = useState('always');
+    const [arrowType, setArrowType] = useState('always');
     const [show, setShow] = useState(true);
   
     const style = {
@@ -294,7 +294,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -307,7 +307,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
     const textList = [
         ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
         ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-        ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+        ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
     ];
 
     return (
@@ -316,7 +316,7 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -334,14 +334,14 @@ import { Carousel, RadioGroup, Radio, Space, Typography } from '@douyinfe/semi-u
             <Space vertical align='start'>
                 <Space> 
                     <div>arrow</div>
-                    <RadioGroup onChange={e => setShow(e.target.value)} value={show}>
+                    <RadioGroup onChange={e => setShow(e.target.value)} value={show} type="button">
                         <Radio value={true}>show</Radio>
                         <Radio value={false}>hide</Radio>
                     </RadioGroup>
                 </Space>
                 <Space> 
                     <div>show time</div>
-                    <RadioGroup onChange={e => setArrowTypew(e.target.value)} value={arrowType}>
+                    <RadioGroup onChange={e => setArrowType(e.target.value)} value={arrowType} type="button">
                         <Radio value='always'>always</Radio>
                         <Radio value='hover'>hover</Radio>
                     </RadioGroup>
@@ -371,7 +371,7 @@ class CarouselDemo extends React.Component {
         this.textList = [
             ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
             ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-            ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+            ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
         ];
         this.arrowProps = {
             leftArrow: { children: <IconArrowLeft size='large'/> },
@@ -381,7 +381,7 @@ class CarouselDemo extends React.Component {
     
     renderLogo() {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }} />
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }} />
         );
     };
 
@@ -412,7 +412,7 @@ class CarouselDemo extends React.Component {
                     {
                         this.imgList.map((src, index) => {
                             return (
-                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                     <Space vertical align='start' spacing='medium' style={titleStyle}>
                                         {this.renderLogo()}
                                         <Typography.Title heading={2} style={colorStyle}>{this.textList[index][0]}</Typography.Title>
@@ -459,7 +459,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -472,7 +472,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
     const textList = [
         ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
         ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-        ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+        ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
     ];
 
     return (
@@ -481,7 +481,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -528,7 +528,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
 
     const renderLogo = () => {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }}/>
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }}/>
         );
     };
 
@@ -542,7 +542,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
     const textList = [
         ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
         ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-        ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+        ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
     ];
 
     return (
@@ -551,7 +551,7 @@ import { Carousel, Typography, Space } from '@douyinfe/semi-ui';
                 {
                     imgList.map((src, index) => {
                         return (
-                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                            <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                 <Space vertical align='start' spacing='medium' style={titleStyle}>
                                     {renderLogo()}
                                     <Title heading={2} style={colorStyle}>{textList[index][0]}</Title>
@@ -587,7 +587,7 @@ class CarouselDemo extends React.Component {
         this.textList = [
             ['Semi Design System Management', 'From Semi Design, To Any Design', 'Quickly define your design system and apply it to design drafts and code'],
             ['Semi Material', 'Customized components for business scenarios, support online preview and debugging', 'Content co-authored by Semi Design users'],
-            ['Semi Pro (In development)', 'Based on 40+ real component code design', 'One-click conversion of massive page template front-end code'],
+            ['Semi Template', 'Efficient Design2Code converts design into real code in seconds', 'One-click conversion of massive page template front-end code'],
         ];
         this.state = {
             activeIndex: 0,
@@ -596,7 +596,7 @@ class CarouselDemo extends React.Component {
 
     renderLogo() {
         return (
-            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width:87, height:31 }} />
+            <img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/semi_logo.svg' alt='semi_logo' style={{ width: 87, height: 31 }} />
         );
     };
 
@@ -628,7 +628,7 @@ class CarouselDemo extends React.Component {
                     {
                         this.imgList.map((src, index) => {
                             return (
-                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url(${src})` }}>
+                                <div key={index} style={{ backgroundSize: 'cover', backgroundImage: `url('${src}')` }}>
                                     <Space vertical align='start' spacing='medium' style={titleStyle}>
                                         {this.renderLogo()}
                                         <Typography.Title heading={2} style={colorStyle}>{this.textList[index][0]}</Typography.Title>
@@ -681,7 +681,8 @@ class CarouselDemo extends React.Component {
 |props           |Parameters on the arrow div, including style, onClick events, etc                                      |DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement\>, HTMLDivElement\>         |-     |2.10.0|
 |children         |Arrow custom icon                                              |React.ReactNode      |-     |2.10.0|
 
-**Method()**
+## Methods
+Some internal methods provided by Carousel can be accessed through ref:
 
 | Method             | Instructions                    | Version |
 | ------------------ | ------------------------------- | ------- |

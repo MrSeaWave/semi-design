@@ -6,6 +6,8 @@ export interface AvatarAdapter<P = Record<string, any>, S = Record<string, any>>
     notifyLeave(event: any): void;
     notifyEnter(event: any): void;
     setFocusVisible: (focusVisible: boolean) => void;
+    setScale: (scale: number) => void;
+    getAvatarNode: () => HTMLSpanElement
 }
 
 export default class AvatarFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<AvatarAdapter<P, S>, P, S> {
@@ -14,9 +16,14 @@ export default class AvatarFoundation<P = Record<string, any>, S = Record<string
         super({ ...adapter });
     }
 
-    init() { } // eslint-disable-line
+    init() {
+        const { children } = this.getProps();
+        if (typeof children === "string") {
+            this.changeScale();
+        }
+    }
 
-    destroy() { } // eslint-disable-line
+    destroy() { }
 
     handleImgLoadError() {
         const { onError } = this.getProps();
@@ -40,7 +47,7 @@ export default class AvatarFoundation<P = Record<string, any>, S = Record<string
             if (target.matches(':focus-visible')) {
                 this._adapter.setFocusVisible(true);
             }
-        } catch (error){
+        } catch (error) {
             warning(true, 'Warning: [Semi Avatar] The current browser does not support the focus-visible');
         }
     }
@@ -49,4 +56,14 @@ export default class AvatarFoundation<P = Record<string, any>, S = Record<string
         this._adapter.setFocusVisible(false);
     }
 
+    changeScale = () => {
+        const { gap } = this.getProps();
+        const node = this._adapter.getAvatarNode();
+        const stringNode = node?.firstChild as HTMLSpanElement;
+        const [nodeWidth, stringNodeWidth] = [node?.offsetWidth || 0, stringNode?.offsetWidth || 0];
+        if (nodeWidth !== 0 && stringNodeWidth !== 0 && gap * 2 < nodeWidth) {
+            const scale = nodeWidth - gap * 2 > stringNodeWidth ? 1 : (nodeWidth - gap * 2) / stringNodeWidth;
+            this._adapter.setScale(scale);
+        }
+    }
 }

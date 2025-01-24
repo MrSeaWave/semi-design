@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { ReactNode, Children, ReactChild, ReactFragment, ReactPortal } from 'react';
+import React, { ReactNode, Children, ReactChild, ReactFragment, ReactPortal, isValidElement } from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
 import BaseComponent from "../_base/baseComponent";
@@ -9,22 +8,21 @@ import CarouselFoundation, { CarouselAdapter } from '@douyinfe/semi-foundation/c
 import CarouselIndicator from './CarouselIndicator';
 import CarouselArrow from './CarouselArrow';
 import '@douyinfe/semi-foundation/carousel/carousel.scss';
-import { debounce } from 'lodash';
+import { debounce, isEqual, pick } from 'lodash';
 import isNullOrUndefined from '@douyinfe/semi-foundation/utils/isNullOrUndefined';
 
 export interface CarouselState {
     activeIndex: number;
-    children: (ReactChild | ReactFragment | ReactPortal)[];
     preIndex: number;
     isReverse: boolean;
-    isInit: boolean;
+    isInit: boolean
 }
 
 class Carousel extends BaseComponent<CarouselProps, CarouselState> {
     static propTypes = {
         activeIndex: PropTypes.number,
-        animation:PropTypes.oneOf(strings.ANIMATION_MAP),
-        arrowProps: PropTypes.object, 
+        animation: PropTypes.oneOf(strings.ANIMATION_MAP),
+        arrowProps: PropTypes.object,
         autoPlay: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
         className: PropTypes.string,
         defaultActiveIndex: PropTypes.number,
@@ -70,7 +68,6 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
 
         this.state = {
             activeIndex: defaultActiveIndex,
-            children: this.getChildren(),
             preIndex: defaultActiveIndex,
             isReverse: false,
             isInit: true
@@ -94,6 +91,9 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
             },
             setIsInit: (isInit: boolean): void => {
                 this.setState({ isInit });
+            },
+            getChildren: (): any[] => {
+                return this.getChildren() as any[];
             }
         };
     }
@@ -115,14 +115,16 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
     }
 
     play = (): void => {
+        this.foundation.setForcePlay(true);
         return this.foundation.handleAutoPlay();
     }
 
     stop = (): void => {
+        this.foundation.setForcePlay(false);
         return this.foundation.stop();
     };
 
-    goTo = ( targetIndex: number): void => {
+    goTo = (targetIndex: number): void => {
         return this.foundation.goTo(targetIndex);
     };
 
@@ -133,23 +135,23 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
     next = (): void => {
         return this.foundation.next();
     };
-    
+
     handleAutoPlay = (): void => {
-        if (!this.foundation.getIsControlledComponent()){
+        if (!this.foundation.getIsControlledComponent()) {
             this.foundation.handleAutoPlay();
         }
     }
 
     handleMouseEnter = (): void => {
         const { autoPlay } = this.props;
-        if (typeof autoPlay !== 'object' || autoPlay.hoverToPause){
+        if ((autoPlay === true) || (typeof autoPlay === 'object' && autoPlay.hoverToPause)) {
             this.foundation.stop();
         }
     }
 
     handleMouseLeave = (): void => {
         const { autoPlay } = this.props;
-        if ((typeof autoPlay !== 'object' || autoPlay.hoverToPause) && !this.foundation.getIsControlledComponent()){
+        if ((typeof autoPlay !== 'object' || autoPlay.hoverToPause) && !this.foundation.getIsControlledComponent()) {
             this.foundation.handleAutoPlay();
         }
     }
@@ -160,7 +162,7 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
 
     getChildren = (): (ReactChild | ReactFragment | ReactPortal)[] => {
         const { children: originChildren } = this.props;
-        return Children.toArray(originChildren).filter(child=>{
+        return Children.toArray(originChildren).filter(child => {
             return React.isValidElement(child);
         });
     }
@@ -172,14 +174,16 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
 
     renderChildren = () => {
         const { speed, animation } = this.props;
-        const { activeIndex, children, preIndex, isInit } = this.state;
+        const { activeIndex, preIndex, isInit } = this.state;
+
+        const children = this.getChildren();
 
         return (
             <>
                 {children.map((child: any, index: number) => {
                     const isCurrent = index === activeIndex;
                     const isPrev = index === this.getValidIndex(activeIndex - 1);
-                    const isNext = index === this.getValidIndex(activeIndex + 1); 
+                    const isNext = index === this.getValidIndex(activeIndex + 1);
 
                     const animateStyle = {
                         transitionTimingFunction: 'ease',
@@ -199,8 +203,8 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
                             [`${cssClasses.CAROUSEL_CONTENT}-item-current`]: isCurrent,
                             [`${cssClasses.CAROUSEL_CONTENT}-item`]: true,
                             [`${cssClasses.CAROUSEL_CONTENT}-item-active`]: isCurrent,
-                            [`${cssClasses.CAROUSEL_CONTENT}-item-slide-in`]:animation === 'slide' && !isInit && isCurrent,
-                            [`${cssClasses.CAROUSEL_CONTENT}-item-slide-out`]:animation === 'slide' && !isInit && index === preIndex,
+                            [`${cssClasses.CAROUSEL_CONTENT}-item-slide-in`]: animation === 'slide' && !isInit && isCurrent,
+                            [`${cssClasses.CAROUSEL_CONTENT}-item-slide-out`]: animation === 'slide' && !isInit && index === preIndex,
                         })
                     });
                 })}
@@ -209,14 +213,15 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
     }
 
     renderIndicator = () => {
-        const { children, activeIndex } = this.state;
+        const { activeIndex } = this.state;
         const { showIndicator, indicatorType, theme, indicatorPosition, indicatorSize, trigger } = this.props;
 
         const carouselIndicatorCls = cls({
             [cssClasses.CAROUSEL_INDICATOR]: true
         });
+        const children = this.getChildren();
 
-        if (showIndicator && children.length > 1){
+        if (showIndicator && children.length > 1) {
             return (
                 <div className={carouselIndicatorCls}>
                     <CarouselIndicator
@@ -236,15 +241,15 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
     }
 
     renderArrow = () => {
-        const { children } = this.state;
         const { showArrow, arrowType, theme, arrowProps } = this.props;
+        const children = this.getChildren();
 
-        if (showArrow && children.length > 1){
+        if (showArrow && children.length > 1) {
             return (
-                <CarouselArrow 
-                    type={arrowType} 
-                    theme={theme} 
-                    prev={this.prev} 
+                <CarouselArrow
+                    type={arrowType}
+                    theme={theme}
+                    prev={this.prev}
                     next={this.next}
                     arrowProps={arrowProps}
                 />
@@ -263,18 +268,19 @@ class Carousel extends BaseComponent<CarouselProps, CarouselState> {
         });
 
         return (
-            <div 
+            <div
                 // role='listbox'
                 // tabIndex={0}
-                className={carouselWrapperCls} 
-                style={style} 
+                className={carouselWrapperCls}
+                style={style}
                 onMouseEnter={debounce(this.handleMouseEnter, 400)}
                 onMouseLeave={debounce(this.handleMouseLeave, 400)}
-                // onMouseEnter={this.handleMouseEnter}
-                // onMouseLeave={this.handleMouseLeave}
-                // onKeyDown={e => this.foundation.handleKeyDown(e)}
+                {...this.getDataAttr(this.props)}
+            // onMouseEnter={this.handleMouseEnter}
+            // onMouseLeave={this.handleMouseLeave}
+            // onKeyDown={e => this.foundation.handleKeyDown(e)}
             >
-                <div 
+                <div
                     className={cls([`${cssClasses.CAROUSEL_CONTENT}-${animation}`], {
                         [`${cssClasses.CAROUSEL_CONTENT}`]: true,
                         [`${cssClasses.CAROUSEL_CONTENT}-reverse`]: slideDirection === 'left' ? isReverse : !isReverse,

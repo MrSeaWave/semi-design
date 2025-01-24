@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 23
+order: 35
 category: Input
 title:  Form
 subTitle: Form
@@ -13,6 +13,7 @@ dir: column
 
 -   **Rerender on demand**, avoids unnecessary full-volume rendering, higher performance
 -   Easy to use, **simple structure**, avoids unnecessary hierarchical nesting
+-   Perfect accessibility support
 -   FormState / FieldState can also be easily obtained from outside the Form
     Provides an external method to operate inside the form: formApi / fieldApi
 -   Support for encapsulating custom components into form controls, and you can quickly access your team's components through the extension mechanism provided by Form (through `withField` HOC)
@@ -20,15 +21,14 @@ dir: column
 
 ## Field
 
-Semi encapsulates all form controls (Input、Select、Checkbox、DatePicker etc.) with withField once.
-Taking over their data flow (value & onChange)  
-When in use, you need to import from the Form (note: only the control imported from the Form has data synchronization)
+Semi encapsulates all form field component (Input、Select、Checkbox、DatePicker etc.) with `withField` once.  
+Taking over their data flow (`props.value` & `props.onChange`)    
+When in use, you need to import from the Form (note: only the control imported from the Form has data synchronization)  
 
 ### Supported Field Component
 
--   `Input`, `InputNumber`, `TextArea`, `Select`, `Checkbox`, `Radio`, `RadioGroup`, `Switch`, `DatePicker`, `TimePicker`, `Slider`, `InputGroup`, `TreeSelect`, `Cascader`, `Rating`, `AutoComplete`, `Label`, `ErrorMessage`, `Section`、`TagInput`
-    All mounted under Form and declared directly in \<Form.Input\> and \<Form.Select\> when used.
--   `Upload` is already planned and will be supported in the follow-up
+-   `Input`, `InputNumber`, `TextArea`, `Select`, `Checkbox`, `Radio`, `RadioGroup`, `Switch`, `DatePicker`, `TimePicker`, `Slider`, `InputGroup`, `TreeSelect`, `Cascader`, `Rating`, `AutoComplete`, `Upload`,  `Label`, `ErrorMessage`, `Section`、`TagInput`
+    All mounted under Form and declared directly in `<Form.Input />`  and `<Form.Select />` when used.
 
 ```javascript
 import { Form } from '@douyinfe/semi-ui';
@@ -41,9 +41,11 @@ const Option = FormSelect.Option;
 The Field level component provided by Form, its `value` (or other properties specified by `valueKey`), onChange (or other callback functions specified by `onKeyChangeFnName`)
 Properties are hijacked by Form, so
 
-1. ** You don't need and shouldn't use `onChange` to sync, of course you can continue to listen to onChange events for the latest values **
-2. ** You cannot set the `value` of field with attributes such as `value`, `defaultValue`, `checked`, `defaultChecked`, etc. The default value can be set by Field's `initValue` or Form's `unitValues` **
-3. ** You should not modify the value of Form State directly, all changes to the data in the Form should be done by providing `formApi`, `fieldApi` **
+<Notice type="primary" title="Notice">
+    <div>1. No longer need to manually bind the onChange event and update the value as controled component. But you can continue to listen onChange events for the latest values if you want</div>
+    <div>2. You cannot set the state of component with attributes such as `value`, `defaultValue`, `checked`, `defaultChecked`, etc. The default value can be set by Field's `initValue` or Form's `unitValues`</div>
+    <div>3. You should not modify the value of Form State directly, all changes to the data in the Form should be done by providing `formApi`, `fieldApi`</div>
+</Notice>
 
 ## Demos
 
@@ -54,7 +56,7 @@ Semi Form supports multiple writing at the same time.
 #### Basic Usage
 
 Add `field` property to each field component.
-You can also set label` properties for each field, by default is the same as field
+You can also set `label` properties for each field, by default is the same as field
 
 `label` can be passed in a string directly, or declared in the form of an object, configure `extra`, `required`, `optional` and other attributes to deal with more complex scenarios
 
@@ -70,19 +72,19 @@ import { IconHelpCircle } from '@douyinfe/semi-icons';
 
 () => (
     <Form layout='horizontal'>
-        <Form.Input field='username' label='UserName' style={{ width:80 }}/>
+        <Form.Input field='username' label='UserName' style={{ width: 80 }}/>
         <Form.Input
             field='password'
             label={{ 
                 text: 'Password',
                 extra: <Tooltip content='More info xxx'><IconHelpCircle style={{ color: 'var(--semi-color-text-2)' }}/></Tooltip> 
             }}
-            style={{ width:176 }}
+            style={{ width: 176 }}
         />
         <Form.Select
             field="role"
             label={{ text: 'Role', optional: true }}
-            style={{ width:176 }}
+            style={{ width: 176 }}
             optionList={[
                 { label: 'Admin', value: 'admin' },
                 { label: 'User', value: 'user' },
@@ -94,9 +96,9 @@ import { IconHelpCircle } from '@douyinfe/semi-icons';
 );
 ```
 
-#### Other forms of support
+#### Other declaration methods
 
-When you need to get formState, formApi, values, etc. directly inside the Form structure, you can also use the following writing
+When you need to get `formState`, `formApi`, `values`, etc. directly inside the Form structure, you can use the following writing
 
 #### Via render props
 
@@ -107,7 +109,7 @@ import { Form } from '@douyinfe/semi-ui';
 () => (
     <Form render={({ formState, formApi, values }) => (
         <>
-            <Form.Select field="role" label='Role' style={{ width:120 }}>
+            <Form.Select field="role" label='Role' style={{ width: 120 }}>
                 <Form.Select.Option value="admin">Admin</Form.Select.Option>
                 <Form.Select.Option value="user">User</Form.Select.Option>
                 <Form.Select.Option value="guest">Guest</Form.Select.Option>
@@ -123,7 +125,7 @@ import { Form } from '@douyinfe/semi-ui';
 
 #### Via children function
 
-Children is a function that returns all form controls
+declare children as a function that returns all field components
 
 ```jsx live=true dir="column"
 import React from 'react';
@@ -134,7 +136,7 @@ import { Form } from '@douyinfe/semi-ui';
         {
             ({ formState, values, formApi }) => (
                 <>
-                    <Form.Select field="role" label='Role' style={{ width:120 }}>
+                    <Form.Select field="role" label='Role' style={{ width: 120 }}>
                         <Form.Select.Option value="admin">Admin</Form.Select.Option>
                         <Form.Select.Option value="user">User</Form.Select.Option>
                         <Form.Select.Option value="guest">Guest</Form.Select.Option>
@@ -173,11 +175,12 @@ class Demo extends React.Component {
 }
 ```
 
-### Supported Fields example collection
+### All supported field components
 
 ```jsx live=true dir="column"
 import React from 'react';
 import { Form, Col, Row, Button } from '@douyinfe/semi-ui';
+import { IconUpload } from '@douyinfe/semi-icons';
 
 class BasicDemoWithInit extends React.Component {
     constructor() {
@@ -185,18 +188,46 @@ class BasicDemoWithInit extends React.Component {
         this.state = {
             initValues: {
                 name: 'semi',
-                business: ['hotsoon'],
+                business: ['ulikeCam'],
                 role: 'ued',
                 switch: true,
+                files: [
+                    {
+                        uid: '1',
+                        name: 'vigo.png',
+                        status: 'success',
+                        size: '130KB',
+                        preview: true,
+                        url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/vigo.png'
+                    },
+                    {
+                        uid: '2',
+                        name: 'resso.jpeg',
+                        status: 'validateFail',
+                        size: '222KB',
+                        percent: 50,
+                        preview: true,
+                        fileInstance: new File([new ArrayBuffer(2048)], 'resso.jpeg', { type: 'image/jpeg' }),
+                        url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/Resso.png'
+                    },
+                    {
+                        uid: '3',
+                        name: 'dy.jpeg',
+                        status: 'uploading',
+                        size: '222KB',
+                        percent: 50,
+                        preview: true,
+                        fileInstance: new File([new ArrayBuffer(2048)], 'dy.jpeg', { type: 'image/jpeg' }),
+                        url: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/dy.png'
+                    }
+                ]
             }
         };
-        this.getFormApi = this.getFormApi.bind(this);
     }
 
-    getFormApi(formApi) { this.formApi = formApi; }
 
     render() {
-        const { Input, InputNumber, AutoComplete, Select, TreeSelect, Cascader, DatePicker, TimePicker, TextArea, CheckboxGroup, Checkbox, RadioGroup, Radio, Slider, Rating, Switch, TagInput } = Form;
+        const { Input, InputNumber, AutoComplete, Select, TreeSelect, Cascader, DatePicker, TimePicker, TextArea, CheckboxGroup, Checkbox, RadioGroup, Radio, Slider, Rating, Switch, TagInput, Section } = Form;
         const { initValues } = this.state;
         const plainOptions = ['A', 'B', 'C'];
         const style = { width: '90%' };
@@ -234,135 +265,154 @@ class BasicDemoWithInit extends React.Component {
 
         return (
             <Form
-                getFormApi={this.getFormApi}
                 initValues={initValues}
                 style={{ padding: 10, width: '100%' }}
                 onValueChange={(v)=>console.log(v)}
             >
-                <Row>
-                    <Col span={12}>
-                        <Input
-                            field="name"
-                            label="Name（Input）"
-                            initValue={'mikeya'}
-                            style={style}
-                            trigger='blur'
-                        />
-                    </Col>
-                    <Col span={12}>
-                        <DatePicker field="date" label='Date（DatePicker）' style={style} placeholder='Choose data' />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <Select field="role" style={style} label='Role（Select）' placeholder='Choose role'>
-                            <Select.Option value="qa">Quality Assurance</Select.Option>
-                            <Select.Option value="rd">Software Engineer</Select.Option>
-                            <Select.Option value="pm">Product Manager</Select.Option>
-                            <Select.Option value="ued">Designer</Select.Option>
-                        </Select>
-                    </Col>
-                    <Col span={12}>
-                        <Select
-                            field="business"
-                            multiple
-                            style={style}
-                            placeholder='Choose application'
-                            label="Application（Multiple Select）"
-                        >
-                            <Select.Option value="abc">Semi</Select.Option>
-                            <Select.Option value="hotsoon">Vigo</Select.Option>
-                            <Select.Option value="xigua">BuzzVideo</Select.Option>
-                        </Select>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <Form.Cascader
-                            placeholder="Choose Area"
-                            treeData={treeData}
-                            field='area'
-                            label='Area（Cascader）'
-                            style={style}
-                        >
-                        </Form.Cascader>
-                    </Col>
-                    <Col span={12}>
-                        <Form.TreeSelect
-                            field="tree"
-                            style={style}
-                            label='Node（TreeSelect）'
-                            placeholder='Select Service Node'
-                            treeData={treeData}
-                            filterTreeNode
-                        >
-                        </Form.TreeSelect>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <TextArea
-                            style={style}
-                            field='description'
-                            label='Apply Reason（TextArea）'
-                        />
-                    </Col>
-                    <Col span={12}>
-                        <CheckboxGroup
-                            field="type"
-                            label='Apply type（CheckboxGroup）'
-                            initValue={['user', 'admin']}
-                            rules={[
-                                { Requested: true }
-                            ]}
-                        >
-                            <Checkbox value="admin">admin</Checkbox>
-                            <Checkbox value="user">user</Checkbox>
-                            <Checkbox value="guest">guest</Checkbox>
-                            <Checkbox value="root">root</Checkbox>
-                        </CheckboxGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <RadioGroup field="isMonopolize" label='Whether exclusive resources（Radio）'>
-                            <Radio value={true}>Yes</Radio>
-                            <Radio value={false}>No</Radio>
-                        </RadioGroup>
-                    </Col>
-                    <Col span={12}>
-                        <CheckboxGroup options={plainOptions} field="checkbox" label='Type（CheckboxGroup）' direction='horizontal'/>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <TimePicker field="time" label='End Time（TimePicker）' style={{ width: '90%' }}/>
-                    </Col>
-                    <Col span={12}>
-                        <InputNumber field='number' label='Number of applications（InputNumber）' initValue={20} style={style}/>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <Slider field="range" label='Resource usage alarm threshold(%)（Slider）' initValue={10} style={{ width: '90%' }}/>
-                    </Col>
-                    <Col span={12}>
-                        <Switch field='switch' label='Switch(Switch)'/>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
-                        <Rating field="rating" label='Satisfaction(Rating)' initValue={2} style={{ width: '90%' }}/>
-                    </Col>
-                    <Col span={12}>
-                        <TagInput 
-                            field="product"
-                            label='Product（TagInput）'
-                            initValue={['abc','hotsoon']}
-                            style={style}
-                        />
-                    </Col>
-                </Row>
+                <Section text={'Basic Info'}>
+                    <Row>
+                        <Col span={12}>
+                            <Input
+                                field="name"
+                                label="Name（Input）"
+                                initValue={'mikeya'}
+                                style={style}
+                                trigger='blur'
+                            />
+                        </Col>
+                        <Col span={12}>
+                            <DatePicker field="date" label='Date（DatePicker）' style={style} initValue={new Date()} placeholder='Choose data' />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Select field="role" style={style} label='Role（Select）' placeholder='Choose role'>
+                                <Select.Option value="qa">Quality Assurance</Select.Option>
+                                <Select.Option value="rd">Software Engineer</Select.Option>
+                                <Select.Option value="pm">Product Manager</Select.Option>
+                                <Select.Option value="ued">Designer</Select.Option>
+                            </Select>
+                        </Col>
+                        <Col span={12}>
+                            <Select
+                                field="business"
+                                multiple
+                                style={style}
+                                placeholder='Choose application'
+                                label="Application（Multiple Select）"
+                            >
+                                <Select.Option value="semi">Semi</Select.Option>
+                                <Select.Option value="ulikeCam">UlikeCam</Select.Option>
+                                <Select.Option value="xigua">BuzzVideo</Select.Option>
+                            </Select>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Form.Cascader
+                                placeholder="Choose Area"
+                                treeData={treeData}
+                                field='area'
+                                label='Area（Cascader）'
+                                style={style}
+                            >
+                            </Form.Cascader>
+                        </Col>
+                        <Col span={12}>
+                            <Form.TreeSelect
+                                field="tree"
+                                style={style}
+                                label='Node（TreeSelect）'
+                                placeholder='Select Service Node'
+                                treeData={treeData}
+                                filterTreeNode
+                            >
+                            </Form.TreeSelect>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <TagInput 
+                                field="product"
+                                label='Product（TagInput）'
+                                initValue={['abc', 'ulikeCam']}
+                                placeholder='Type and choose product name'
+                                style={style}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={24}>
+                            <Form.Upload
+                                field='files'
+                                label='Files（Upload）'
+                                action='//semi.design/api/upload'
+                            >
+                                <Button icon={<IconUpload />} theme="light">
+                                    Click to upload
+                                </Button>
+                            </Form.Upload>
+                        </Col>
+                    </Row>
+                </Section>
+                <Section text='Source Detail'>
+                    <Row>
+                        <Col span={12}>
+                            <TextArea
+                                style={style}
+                                field='description'
+                                label='Apply Reason（TextArea）'
+                            />
+                        </Col>
+                        <Col span={12}>
+                            <CheckboxGroup
+                                field="type"
+                                label='Apply type（CheckboxGroup）'
+                                initValue={['user', 'admin']}
+                                rules={[
+                                    { Requested: true }
+                                ]}
+                            >
+                                <Checkbox value="admin">admin</Checkbox>
+                                <Checkbox value="user">user</Checkbox>
+                                <Checkbox value="guest">guest</Checkbox>
+                                <Checkbox value="root">root</Checkbox>
+                            </CheckboxGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <RadioGroup field="isMonopolize" label='Whether exclusive resources（Radio）'>
+                                <Radio value={1}>Yes</Radio>
+                                <Radio value={0}>No</Radio>
+                            </RadioGroup>
+                        </Col>
+                        <Col span={12}>
+                            <CheckboxGroup options={plainOptions} field="checkbox" label='Type（CheckboxGroup）' direction='horizontal'/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <TimePicker field="time" label='End Time（TimePicker）' style={{ width: '90%' }}/>
+                        </Col>
+                        <Col span={12}>
+                            <InputNumber field='number' label='Number of applications（InputNumber）' initValue={20} style={style}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Slider field="range" label='Resource usage alarm threshold(%)（Slider）' initValue={10} style={{ width: '90%' }}/>
+                        </Col>
+                        <Col span={12}>
+                            <Switch field='switch' label='Switch(Switch)'/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Rating field="rating" label='Satisfaction(Rating)' initValue={2} style={{ width: '90%' }}/>
+                        </Col>
+                    </Row>
+                </Section>
                 <Checkbox value="false" field="agree" noLabel={true}>
                     I have read and understood the relevant regulations（Checkbox）
                 </Checkbox>
@@ -376,7 +426,7 @@ class BasicDemoWithInit extends React.Component {
 
 ### Field binding syntax
 
-Every Field must have a `field` property. This is how the form manages the state of this field.
+Every Field component must have a `field` property. This is how the form manages the state of this field.
 See the field syntax section below for additional details on what you can pass in for field.
 
 The field can be a simple string, can be contained`.`Or`[]`String that supports multi-level nesting  
@@ -444,7 +494,7 @@ import { Form, Button, Toast } from '@douyinfe/semi-ui';
                     <Form.Checkbox field='agree' noLabel>I have read and agree to the terms of service</Form.Checkbox>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <p>
-                            <span>Or</span><Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor:'pointer' }}>Sign up</Button>
+                            <span>Or</span><Button theme='borderless' style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}>Sign up</Button>
                         </p>
                         <Button disabled={!values.agree} htmlType='submit' type="tertiary">Log in</Button>
                     </div>
@@ -456,7 +506,7 @@ import { Form, Button, Toast } from '@douyinfe/semi-ui';
 ```
 
 -   Horizontal Layout: Arrange each field horizontally
-    You can use the horizontal layout by setting `layout='layout'`
+    You can use the horizontal layout by setting `layout='horizontal'`
 
 ```jsx live=true dir="column"
 import React from 'react';
@@ -479,41 +529,45 @@ import { Form, Select, Checkbox, Radio } from '@douyinfe/semi-ui';
 
 
 class BasicDemo extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             labelPosition: 'left',
             labelAlign: 'left',
-            labelWidth: '180px'
         };
-        this.changeLabelPos = this.changeLabelPos.bind(this);
-        this.changeLabelAlign = this.changeLabelAlign.bind(this);
     }
-
-
-    changeLabelPos(labelPosition) {
-        let labelWidth;
-        labelPosition === 'left' ? labelWidth = '180px' : labelWidth = 'auto';
-        this.setState({ labelPosition, labelWidth });
-    }
-
-    changeLabelAlign(labelAlign) { this.setState({ labelAlign }); }
 
     render() {
-        const { labelPosition, labelAlign, labelWidth } = this.state;
+        const { labelPosition, labelAlign } = this.state;
+        const labelWidth = 120;
         return (
             <>
                 <div style={{ borderBottom: '1px solid var(--semi-color-text-3)', paddingBottom: 10 }}>
-                    <Form.Label style={{ marginLeft: 10 }}>Switch Label Position:</Form.Label>
-                    <Select onChange={this.changeLabelPos} value={labelPosition} style={{ width: 100 }}>
-                        <Select.Option value='top'>top</Select.Option>
-                        <Select.Option value='left'>left</Select.Option>
-                    </Select>
-                    <Form.Label style={{ marginLeft: 10 }}>Switch Label Text Align</Form.Label>
-                    <Select onChange={this.changeLabelAlign} value={labelAlign} style={{ width: 100 }}>
-                        <Select.Option value='left'>left</Select.Option>
-                        <Select.Option value='right'>right</Select.Option>
-                    </Select>
+                    <Form
+                        labelPosition='inset'
+                        layout='horizontal'
+                        initValues={{ labelPosition: 'left', labelAlign: 'left' }}
+                        onValueChange={values => this.setState(values)}
+                    >
+                        <Form.Select 
+                            field='labelPosition'
+                            style={{ width: 240 }}
+                            label='Current Label Position:'
+                            optionList={[
+                                { label: 'top', value: 'top' },
+                                { label: 'left', value: 'left' },
+                            ]}
+                        />
+                        <Form.Select 
+                            field='labelAlign'
+                            style={{ width: 240 }}
+                            label='Current Label Align:'
+                            optionList={[
+                                { label: 'left', value: 'left' },
+                                { label: 'right', value: 'right' },
+                            ]}
+                        />
+                    </Form>
                 </div>
                 <Form
                     labelPosition={labelPosition}
@@ -553,6 +607,7 @@ class BasicDemo extends React.Component {
         );
     }
 }
+
 ```
 
 -   A more complex layout.  
@@ -658,7 +713,8 @@ import { Form } from '@douyinfe/semi-ui';
 
 ### Remove automatically added Label
 
-Form will automatically inserts `Label` for Field Component. If you do not need to automatically insert the `Label` module, you can turn off this feature by setting `noLabel=true` in Field
+Form will automatically insert `Label` for Field control. If you don't need to automatically insert the Label module, you can turn off the automatic label insertion function by setting `noLabel=true` in the Field (at this time, the Field still has the ability to automatically display ErrorMessage, so the DOM structure is still different from the original component)  
+If you want to keep the DOM structure consistent with the original component, you can use `pure=true`. At this time, the DOM structure will not change except that the data flow is taken over (you need to be responsible for the rendering of ErrorMessage, and it cannot be used by formProps.wrapperCol property impact)
 
 ```jsx live=true dir="column"
 import React from 'react';
@@ -666,13 +722,39 @@ import { Form } from '@douyinfe/semi-ui';
 
 () => (
     <Form onSubmit={(values) => console.log(values)} style={{ width: 400 }}>
-        <Form.Input field='name' label='UserName' trigger='blur' noLabel={true} style={{ width: 250 }} placeholder='Input userName'/>
-        <Form.Select field="role" label='UserRole' style={{ width: '250px' }} noLabel={true} placeholder='Choose role'>
-            <Form.Select.Option value="qa">Quality Assurance</Form.Select.Option>
-            <Form.Select.Option value="rd">Software Engineer</Form.Select.Option>
-            <Form.Select.Option value="pm">Product Manager</Form.Select.Option>
-            <Form.Select.Option value="ued">Designer</Form.Select.Option>
+        <Form.Input
+            field='name'
+            label='Name'
+            trigger='blur'
+            noLabel={true}
+            style={{ width: 250 }}
+            validate={val => val !== 'semi' ? 'not semi' : '' }
+            placeholder='Type your name'
+        />
+        <Form.Input field='purename' pure placeholder='DOM same as origin Input component'/>
+    </Form>
+);
+```
+
+### Embedded Label
+
+A Label can be inlined in a field control by setting labelPosition to `inset`. Components currently supporting this feature include `Input`, `InputNumber`, `DatePicker`, `TimePicker`, `Select`, `TreeSelect`, `Cascader`, `TagInput`
+
+```jsx live=true dir="column"
+import React from 'react';
+import { Form } from '@douyinfe/semi-ui';
+
+() => (
+    <Form labelPosition='inset' layout='horizontal'>
+        <Form.Input field='name' label='Name' trigger='blur' style={{ width: 250 }} initValue='semi'/>
+        <Form.Select field="role" label='Role' style={{ width: '250px' }} initValue='rd'>
+            <Form.Select.Option value="operate">operate</Form.Select.Option>
+            <Form.Select.Option value="rd">rd</Form.Select.Option>
+            <Form.Select.Option value="pm">pm</Form.Select.Option>
+            <Form.Select.Option value="ued">ued</Form.Select.Option>
         </Form.Select>
+        <Form.DatePicker field="date" label='StartDate' style={{ width: '250px' }} initValue={new Date()}>
+        </Form.DatePicker>
     </Form>
 );
 ```
@@ -699,9 +781,6 @@ import React from 'react';
 import { Form } from '@douyinfe/semi-ui';
 
 class AssistComponent extends React.Component {
-    constructor() {
-        super();
-    }
     render() {
         return (
             <Form
@@ -712,14 +791,6 @@ class AssistComponent extends React.Component {
                 labelWidth={100}
             >
                 <Form.Input field='effectName' label='EffectName' style={{ width: 250 }}/>
-                <Form.Select
-                    style={{ width: 300 }}
-                    field="type"
-                    label="EffectType"
-                >
-                    <Form.Select.Option value="faceSticker">FaceSticker</Form.Select.Option>
-                    <Form.Select.Option value="backgroundSticker">BackgroundSticker</Form.Select.Option>
-                </Form.Select>
                 <Form.ErrorMessage />
                 <Form.Slot label={{ text: 'SlotA' }}>
                     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
@@ -736,26 +807,107 @@ class AssistComponent extends React.Component {
 }
 ```
 
-### Embedded Label
 
-By setting the `labelPositon` to`inset`, you can embed label in the field component. This feature currently support `Input`, `InputNumber`, `DatePicker`, `TimePicker`, `Select`, `Cascader`, `TreeSelect`
+### Use helpText、extraText set prompt information
+
+You can place custom prompt information through `helpText`, and display it in the same block as the verification information (error). When both have values, the verification information will be displayed first.  
+Additional prompt information can be placed through `extraText`. When the error message and prompt text need to appear at the same time, this configuration can be used. It is always displayed and located after helpText/error  
+When `validateStatus` is passed in, the UI style corresponding to the value of validateStatus will be displayed first. If not passed in, the internal verification status of the field shall prevail.  
 
 ```jsx live=true dir="column"
 import React from 'react';
 import { Form } from '@douyinfe/semi-ui';
-() => (
-    <Form labelPosition='inset' layout='horizontal'>
-        <Form.Input field='name' label='UserName' trigger='blur' style={{ width: 250 }} placeholder='Input userName'/>
-        <Form.Select field="role" label='UserRole' style={{ width: '250px' }}>
-            <Form.Select.Option value="qa">Quality Assurance</Form.Select.Option>
-            <Form.Select.Option value="rd">Software Engineer</Form.Select.Option>
-            <Form.Select.Option value="pm">Product Manager</Form.Select.Option>
-            <Form.Select.Option value="ued">Designer</Form.Select.Option>
-        </Form.Select>
-        <Form.DatePicker field="date" label='Start Date' style={{ width: '250px' }}>
-        </Form.DatePicker>
-    </Form>
-);
+
+() => {
+    const [helpText, setHelpText] = useState('');
+    const [validateStatus, setValidateStatus] = useState('default');
+    const formRef = useRef();
+
+    const validate = (val, values) => {
+        if (!val) {
+            setValidateStatus('error');
+            return <span>Password can not be blank</span>;
+        } else if (val && val.length <= 3) {
+            setValidateStatus('warning');
+            setHelpText(<span style={{ color: 'var(--semi-color-warning)' }}>Password Strength: Weak</span>); // show helpText
+            return ''; // validate pass
+        } else {
+            setHelpText('');
+            setValidateStatus('success');
+            return '';
+        }
+    };
+
+    const random = () => {
+        let pw = (Math.random() * 100000).toString().slice(0, 5);
+        formRef.current.formApi.setValue('Password', pw);
+        formRef.current.formApi.setError('Password', '');
+        setHelpText('');
+        setValidateStatus('success');
+    };
+
+    return (
+        <Form
+            showValidateIcon={true}
+            ref={formRef}
+            onSubmit={(value) => console.log('submit success')}
+            onSubmitFail={(errors) => console.log(errors)}
+        >
+            <Form.Input
+                validate={validate}
+                field="Password"
+                validateStatus={validateStatus}
+                helpText={helpText}
+                extraText={
+                    <div
+                        style={{
+                            color: 'var(--semi-color-link)',
+                            fontSize: 14,
+                            userSelect: 'none',
+                            cursor: 'pointer'
+                        }}
+                        onClick={random}
+                    >
+                        Don't have a suitable password? Click to generate a random
+                    </div>
+                }
+            ></Form.Input>
+        </Form>
+    );
+};
+```
+
+By configuring `extraTextPosition`, you can control the display position of extraText. Optional values `bottom`, `middle`  
+For example, when you want to display the extraText prompt information between the Label and Field component.  
+This attribute can be configured uniformly on the Form or individually on each Field. When passing in at the same time, the configuration of the Field shall prevail.  
+
+```jsx live=true dir="column"
+import React from 'react';
+import { Form } from '@douyinfe/semi-ui';
+
+() => {
+    const options = [
+        { label: 'Lark Notification', value: 'lark' },
+        { label: 'Email Notification', value: 'email' },
+        { label: 'Banner Notification', value: 'notification' }
+    ];
+    const notifyText = "When unchecked, the default is a red dot reminder, and the message enters the recipient's message list by default. For important notifications, you can check the corresponding notification methods at the same time";
+    const forceText = "For dialog notifications, you can specify that the message must wait for a specified amount of time before it can be marked as read.";
+    return (
+        <Form extraTextPosition='middle'>
+            <Form.CheckboxGroup
+                direction='horizontal'
+                field='notify'
+                label='Method to informe'
+                extraText={notifyText}
+                options={options}
+            />
+            <Form.InputNumber field='force' label='Force read (optional)' placeholder='seconds' extraText={forceText} extraTextPosition='bottom'/>
+        </Form>
+    );
+};
+
+
 ```
 
 ### Using Input Group
@@ -830,7 +982,7 @@ class ModalFormDemo extends React.Component {
         this.formApi = formApi;
     }
 
-    render(){
+    render() {
         const { visible } = this.state;
         let message = 'Required';
         return (
@@ -851,7 +1003,7 @@ class ModalFormDemo extends React.Component {
                                 <Form.Select
                                     field='region'
                                     label="Country/Region"
-                                    style={{ width:120 }}
+                                    style={{ width: 120 }}
                                     rules={[
                                         { required: true, message },
                                     ]}
@@ -879,7 +1031,7 @@ class ModalFormDemo extends React.Component {
                                     field='area'
                                     label="Area"
                                     placeholder='Choose Area'
-                                    style={{ width:120 }}
+                                    style={{ width: 120 }}
                                     rules={[
                                         { required: true, message },
                                     ]}
@@ -912,53 +1064,55 @@ class ModalFormDemo extends React.Component {
 ### Configure initial values and verification rules
 
 -   You can configure check rules for each Field through `rules`  
-     The verification library inside the Form is based on async-validator, and more configuration rules can be found in its [official documentation](https://github.com/yiminghe/async-validator)
+     The verification library inside the Form is based on `async-validator`, and more configuration rules can be found in its [official documentation](https://github.com/yiminghe/async-validator)
 -   You can uniformly set the initial value for the entire form through the `initValues` of form, or you can set the initial value through `initValue` in each field (the latter has a higher priority)
+-   You can configure different verification trigger timings for each Field through `trigger`, and the default is `change` (that is, when onChange is triggered, the verification is performed automatically). Also supports `change`, `blur`, `mount`, `custom` or a combination of the above. After v2.42, it supports unified configuration through FormProps. If both are configured, FieldProps shall prevail
+-   You can use the `stopValidateWithError`` switch to decide whether to continue to trigger the validation of subsequent rules when the first rule that fails the validation is encountered. After v2.42, unified configuration through FormProps is supported. If both are configured, FieldProps shall prevail
+
 
 ```jsx live=true dir="column"
 import React from 'react';
-import { Form } from '@douyinfe/semi-ui';
+import { Form, Button } from '@douyinfe/semi-ui';
 
-class BasicDemoWithInit extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            initValues: {
-                name: 'semi',
-                role: 'rd'
-            }
-        };
-        this.getFormApi = this.getFormApi.bind(this);
-    }
+() => {
+    
+    const initValues = {
+        name: 'semi',
+        shortcut: 'se'
+    };
+    
+    const style = { width: '100%' };
+    
+    const { Select, Input } = Form;
 
-    getFormApi(formApi) { this.formApi = formApi; }
-
-    render() {
-        const { Select, Input } = Form;
-        const style = { width: '100%' };
-        return (
-            <Form initValues={this.state.initValues}>
-                <Input
-                    field="name"
-                    label="Name（Input）"
-                    style={style}
-                    trigger='blur'
-                    rules={[
-                        { required: true, message: 'required error' },
-                        { type: 'string', message: 'type error' },
-                        { validator: (rule, value) => value === 'muji', message: 'not muji' }
-                    ]}
-                />
-                <Select field="role" style={style} label='Role' placeholder='Choose Role' initValue={'pm'}>
-                    <Select.Option value="qa">Quality Assurance</Select.Option>
-                    <Select.Option value="rd">Software Engineer</Select.Option>
-                    <Select.Option value="pm">Product Manager</Select.Option>
-                    <Select.Option value="ued">Designer</Select.Option>
-                </Select>
-            </Form>
-        );
-    }
-}
+    return (
+        <Form initValues={initValues}>
+            <Input
+                field="name"
+                style={style}
+                trigger='blur'
+                rules={[
+                    { required: true, message: 'required error' },
+                    { type: 'string', message: 'type error' },
+                    { validator: (rule, value) => value === 'semi', message: 'should be semi' },
+                    { validator: (rule, value) => value && value.startsWith('se'), message: 'should startsWith se' }
+                ]}
+            />
+            <Input
+                field="shortcut"
+                style={style}
+                stopValidateWithError
+                rules={[
+                    { required: true, message: 'required error' },
+                    { type: 'string', message: 'type error' },
+                    { validator: (rule, value) => value === 'semi', message: 'should be semi' },
+                    { validator: (rule, value) => value && value.startsWith('se'), message: 'should startsWith se' }
+                ]}
+            />
+            <Button htmlType='submit'>提交</Button>
+        </Form>
+    );
+};
 ```
 
 ### Custom Validate (Form Level)
@@ -1110,6 +1264,90 @@ class FieldLevelValidateDemo extends React.Component {
 }
 ```
 
+### Manually Trigger specified validation
+When you want to manually trigger the validation of some specific Field, you can do it through `formApi.validate`.  
+ When no parameters are passed in, all Fields are checked by default. When parameters are passed in, the parameters specified shall prevail  
+
+
+```jsx live=true dir="column"
+import React from 'react';
+import { Form, Button, Space } from '@douyinfe/semi-ui';
+class PartValidAndResetDemo extends React.Component {
+    constructor() {
+        super();
+        this.validate = this.validate.bind(this);
+        this.getFormApi = this.getFormApi.bind(this);
+        this.validatePartial = this.validatePartial.bind(this);
+        this.resetPartial = this.resetPartial.bind(this);
+    }
+
+    getFormApi(formApi) {
+        this.formApi = formApi;
+    }
+
+    validate(val) {
+        if (!val) {
+            return 'can\'t be empty';
+        } else if (val.length <= 5) {
+            return (<span>i am incoming reactNode</span>);
+        }
+        return;
+    }
+
+    validatePartial(type) {
+        let scope = this.formApi.getValue('validateScope');
+        !scope ? scope = [] : null;
+        type === 'all' ? scope = ['a', 'b', 'c', 'd', 'b.name'] : null;
+        this.formApi.validate(scope)
+            .then(values => {
+                console.log(values);
+                Toast.success('pass');
+            }).catch(error => {
+                Toast.error('error');
+                console.log(error);
+            });
+    }
+
+    resetPartial() {
+        let scope = this.formApi.getValue('resetScope');
+        this.formApi.reset(scope);
+    }
+
+    render() {
+        let options = ['a', 'b', 'c', 'd', 'b.name'].map(item => ({ label: item, value: item }));
+        return (
+            <Form getFormApi={this.getFormApi} autoScrollToError layout='horizontal'>
+                {
+                    ({ formState, values, formApi }) => (
+                        <>
+                            <div>
+                                <Form.Input field="a[1]" validate={this.validate} trigger="blur" />
+                                <Form.Input field="a[0]" validate={this.validate} trigger="blur" />
+                                <Form.Input field="b.name[0]" validate={this.validate} trigger="blur" />
+                                <Form.Input field="b.name[1]" validate={this.validate} trigger="blur" />
+                                <Form.Input field="b.type" validate={this.validate} trigger="blur" />
+                                <Form.Input field="c" validate={this.validate} trigger="blur" />
+                                <Form.Input field="d" validate={this.validate} trigger="blur" />
+                            </div>
+                            <div>
+                                <Form.CheckboxGroup options={options} field="validateScope" label="The Field you want to validate currently" initValue={['a', 'b']} direction="horizontal" />
+                                <Form.CheckboxGroup options={options} field="resetScope" label="The Field you want to reset currently" direction="horizontal" />
+                                <Space>
+                                    <Button htmlType="reset">reset</Button>
+                                    <Button onClick={() => this.validatePartial('all')}>all validate</Button>
+                                    <Button onClick={() => this.validatePartial()}>partial validate {JSON.stringify(values.validateScope)}</Button>
+                                    <Button onClick={this.resetPartial}>partial reset</Button>
+                                </Space>
+                            </div>
+                        </>
+                    )
+                }
+            </Form>
+        );
+    }
+}
+```
+
 ### Linkage Fields
 
 You can achieve the linkage between Fields by listening to the `onChange` of Field and then using formApi to make modifications.
@@ -1179,27 +1417,32 @@ import { Form, Button } from '@douyinfe/semi-ui';
 );
 ```
 
-#### Add or delete form items dynamically - by use ArrayField
+### ArrayField Usage
 
 For array items that are dynamically added or deleted, we provide the `ArrayField` component to simplify the operation of add / remove
 
+For the detailed API of ArrayField, please refer to [ArrayField Props](#arrayfield-props) below
+
+> Note: The initValue type of ArrayField must be an array
+
 ```jsx live=true dir="column"
 import React from 'react';
-import { ArrayField, TextArea, Button, Form, useFormState } from '@douyinfe/semi-ui';
+import { ArrayField, TextArea, Form, Button, useFormState } from '@douyinfe/semi-ui';
+import { IconPlusCircle, IconMinusCircle } from '@douyinfe/semi-icons';
 
 class ArrayFieldDemo extends React.Component {
     constructor() {
         super();
         this.state = {
-            menu: [
-                { name: 'Face stickers', type: '2D' },
-                { name: 'Background sticker', type: '3D' },
+            data: [
+                { name: 'Semi D2C', role: 'Engineer' },
+                { name: 'Semi C2D', role: 'Designer' },
             ]
         };
     }
 
     render() {
-        let { menu } = this.state;
+        let { data } = this.state;
         const ComponentUsingFormState = () => {
             const formState = useFormState();
             return (
@@ -1207,29 +1450,38 @@ class ArrayFieldDemo extends React.Component {
             );
         };
         return (
-            <Form style={{ width: 500 }} labelPosition='left' allowEmpty>
-                <ArrayField field='effects' initValue={menu}>
-                    {({ add, arrayFields }) => (
+            <Form style={{ width: 800 }} labelPosition='left' labelWidth='100px' allowEmpty>
+                <ArrayField field='rules' initValue={data}>
+                    {({ add, arrayFields, addWithInitValue }) => (
                         <React.Fragment>
-                            <Button onClick={add}>Add</Button>
+                            <Button onClick={add} icon={<IconPlusCircle />} theme='light'>Add new line</Button>
+                            <Button icon={<IconPlusCircle />} onClick={() => {addWithInitValue({ name: 'Semi DSM', type: 'Designer' });}} style={{ marginLeft: 8 }}>Add new line with init value</Button>
                             {
                                 arrayFields.map(({ field, key, remove }, i) => (
                                     <div key={key} style={{ width: 1000, display: 'flex' }}>
                                         <Form.Input
                                             field={`${field}[name]`}
-                                            label={`Effect Name：`}
+                                            label={`${field}.name`}
                                             style={{ width: 200, marginRight: 16 }}
                                         >
                                         </Form.Input>
                                         <Form.Select
-                                            field={`${field}[type]`}
-                                            label={`Effect Type：`}
-                                            style={{ width: 90 }}
+                                            field={`${field}[role]`}
+                                            label={`${field}.role`}
+                                            style={{ width: 120 }}
+                                            optionList={[
+                                                { label: 'Engineer', value: 'Engineer' },
+                                                { label: 'Designer', value: 'Designer' },
+                                            ]}
                                         >
-                                            <Form.Select.Option value='2D'>2D</Form.Select.Option>
-                                            <Form.Select.Option value='3D'>3D</Form.Select.Option>
                                         </Form.Select>
-                                        <Button type='danger' onClick={remove} style={{ margin: 16 }}>remove</Button>
+                                        <Button
+                                            type='danger'
+                                            theme='borderless'
+                                            icon={<IconMinusCircle />}
+                                            onClick={remove}
+                                            style={{ margin: 12 }}
+                                        />
                                     </div>
                                 ))
                             }
@@ -1241,7 +1493,159 @@ class ArrayFieldDemo extends React.Component {
         );
     }
 }
+
 ```
+
+
+#### Nesting ArrayField
+
+ArrayField supports multi-level nesting. The following is an example of two-level nesting.
+
+```jsx live=true dir="column" noInline=true
+import { Form, ArrayField, Button, Card, Typography, } from "@douyinfe/semi-ui";
+import { IconPlusCircle, IconMinusCircle } from "@douyinfe/semi-icons";
+import React from "react";
+
+const initValue = {
+    group: [
+        {
+            name: "Email filtering rule 1",
+            rules: [
+                { itemName: "Sender address", type: "include" },
+                { itemName: "Email Title", type: "exclude" },
+            ],
+        },
+        {
+            name: "Email filtering rule 2",
+            rules: [
+                { itemName: "Send time", type: "include" }
+            ],
+        },
+    ]
+};
+
+const NestedField = (props) => {
+    const rowStyle = {
+        marginTop: 12,
+        marginLeft: 12,
+    };
+    return (
+        <ArrayField field={`${props.field}.rules`}>
+            {({ add, arrayFields, addWithInitValue }) => (
+                <React.Fragment>
+                    {arrayFields.map(({ field, key, remove }, i) => (
+                        <div style={{ display: "flex" }} key={key}>
+                            <Form.Input
+                                field={`${field}[itemName]`}
+                                label={`${field}.itemName`}
+                                noLabel
+                                style={{ width: 140, marginRight: 12 }}
+                            ></Form.Input>
+                            <Form.Select
+                                field={`${field}[type]`}
+                                label={`${field}.type`}
+                                noLabel
+                                style={{ width: 140 }}
+                                optionList={[
+                                    { label: "Include", value: "include" },
+                                    { label: "Exclude", value: "exclude" },
+                                ]}
+                            ></Form.Select>
+                            <Button
+                                type="danger"
+                                theme="borderless"
+                                style={rowStyle}
+                                icon={<IconMinusCircle />}
+                                onClick={remove}
+                            />
+                            <Button
+                                icon={<IconPlusCircle />}
+                                style={rowStyle}
+                                disabled={i !== arrayFields.length - 1}
+                                onClick={() => {
+                                    addWithInitValue({
+                                        itemName: `Condition ${arrayFields.length + 1}`,
+                                        type: "include",
+                                    });
+                                }}
+                            />
+                        </div>
+                    ))}
+                </React.Fragment>
+            )}
+        </ArrayField>
+    );
+};
+
+const NestArrayFieldDemo = () => {
+    return (
+        <Form
+            onValueChange={(values) => console.log(values)}
+            initValues={initValue}
+            labelPosition="left"
+            style={{ textAlign: "left" }}
+            allowEmpty
+        >
+            <ArrayField field="group" >
+                {({ add, arrayFields, addWithInitValue }) => (
+                    <React.Fragment>
+                        <Button
+                            icon={<IconPlusCircle />}
+                            theme="solid"
+                            onClick={() => {
+                                addWithInitValue({
+                                    name: "New Rule",
+                                    rules: [
+                                        { itemName: "Main Text", type: "include" },
+                                        { itemName: "Accessory name", type: "include" },
+                                    ],
+                                });
+                            }}
+                        >
+                            Add receiving rules
+                        </Button>
+                        {arrayFields.map(({ field, key, remove }, i) => (
+                            <div
+                                key={key}
+                                style={{ width: 1000, display: "flex", flexWrap: "wrap" }}
+                            >
+                                <Form.Input
+                                    field={`${field}[name]`}
+                                    labelPosition="top"
+                                    label={"RuleName"}
+                                    style={{ width: "600px" }}
+                                ></Form.Input>
+                                <Button
+                                    type="danger"
+                                    theme="borderless"
+                                    style={{ margin: "36px 0 0 12px" }}
+                                    icon={<IconMinusCircle />}
+                                    onClick={remove}
+                                />
+                                <Typography.Text strong style={{ flexBasis: "100%" }}>
+                                    When the mail arrives, the following conditions are met:
+                                </Typography.Text>
+                                <Card
+                                    shadow="hover"
+                                    style={{
+                                        width: 620,
+                                        margin: "12px 0 0 24px",
+                                    }}
+                                >
+                                    <NestedField field={field} />
+                                </Card>
+                            </div>
+                        ))}
+                    </React.Fragment>
+                )}
+            </ArrayField>
+        </Form>
+    );
+};
+
+render(NestArrayFieldDemo);
+```
+
 
 #### Add or delete form items dynamically - by use formApi
 
@@ -1276,7 +1680,7 @@ class ArrayDemo extends React.Component {
         if (!effects) {
             effects = [];
         }
-        effects.push({ name: '', type: '', key: this.id++  });
+        effects.push({ name: '', type: '', key: this.id++ });
         this.formApi.setValue('effects', effects);
     }
     remove(key) {
@@ -1290,12 +1694,12 @@ class ArrayDemo extends React.Component {
     renderItems(formState, values) {
         return values.effects && values.effects.map((effect, i) => (
             <div key={effect.key} style={{ width: 1000, display: 'flex' }}>
-                <Form.Input field={`effects[${i}].name`} style={{ width: 200, marginRight: 16 }}></Form.Input>
+                <Form.Input field={`effects[${i}].name`} style={{ width: 200, marginRight: 12 }}></Form.Input>
                 <Form.Select field={`effects[${i}].type`} style={{ width: 90 }}>
                     <Form.Select.Option value='2D'>2D</Form.Select.Option>
                     <Form.Select.Option value='3D'>3D</Form.Select.Option>
                 </Form.Select>
-                <Button type='danger' onClick={() => this.remove(effect.key)} style={{ margin: 16 }}>Remove</Button>
+                <Button type='danger' onClick={() => this.remove(effect.key)} style={{ margin: 12 }}>Remove</Button>
             </div>
         ));
     }
@@ -1334,22 +1738,22 @@ import { useFormApi, useFormState, useFieldApi, useFieldState } from '@douyinfe/
 
 `useFormApi` allows you to directly access the formApi of the parent Form component within Functional Component via hook
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { useFormApi, Form, Button } from '@douyinfe/semi-ui';
 
+const ComponentUsingFormApi = () => {
+    const formApi = useFormApi();
+    const change = () => {
+        formApi.setValue('name', Math.random());
+    };
+    return (
+        <Button onClick={change}>ChangeName By【formApi】</Button>
+    );
+};
+
 class UseFromApiDemo extends React.Component {
-    constructor() { super(); }
     render() {
-        const ComponentUsingFormApi = () => {
-            const formApi = useFormApi();
-            const change = () => {
-                formApi.setValue('name', Math.random());
-            };
-            return (
-                <Button onClick={change}>ChangeName By【formApi】</Button>
-            );
-        };
         return (
             <Form>
                 <Form.Input field='name' initValue='mike'></Form.Input>
@@ -1358,27 +1762,29 @@ class UseFromApiDemo extends React.Component {
         );
     }
 }
+
+render(UseFromApiDemo);
 ```
 
 #### useFormState
 
 `useFormState` allows you to directly access the form State of the parent Form component within Functional Component via hook
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { useFormState, Form } from '@douyinfe/semi-ui';
 
+const ComponentUsingFormState = () => {
+    const formState = useFormState();
+    return (
+        <pre>
+            <code>{JSON.stringify(formState)}</code>
+        </pre>
+    );
+};
+
 class UseFromStateDemo extends React.Component {
-    constructor() { super(); }
     render() {
-        const ComponentUsingFormState = () => {
-            const formState = useFormState();
-            return (
-                <pre>
-                    <code>{JSON.stringify(formState)}</code>
-                </pre>
-            );
-        };
         return (
             <Form>
                 <Form.Input field='name' initValue='mike'></Form.Input>
@@ -1388,28 +1794,30 @@ class UseFromStateDemo extends React.Component {
         );
     }
 }
+
+render(UseFromStateDemo);
 ```
 
 #### useFieldApi
 
 `useFieldApi` allows you to call the api of the specified Field directly within Functional Component via hook
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { useFieldApi, Form, Button } from '@douyinfe/semi-ui';
 
-class UseFieldApiDemo extends React.Component {
-    constructor() { super(); }
+const ComponentUsingFieldApi = () => {
+    const nameFieldApi = useFieldApi('name');
+    const change = () => {
+        nameFieldApi.setValue(Math.random());
+    };
+    return (
+        <Button onClick={change}>Click Me!!! changeNameBy【fieldApi】</Button>
+    );
+};
+
+class UseFieldApiDemo extends React.PureComponent {
     render() {
-        const ComponentUsingFieldApi = () => {
-            const nameFieldApi = useFieldApi('name');
-            const change = () => {
-                nameFieldApi.setValue(Math.random());
-            };
-            return (
-                <Button onClick={change}>Click Me!!! changeNameBy【fieldApi】</Button>
-            );
-        };
         return (
             <Form>
                 <Form.Input field='name' initValue='mike'></Form.Input>
@@ -1418,38 +1826,44 @@ class UseFieldApiDemo extends React.Component {
         );
     }
 }
-```
 
+render(UseFieldApiDemo);
+```
 #### useFieldState
 
 `useFieldState` allows you to directly access the State of the specified Field within Functional Component via hook
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { useFieldState, Form } from '@douyinfe/semi-ui';
 
-class UseFieldStateDemo extends React.Component {
-    constructor() { super(); }
+const ComponentUsingFieldState = props => {
+    const fieldState = useFieldState(props.field);
+    return (
+        <div style={props.style}>
+            <span>【{props.field}】FieldState read by 【useFieldState】：</span>
+            <code>{JSON.stringify(fieldState)}</code>
+        </div>
+    );
+};
+class UseFieldStateDemo extends React.PureComponent {
     render() {
-        const ComponentUsingFieldState = props => {
-            const fieldState = useFieldState(props.field);
-            return (
-                <>
-                    <span>【{props.field}】FieldState read by 【useFieldState】：</span>
-                    <code>{JSON.stringify(fieldState)}</code>
-                </>
-            );
-        };
         return (
             <Form>
                 <Form.Input field='name' initValue='mike'></Form.Input>
-                <ComponentUsingFieldState field='name' />
-                <Form.Input field='country' initValue='china'></Form.Input>
-                <ComponentUsingFieldState field='country' />
+                <Form.Input field='role' initValue='designer'></Form.Input>
+                <div style={{ width: 500, marginTop: 12 }}>
+                    <ComponentUsingFieldState field='name' style={{ marginTop: 0 }} />
+                    <ComponentUsingFieldState field='role' style={{ marginTop: 12 }} />
+                </div>
             </Form>
         );
     }
 }
+
+render(UseFieldStateDemo);
+
+
 ```
 
 ### Use of HOC
@@ -1466,35 +1880,31 @@ import { withFormApi, withFormState, withField } from '@douyinfe/semi-ui';
 You can encapsulate the component via `withFormApi` HOC so that the formApi of the parent Form component can be called directly inside the component  
 Note that the encapsulated components must be placed inside the Form structure.
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { withFormApi, Form, Button } from '@douyinfe/semi-ui';
 
-class withFormApiDemo extends React.Component {
-    constructor() {
-        super();
-    }
-    renderComponentWithFormApi() {
-        const SomeComponetInsideForm = props => (
-            <Button onClick={() => {
-                props.formApi.setValue('name', Math.random());
-            }}>Click Me!!! ChangeName By【formApi】</Button>
-        );
-        return ComponentWithFormApi = withFormApi(SomeComponetInsideForm);
+const SomeComponetInsideForm = props => (
+    <Button onClick={() => {
+        props.formApi.setValue('name', Math.random());
+    }}>Click Me!!! ChangeName By【formApi】</Button>
+);
+const ComponentWithFormApi = withFormApi(SomeComponetInsideForm);
 
-    }
+class WithFormApiDemo extends React.Component {
     render() {
-        const ComponentWithFormApi = this.renderComponentWithFormApi();
         return (
             <Form>
-                <Form.Input field='name' label='Name' initValue='steve'></Form.Input>
-                <Form.Input field='familyName' label='FamilyName' initValue='jobs'></Form.Input>
-                <Button htmlType='submit'>submit</Button>
+                <Form.Input field='name' initValue='semi'></Form.Input>
+                <Form.Input field='familyName' initValue='design'></Form.Input>
+                <Button htmlType='submit' style={{ marginRight: 4 }}>submit</Button>
                 <ComponentWithFormApi />
             </Form>
         );
     }
 }
+
+render(WithFormApiDemo);
 ```
 
 #### HOC - withFormState
@@ -1502,74 +1912,80 @@ class withFormApiDemo extends React.Component {
 You can encapsulate the component via `withFormState` HOC so that the component has direct access to the Form State of the parent Form component.  
 Note that the encapsulated components must be placed inside the Form structure.
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { withFormState, Form } from '@douyinfe/semi-ui';
 
-class withFormStateDemo extends React.Component {
-    constructor() {
-        super();
-    }
-    render() {
-        const SomeComponentInsideForm = props => (
-            <code>{JSON.stringify(props.formState)}</code>
-        );
-        const ComponentWithFormState = withFormState(SomeComponentInsideForm);
+const SomeComponentInsideForm = props => (
+    <code>{JSON.stringify(props.formState)}</code>
+);
+const ComponentWithFormState = withFormState(SomeComponentInsideForm);
 
+class WithFormStateDemo extends React.Component {
+    render() {
         return (
             <Form>
-                <Form.Input field='name' label='Name' initValue='steve'></Form.Input>
-                <Form.Input field='familyName' label='FamilyName' initValue='jobs'></Form.Input>
+                <Form.Input field='name' initValue='semi'></Form.Input>
+                <Form.Input field='familyName' initValue='design'></Form.Input>
                 <ComponentWithFormState />
             </Form>
         );
     }
 }
+
+render(WithFormStateDemo);
 ```
 
-### With Field encapsulation custom form control
+### Take over custom components
 
 Via `withField`, you can extend other custom components into Field. Form will taking over its behavior.
 
-Note: Custom components must be controlled components.
+
+<Notice type="primary" title="Notice">
+   Custom components must be controlled components.
+</Notice>
 
 With Field did the following things.
 
 -   Take over the `value` of the component (or other properties specified by valueKey), `onChange` (or other callback functions specified by onKeyChangeFnName)
 -   Insert Field's `<Form.Label>`above the field
 -   Insert Field's `<ErrorMessage>` under the field
+-   Insert Field's extraText under the field
 
 With Field Options specific configuration can be consulted [withFieldOption](#WithFieldOption)
+
+Your custom controlled component needs to do the following:
+- When the value changes, call `props.onChange` and use the latest value as an input parameter
+- Respond to changes in `props.value` and update your component UI rendering results
 
 ```jsx
 withField(YourComponent, withFieldOption);
 ```
 
-```jsx live=true dir="column"
+```jsx live=true dir="column" noInline=true
 import React from 'react';
 import { withField, Form } from '@douyinfe/semi-ui';
 
-class CustomFieldDemo extends React.Component {
-    constructor() {
-        super();
-    }
-    render() {
-        // Here to encapsulat HTML input
-        const htmlInput = (props) => {
-            let value = props.value || '';
-            let { validateStatus, ...rest } = props; // prevent props being transparently transmitted to DOM
-            return <input {...rest} value={value} />; 
-        };
-        const CustomInput = withField(htmlInput, { valueKey: 'value', onKeyChangeFnName: 'onChange', valuePath: 'target.value' });
+// encapsulated html native input
+const htmlInput = (props) => {
+    let value = props.value || '';
+    let { validateStatus, ...rest } = props; // prevent props being transparently transmitted to DOM
+    return <input {...rest} value={value} />; 
+};
+const CustomInput = withField(htmlInput, { valueKey: 'value', onKeyChangeFnName: 'onChange', valuePath: 'target.value' });
 
-        const ComponentUsingFormState = () => {
-            const formState = useFormState();
-            return (
-                <pre>
-                    <code>{JSON.stringify(formState.values)}</code>
-                </pre>
-            );
-        };
+// This component is used as an example, you can observe the formState here to see if the input data flow has been taken over by the form
+const ComponentUsingFormState = () => {
+    const formState = useFormState();
+    return (
+        <pre>
+            <code>{JSON.stringify(formState)}</code>
+        </pre>
+    );
+};
+
+class WithFieldDemo1 extends React.Component {
+    render() {
         return (
             <Form>
                 <CustomInput field='name' />
@@ -1578,6 +1994,58 @@ class CustomFieldDemo extends React.Component {
         );
     }
 }
+
+render(WithFieldDemo1);
+```
+
+
+```jsx live=true dir="column" noInline=true
+import React from 'react';
+import { withField, Input, Select, Form } from '@douyinfe/semi-ui';
+
+const MyComponent = (props) => {
+    const { onChange, value } = props;
+    const { name, role } = value || {};
+    const handleChange = (v, type) => {
+        let newValue = { ...value, [type==='name' ? 'name' : 'role']: v };
+        onChange(newValue);
+    };
+    return (
+        <div className='customField'>
+            <Input insetLabel='Name' value={name} onChange={v => handleChange(v, 'name')} style={{ width: 180, marginRight: 12 }} />
+            <Select
+                insetLabel='Role'
+                value={role}
+                onChange={v => handleChange(v, 'role')}
+                style={{ width: 200 }}
+                optionList={[{ value: 'rd', label: 'Engineer' }, { value: 'UED', label: 'Designer' }]}
+            />
+        </div>
+    );
+};
+const CustomField = withField(MyComponent, { valueKey: 'value', onKeyChangeFnName: 'onChange' });
+
+const ComponentUsingFormState = () => {
+    const formState = useFormState();
+    return (
+        <pre>
+            <code>{JSON.stringify(formState)}</code>
+        </pre>
+    );
+};
+
+class WithFieldDemo2 extends React.Component {
+    render() {
+        return (
+            <Form>
+                <CustomField field='baseInfo' label={{ text: 'Basic info', required: true }} />
+                <ComponentUsingFormState />
+            </Form>
+        );
+    }
+}
+
+render(WithFieldDemo2);
 ```
 
 ## API reference
@@ -1591,7 +2059,7 @@ class CustomFieldDemo extends React.Component {
 | component         | For declaring fields, not used at the same time as render, props.children                                                                                                                                                                                                                                           | ReactNode                                       |
 | className         | Classname for form tag                                                                                                                                                                                                                                                                                              | string                                          |
 | disabled          | If true, all fields inside the form structure will automatically inherit the disabled attribute                                                                                                                                                                                                                     | boolean                                         | false      |
-| extraTextPosition | The extraTextPosition property applied to each Field uniformly controls the display position of extraText. Middle (the vertical direction is displayed in the order of Label, extraText, and Field), bottom (the vertical direction is displayed in the order of Label, Field, and extraText) <br/>**since v1.9.0** | string                                          | 'bottom'   |
+| extraTextPosition | The extraTextPosition property applied to each Field uniformly controls the display position of extraText. Middle (the vertical direction is displayed in the order of Label, extraText, and Field), bottom (the vertical direction is displayed in the order of Label, Field, and extraText) | string                                          | 'bottom'   |
 | getFormApi        | This function will be executed once when the form is mounted and returns formApi. <br/>formApi can be used to modify the internal state of the form (value, touched, error)                                                                                                                                         | function (formApi: object)                      |            |
 | initValues        | Used to uniformly set the initial value of the form <br/>(will be consumed only once when form is mount)                                                                                                                                                                                                            | object                                          |            |
 | layout            | The layout of fields, optional `horizontal` or `vertical`                                                                                                                                                                                                                                                           | string                                          | 'vertical' |
@@ -1600,14 +2068,19 @@ class CustomFieldDemo extends React.Component {
 | labelPosition     | Location of label in Field, optional 'top', 'left', 'inset' <br/> (inset label only partial component support)                                                                                                                                                                                                      | string                                          | 'top'      |
 | labelWidth        | Width of field'r label                                                                                                                                                                                                                                                                                              | string\|number                                  |            |
 | onChange          | Callback invoked when form update, including Fields mount/unmount / value change / <br/> blur / validation status change / error status change.                                                                                                                                                                     | function (formState: object)                    |            |
-| onValueChange     | Callback invoked when form values update                                                                                                                                                                                                                                                                            | function (values: object, changedValue: object) |
+| onErrorChange     | Callback when the validation state of form updated. The first parameter: formState.errors, second parameter: name of the field that has changed and it's error message (available after v2.66)                                                       | function(values:object, changedError: object) |            |
+| onValueChange     | Callback invoked when form values update. The first parameter: formState.values, second parameter: name of the field and it's value                                                                                                                                                                                                                                                                            | function (values: object, changedValue: object) |
 | onReset           | Callback invoked after clicked on reset button or executed `formApi.reset()`                                                                                                                                                                                                                                        | function ()                                     |            |
-| onSubmit          | Callback invoked after clicked on submit button or executed `formApi.submit()`, <br/>and all validation pass.                                                                                                                                                                                                        | function (values: object)                       |            |
-| onSubmitFail      | Callback invoked after clicked on submit button or executed `formApi.submit()`,<br/> but validate failed.                                                                                                                                                                                                            | function (object, values: object)               |            |
+| onSubmit          | Callback invoked after clicked on submit button or executed `formApi.submit()`, <br/>and all validation pass.                                                                                                                                                                                                        | function (values: object, e: event)                       |            |
+| onSubmitFail      | Callback invoked after clicked on submit button or executed `formApi.submit()`,<br/> but validate failed.                                                                                                                                                                                                            | function (error: object, values: object, e: event)               |            |
 | render            | For declaring fields, not used at the same time as component, props.children                                                                                                                                                                                                                                        | function                                        |
-| showValidateIcon  | Whether the verification information block in the field automatically adds the corresponding status icon display <br/>**since v1.0.0**                                                                                                                                                                              | boolean                                         | true       |
+| showValidateIcon  | Whether the verification information block in the field automatically adds the corresponding status icon display                                                                                                                                                                               | boolean                                         | true       |
+| style             | inline style of form element                                                                          | object                                        |
+| stopValidateWithError | Apply stopValidateWithError to each Field uniformly. For usage instructions, see the API of the same name in Field props (available after v2.42)                                                                            | boolean                             | false     |
+| stopPropagation | Whether to prevent submit or reset events from bubbling. This is used in nested Form scenarios to prevent events from propagating outwards when the inner Form submits or resets, triggering events in the outer Form. The default is `{ reset: false, submit: false }`(available after v2.63)                                                                              | object                             |      |
+| trigger  | Apply the trigger uniformly to each Field to control the timing of verification. For detailed instructions, see the API of the same name in Field props.(available after v2.42)                                               | string\|array                            |  'change'  |
 | validateFields    | Form-level custom validate functions are called at submit or formApi.validate(). <br/>Supported synchronous / asynchronous function                                                                                                                                                                                 | function (values)                               |            |
-| wrapperCol        | Uniformly apply the layout on each Field, with [Col component](/en-US/basic/grid#Col), <br/>set `span`, `span` values, such as {span: 20, selected: 4}                                                                                                                                     | object                                          |
+| wrapperCol        | Uniformly apply the layout on each Field, with [Col component](/en-US/basic/grid#Col), <br/>set `span`, `span` values, such as {span: 20, offset: 4}                                                                                                                                     | object                                          |
 
 ## FormState
 
@@ -1622,42 +2095,51 @@ FormState stores all the state values within the Form, including the values of e
 ### How to access the form state
 
 -   By calling `formApi.getFormState()`
--   By declaring fields through "child render function", formState will injected as a parameter
--   By declaring fields through "render props", formState will injected as a parameter
+-   By declaring fields through [child render function](/en-US/input/form#Various%20ways%20to%20declare%20form),  formState will injected as a parameter
+-   By declaring fields through [render props](/en-US/input/form#Various%20ways%20to%20declare%20form), formState will injected as a parameter
 -   Via [useFormState](#useFormState) hook
--   Via withFormState HOC
+-   Via [withFormState](#withFormState) HOC
 
 ## FormApi
 
-We provide FormApi. You have easy access to FormApi both inside and outside the Form, which allows you to use getter and setter to get and manipulate the values of FormState.  
+We provide FormApi. You have easy access to FormApi both inside and outside the Form, which allows you to use getter and setter to get and manipulate the values of FormState.   
 The table below describes the features available in the formApi.
 
-| Function      | Description                                                                                                                                                                                                                                                                                                                        | example                                                                                                                       |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+
+<Notice title='About scope isolation'>
+ In order to prevent the user from accidentally modifying the internal state of the Form component after reading the internal state of formState, values  
+ Semi will automatically execute deepClone once for  input parameters of `formApi.setValue` and `setValues` and the return results of `formApi.getFormState`, `getValue` and `getValues ` 
+</Notice>
+
+
+| Function      | Description                                                                        | example                                                                                                                       |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------------------------------------------------------------------------------------------------------------------------------|
+| getFormProps  | Get Form Component Props, support after v2.57.0                                                                                                                                                                                                                                                                                                                      | formApi.getFormProps(propNames?: string[])                                                                                                        |
 | getFormState  | Get FormState                                                                                                                                                                                                                                                                                                                      | formApi.getFormState()                                                                                                        |
-| submitForm    | manually submit the submit operation                                                                                                                                                                                                                                                                                               | formApi.submitForm()                                                                                                          |
-| reset         | reset the form manually                                                                                                                                                                                                                                                                                                            | formApi.reset()                                                                                                               |
-| validate      | Manually trigger validation of the entire form                                                                                                                                                                                                                                                                                     | formApi.validate() <br/>.then(values ​​=> {})<br/>.catch(errors => {})                                                        |
+| submitForm    | Manually submit form operation                                                                                                                                                                                                                                                                                               | formApi.submitForm()                                                                                                          |
+| reset         | Reset the form manually                                                                                                                                                                                                                                                                                                            | formApi.reset(fields?: Array <string\>)                                                                                      |
+| validate      | Manually trigger validation of the entire form. the verification of the entire Field will be triggered by default when no parameters are passed , if you want to trigger the verification of some fields, pass in the target field array <br/><br/> After the Form level validator is configured, the Field level validator will not be triggered again when submit or formApi.validate()  | formApi.validate() <br/>.then(values ​​=> {})<br/>.catch(errors => {})<br/>OR formApi.validate(['fieldA','fieldB'])           |
 | setValues ​​  | Set the values ​​of the entire form. The isOverride in the second parameter is false by default. <br/> By default, only the values ​​of the existing field in the Form are updated from `newValues` to`formState.values`. <br/> When isOverride is `true`, the newValues ​​will be overwritten and assigned to formState.values ​​ | formApi.setValues(newValues: object, {isOverride: boolean})                                                                   |
 | getValues ​​  | Get the values of all Field                                                                                                                                                                                                                                                                                                        | formApi.getValues()                                                                                                           |
 | setValue      | provides direct modification of formState.values ​​method.<br/>The difference from `setValues` ​​is that it only modifies a single field.                                                                                                                                                                                          | formApi.setValue(field: string, newFieldValue: any)                                                                           |
-| getValue      | Get the value of all / single Field                                                                                                                                                                                                                                                                                                | formApi.getValue()<br/>formApi.getValue(field: string)                                                                         |
-| setTouched    | modify formState.touched                                                                                                                                                                                                                                                                                                           | formApi.setTouched(field: string, isTouched: boolean)<br/>                                                                    |
+| getValue      | Get the value of all / single Field                                                                                                                                                                                                                                                                                                | formApi.getValue()<br/>formApi.getValue(field: string)                                                                        |
+| setTouched    | Modify formState.touched                                                                                                                                                                                                                                                                                                           | formApi.setTouched(field: string, isTouched: boolean)<br/>                                                                    |
 | getTouched    | Get the touched state of the Field                                                                                                                                                                                                                                                                                                 | formApi.getTouched(field: string)                                                                                             |
 | setError      | Modify the error information of a field                                                                                                                                                                                                                                                                                            | formApi.setError(field: string, fieldErrorMessage: string)                                                                    |
 | getError      | Get Error Status of Field                                                                                                                                                                                                                                                                                                          | formApi.getError(field: string)                                                                                               |
 | getFieldExist | Get whether the field exists in the Form                                                                                                                                                                                                                                                                                           | formApi.getFieldExist(field: string)                                                                                          |
-| scrollToField | Scroll to field                                                                                                                                                                                                                                                                                                                    | formApi.scrollToField(field: string, scrollOpts: [object](<(https://github.com/stipsan/scroll-into-view-if-needed#options)>)) |
+| scrollToField | Scroll to the specified field, the second input parameter will be passed to scroll-into-view-if-needed | formApi.scrollToField(field: string, scrollOpts: [ScrollIntoViewOptions](https://github.com/stipsan/scroll-into-view-if-needed#options))                                                            |
+| scrollToError | Scroll to the field with validation error. You can pass a specified field or index. If you pass index, scroll to the index-th error DOM. If you do not pass any parameters, scroll to the first validation error position in the DOM tree. Available after v2.61.0  | formApi.scrollToError(<ApiType detail='{field?: string; index?: number; scrollOpts?: ScrollIntoViewOptions }'>ScrollToErrorOptions</ApiType>) 
 
 ### How to access formApi
 
--   The Form component in the ComponentDidMount phase will execute the getFormApi callback passed in by props. You can save a reference to formApi in the callback function for subsequent calls (example code below)
+-   The Form component in the `ComponentDidMount` phase will execute the `getFormApi` callback passed in by props. You can save a reference to formApi in the callback function for subsequent calls (example code below)
     In addition, we provide other ways to get formApi, and you can choose different ways of calling according to your preference.
 -   Use reference to get form instance，you can access form instance & its formApi
 -   By declaring fields through "child render function", formApi will injected as a parameter
 -   By declaring fields through "render props", formApi will injected as a parameter
--   Via [useFormApi](#useFormApi) hook
--   Via "withFormApi" HOC
+-   Via [useFormApi](#useFormApi) hook for children component of Form
+-   Via [withFormApi](#withFormApi) HOC for children component of Form
 
 ```jsx
 import React from 'react';
@@ -1726,18 +2208,18 @@ import { Form, Button } from '@douyinfe/semi-ui';
 | labelAlign            | Text-align of the label text of this field                                                                                                                                                                                               | string                                 |           |
 | labelWidth            | The width of the label text of this field                                                                                                                                                                                                | string\|number                         |           |
 | noLabel               | When you don't need to add label automatically, you can set this value to true                                                                                                                                                           | boolean                                |           |
-| name                  | Field name. When passed in, the corresponding className will be automatically added to the corresponding field div, such as: money => '.semi-form-field-money'                                                                           | string                                 |           |
+| name                  | Field name. When passed in, the corresponding className will be automatically added to the field wrapper div, such as: money => '.semi-form-field-money'. After v2.24, the name will also be transparently transmitted to the underlying component for consumption. For example, you can configure the name attribute of input                                                                           | string                                 |           |
 | fieldClassName        | The className of the entire fieldWrapper is the same as the name parameter, except that the prefix is ​​not automatically appended                                                                                                       | string                                 |           |
 | fieldStyle            | The inline style of the entire fieldWrapper <br/>**since v1.9.0**                                                                                                      | object                                 |           |
 | initValue             | The initial value of the field (consumed only once when Field mounted, subsequent updates are invalid), it has higher priority than the values ​​in Form's initValues ​​                                                                 | any(type depends on current component) |           |
 | validate              | The custom validation function for this form control. Supports synchronous and asynchronous verification. <br/> Rules does not take effect when validate is set                                                                           | function(fieldValue, values)           |           | (fieldValue) => fieldValue.length>5? 'error balabala': ''          |
 | rules                 | validation rules, validation library based on [async-validator](https://github.com/yiminghe/async-validator)                                                                                                                             | array                                  |           | const rules = \[{type:' string ', message:' invalidate string'} \] |
 | validateStatus        | The validation result status of this form control, optional: `success` / `error` / `warning` / `default`                                                                                                                                 | string                                 | 'default' |
-| trigger               | The timing of triggering the verification, optional: `blur` / `change` / `custom` / `mount` <br/> 1. When set to custom, only formApi will trigger the verification <br/> 2。mount (triggered once when mounting)                          | string                                 | 'change'  |
+| trigger               | The timing of triggering the verification, optional: `blur` / `change` / `custom` / `mount` <br/> 1. When set to custom, only formApi will trigger the verification <br/> 2.mount (triggered once when mounting)                          | string                                 | 'change'  |
 | onChange              | Callback invoked when this field value changes                                                                                                                                                                                           |
 | transform             | transform field values before validation                                                                                                                                                                                                 | function(fieldValue)                   |           | (value) => Number(value)                                           |
 | allowEmptyString      | Whether to allow values to be empty strings. <br/>When the value is '' by default, the key corresponding to this field will be removed from `values`. <br/>If you want to keep the key, you need to set allowEmptyString to true           | boolean                                |           | false                                                              |
-| convert               | After the field value changes, before rerender, update the value of filed                                                                                                                                                                | function(fieldValue)                   |           | (value) => newValue(value)                                         |
+| convert               | After the field value changes, before rerender, update the value of filed                                                                                                                                                                | function(fieldValue)                   |           | (value) => newValue                                        |
 | stopValidateWithError | When it is true, the rules check is used. After encountering the first rule that fails the check, it will no longer trigger the check of subsequent rules<br/>**since v0.35.0**                                                          | boolean                                |           | false                                                              |
 | helpText              | Custom prompt information, which is displayed in the same block as the verification information. When both have values, the verification information is displayed first<br/>**since v1.0.0**                                             | ReactNode                              |           |                                                                    |
 | extraText             | Additional prompt information, you can use this when both error information and prompt copy are required, after helpText/errorMessage<br/>**since v1.0.0**                                                                               | ReactNode                              |           |                                                                    |
@@ -1758,16 +2240,37 @@ We also provide `fieldApi`, most of which is similar to `formApi`, with the diff
 | setError   | Modify the error information of the current Field | fieldApi.setError(newErrorMessage: string) |
 | getError   | Gets field's error status                         | fieldApi.getError()                        |
 
-## Form.Section
 
-> Form.Section is available since v1.0.0
+## ArrayField Props
+For dynamically added and deleted array form items, we provide the ArrayField scope to simplify add/remove operations
+
+| Properties            | Description                                                              | Type      | Default     |
+| --------------------- | ---------------------------------------------------------------- | -------- | --------- |
+| field                 | The mapping path of the value of the form control in formState.values<br/>Required, for example, there is an ArrayField responsible for rendering a[0].name, a[1].name, a[2].name three lines, their The parent is a, here props.field should be `a`                                         | string                                                                                        |           |
+| initValue             | The initial value of ArrayField, if the initial value is configured in both formProps.initValues and arrayFieldProps.initValue, the priority of the latter is higher | Array                        | []
+| children              | The content of ArrayField, the type is Function, the function input parameters are operation functions such as add, addWithInitValue and arrayFields, and it should return ReactNode after execution | Function(ArrayFieldChildrenProps) => ReactNode  | 
+
+```ts
+interface ArrayFieldChildrenProps {
+    arrayFields: ArrayFieldItem<>;                               // The current array form, which can be used to perform map operations to render each row
+    add: () => void;                                             // Add blank line
+    addWithInitValue: (lineObject: Record<string, any>) => void; // Add a new row with an initial value
+}
+
+interface ArrayFieldItem {
+    key: string;        // A key used to identify the current row, which should be bound to the wrapper of the current row
+    field: string;      // This row fieldPath, which is equivalent to ArrayFieldProps.field + [index]
+    remove: () => void; // Remove operation function of this line, when called, this line will be deleted directly
+}
+```
+## Form.Section
 
 ```jsx
 import { Form } from '@douyinfe/semi-ui';
 const { Section } = Form;
 ```
 
-| Properties | Instructions       | Type      |
+| Properties | Description       | Type      |
 | ---------- | ------------------ | --------- |
 | text       | Title of section   | ReactNode |
 | className  | Classname          | string    |
@@ -1784,7 +2287,7 @@ import { Form } from '@douyinfe/semi-ui';
 const { Label } = Form;
 ```
 
-| Properties | Instructions                    | Type      | Default |
+| Properties | Description                    | Type      | Default |
 | ---------- | ------------------------------- | --------- | ------- |
 | text       | Label content                   | ReactNode |         |
 | required   | Whether to show the required \* | boolean   | false   |
@@ -1794,6 +2297,19 @@ const { Label } = Form;
 | style      | Inline style                    | string    |         |
 | width      | Label width                     | number    |         |
 | optional  | Whether to automatically append the "(optional)" text mark after the text (automatically switch the same semantic text according to different languages configured by Locale). When this item is true, the required \* will no longer be displayed.  | boolean    | false | v2.18.0 |
+
+## Form.InputGroup
+
+| Properties             | Description                                                      | Type                     | Default | Version |
+| ---------------- | --------------------------------------------------------- | ------------------------ |--- |--- |
+| className        | Classname of Form.InputGroup                                                  | string                   | |
+| style            | Inline style                                                 | object                   ||
+| label            | Label text of Form.InputGroup                      |  Label \| string                 | |
+| labelPosition    | Label position，optional: 'top'/'left'/'inset'. When Form and InputGroup are passed in at the same time, the InputGroup props shall prevail | string     | 'top'|
+| extraText        | Additional prompt information, when the error message and prompt text need to appear at the same time, you can use this, located after errorMessage | ReactNode | | v2.29.0 |
+| extraTextPosition| Control the display position of extraText, optional `middle` (vertical direction is displayed in the order of Label, extraText, Group), `bottom` (vertical direction is displayed in the order of Label, Group, extraText)| string | 'bottom' | v2.29.0|
+
+When extraTextPositon is middle and labelPosition is left. Since extraText is allowed to be ReactNode, the height of the content is variable, and the Label will no longer ensure that it can be aligned with the first line of text in the Field / InputGroup.
 
 ## Form.Slot
 
@@ -1808,6 +2324,7 @@ const { Slot } = Form;
 | className  | Classname of Slot Wrapper                                                                                                                                                                              | string         |         |
 | style      | Slot inline style                                                                                                                                                                                       | object         |         |
 | children   | Content of slot. You can place your custom component here                                                                                                                                               | ReactNode      |         |
+| error      | ErrorMessage of Slot       | ErrorMessage\|ReactNode      |
 
 ## Form.ErrorMessage
 
@@ -1819,11 +2336,14 @@ const { ErrorMessage } = Form;
 -   When the error is React Node, String, boolean, render directly
 -   When the error is an array, the join operation is automatically performed to aggregate the error information in the array
 
-| Properties | Instructions                      | Type                     | Default |
-| ---------- | --------------------------------- | ------------------------ | ------- |
-| error      | Error message content             | string\|array\|ReactNode\|undefined\|boolean | {}      |
-| className  | Classname of ErrorMessage wrapper | string                   |         |
-| style      | Inline style                      | object                   |         |
+| Properties | Instructions                      | Type                     |
+| ---------------- | ------------------------------------------------------------------------------------------ | --------------------------------- |
+| error            | Error message content                                                                      | array\|ReactNode\|boolean         |
+| className        | Classname of ErrorMessage wrapper                                                          | string                            |
+| style            | Inline style                                                                               | object                            |
+| showValidateIcon | Whether to automatically add the icon corresponding to validateStatus                      | boolean                           |
+| validateStatus   | The verification status of the information, optional: default/error/warning/success (success is generally recommended to be the same as default) | string|
+
 
 ## withFieldOption
 

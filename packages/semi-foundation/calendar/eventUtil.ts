@@ -93,12 +93,12 @@ export interface DateObj {
     isToday: boolean;
     isWeekend: boolean;
     isSameMonth: boolean;
-    month: string;
+    month: string
 }
 
-export type weeekStartsOnEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type weekStartsOnEnum = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-export const calcRangeData = (value: Date, start: Date, rangeLen: number, mode: string, locale: Locale, weekStartsOn: weeekStartsOnEnum) => {
+export const calcRangeData = (value: Date, start: Date, rangeLen: number, mode: string, locale: Locale, weekStartsOn: weekStartsOnEnum) => {
     const today = getCurrDate();
     const arr: Array<DateObj> = [];
     [...Array(rangeLen).keys()].map(ind => {
@@ -121,15 +121,17 @@ export const calcRangeData = (value: Date, start: Date, rangeLen: number, mode: 
 
 /**
  *
- * @param {value} date
+ * @param {Date} date
+ * @param {Date} monthStart current month start date, using for month mode
  * @param {string} mode
  * @param {string} locale
  * @returns {object[]} { date: Date, dayString: string, ind: number, isToday: boolean, isWeekend: boolean, weekday: string }
  * create weekly object array
  */
-export const calcWeekData = (value: Date, mode = 'week', locale: Locale, weekStartsOn: weeekStartsOnEnum) => {
+export const calcWeekData = (value: Date, monthStart: Date | null, mode = 'week', locale: Locale, weekStartsOn: weekStartsOnEnum) => {
     const start = startOfWeek(value, { weekStartsOn });
-    return calcRangeData(value, start, 7, mode, locale, weekStartsOn);
+    const realValue = monthStart || value;
+    return calcRangeData(realValue, start, 7, mode, locale, weekStartsOn);
 };
 
 /**
@@ -228,7 +230,11 @@ export const filterEvents = (events: Map<string, EventObject[]>, start: Date, en
         const item = events.get(day);
         const date = new Date(day);
         if (isDateInRange(date, start, end)) {
-            res.set(day, item);
+            if (res.has(day)) {
+                res.set(day, [...res.get(day), ...item]);
+            } else {
+                res.set(day, item);
+            }
         } else if (isBefore(end, date)) {
             // do nothing
         } else {
@@ -249,8 +255,7 @@ export const filterEvents = (events: Map<string, EventObject[]>, start: Date, en
  * @returns {arr}
  * filter out event that is not in the week range
  */
-// eslint-disable-next-line max-len
-export const filterWeeklyEvents = (events: Map<string, EventObject[]>, weekStart: Date, weekStartsOn: weeekStartsOnEnum ) => filterEvents(events, weekStart, addDays(endOfWeek(weekStart, { weekStartsOn }), 1));
+export const filterWeeklyEvents = (events: Map<string, EventObject[]>, weekStart: Date, weekStartsOn: weekStartsOnEnum ) => filterEvents(events, weekStart, addDays(endOfWeek(weekStart, { weekStartsOn }), 1));
 
 /**
  * @returns {arr}
@@ -309,7 +314,7 @@ export const parseWeeklyAllDayEvent = (
     startDate: Date,
     weekStart: Date,
     parsed: Array<Array<ParsedRangeEvent>>,
-    weekStartsOn: weeekStartsOnEnum
+    weekStartsOn: weekStartsOnEnum
 ) => parseRangeAllDayEvent(event, startDate, weekStart, addDays(endOfWeek(startDate, { weekStartsOn }), 1), parsed);
 
 
@@ -329,7 +334,6 @@ export const collectDailyEvents = (events: ParsedRangeEvent[][]) => {
 };
 
 export const renderDailyEvent = (event: EventObject) => {
-    // eslint-disable-next-line prefer-const
     let { start, end, allDay, children } = event;
     let startPos,
         endPos;

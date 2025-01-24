@@ -4,12 +4,12 @@ import { destroyFns, ModalReactProps } from './Modal';
 import ConfirmModal from './ConfirmModal';
 
 import '@douyinfe/semi-foundation/modal/modal.scss';
-import { get } from 'lodash';
 import { IconAlertCircle, IconAlertTriangle, IconHelpCircle, IconInfoCircle, IconTickCircle } from '@douyinfe/semi-icons';
-import { Motion } from '../_base/base';
+import { omit } from "lodash";
+import { type ButtonProps } from "../button";
 
 export interface ConfirmProps extends ModalReactProps {
-    type: 'success' | 'info' | 'warning' | 'error' | 'confirm';
+    type: 'success' | 'info' | 'warning' | 'error' | 'confirm'
 }
 
 export default function confirm<T>(props: ConfirmProps) {
@@ -28,7 +28,6 @@ export default function confirm<T>(props: ConfirmProps) {
         for (let i = 0; i < destroyFns.length; i++) {
             const fn = destroyFns[i];
 
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             if (fn === close) {
                 destroyFns.splice(i, 1);
                 break;
@@ -36,22 +35,15 @@ export default function confirm<T>(props: ConfirmProps) {
         }
     };
 
-    const mergedMotion: Motion = typeof (props.motion) === 'undefined' || props.motion ? {
-        ...(props.motion as any),
-        didLeave: (...args: any) => {
-            const didLeave = get(props.motion, 'didLeave');
-
-            if (typeof didLeave === 'function') {
-                didLeave(...args);
-            }
-
-            destroy();
-        }
-
-    } : false;
 
     function render(renderProps: ConfirmProps) {
-        ReactDOM.render(<ConfirmModal {...renderProps} motion={mergedMotion}/>, div);
+        const { afterClose } = renderProps;
+        //@ts-ignore
+        ReactDOM.render(<ConfirmModal {...renderProps} afterClose={(...args: any) => {
+            //@ts-ignore
+            afterClose?.(...args);
+            destroy();
+        }} motion={props.motion}/>, div);
     }
 
     function close() {
@@ -107,9 +99,10 @@ export function withError(props: ModalReactProps) {
     return {
         type: 'error' as const,
         icon: <IconAlertCircle/>,
-        ...props
+        okButtonProps: { type: 'danger' as ButtonProps['type'], ...props.okButtonProps },
+        ...(omit(props, ['okButtonProps']))
     };
-}
+} 
 
 export function withConfirm(props: ModalReactProps) {
     return {

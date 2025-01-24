@@ -1,13 +1,13 @@
-/* eslint-disable prefer-template */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { cssClasses } from '@douyinfe/semi-foundation/form/constants';
 import { IconAlertTriangle, IconAlertCircle } from '@douyinfe/semi-icons';
+import type { BasicFieldError } from '@douyinfe/semi-foundation/form/interface';
 
 const prefix = cssClasses.PREFIX;
 
-export type ReactFieldError = Array<any> | React.ReactNode;
+export type ReactFieldError = BasicFieldError | React.ReactNode;
 
 export interface ErrorMessageProps {
     error?: ReactFieldError;
@@ -18,7 +18,7 @@ export interface ErrorMessageProps {
     helpText?: React.ReactNode;
     isInInputGroup?: boolean;
     errorMessageId?: string;
-    helpTextId?: string;
+    helpTextId?: string
 }
 
 export default class ErrorMessage extends PureComponent<ErrorMessageProps> {

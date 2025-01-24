@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,7 +10,7 @@ export interface TriggerProps {
     placeholder?: string | string[];
     className?: string;
     style?: React.CSSProperties;
-    [x: string]: any;
+    [x: string]: any
 }
 /**
  * `Trigger` is a HOC that will cover the inner of components which have popups
@@ -36,7 +34,6 @@ class Trigger extends React.PureComponent<TriggerProps> {
     };
 
     render() {
-        // eslint-disable-next-line no-unused-vars
         const { triggerRender, componentName, ...rest } = this.props;
         return triggerRender({ ...rest });
     }

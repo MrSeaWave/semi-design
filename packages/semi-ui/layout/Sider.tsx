@@ -21,7 +21,7 @@ export interface ResponsiveMap {
     md: string;
     lg: string;
     xl: string;
-    xxl: string;
+    xxl: string
 }
 
 const generateId = ((): () => string => {
@@ -42,7 +42,7 @@ export interface SiderProps {
     breakpoint?: Array<keyof ResponsiveMap>;
     onBreakpoint?: (screen: keyof ResponsiveMap, match: boolean) => void;
     'aria-label'?: React.AriaAttributes['aria-label'];
-    'role'?:React.AriaRole
+    'role'?: React.AriaRole
 }
 
 class Sider extends React.PureComponent<SiderProps> {
@@ -61,6 +61,7 @@ class Sider extends React.PureComponent<SiderProps> {
     };
 
     static contextType = LayoutContext;
+    static elementType = "Layout.Sider"
 
     unRegisters: Array<() => void> = [];
     context: ContextType;

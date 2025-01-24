@@ -1,5 +1,4 @@
 @import "./animation.scss";
-@import '../input/variables.scss';
 @import './variables.scss';
 
 $module: #{$prefix}-input-number;
@@ -105,6 +104,15 @@ $module: #{$prefix}-input-number;
             .#{$module}-suffix-btns-inner {
                 height: $height-inputNumber_button_inner_small;
             }
+        }
+    }
+}
+
+
+.#{$module}:not(:focus-within):not(:hover){
+    .#{$prefix}-input-borderless{
+        & + .#{$module}-suffix-btns{
+            opacity: 0;
         }
     }
 }

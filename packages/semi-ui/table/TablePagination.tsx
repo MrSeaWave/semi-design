@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { PureComponent, isValidElement } from 'react';
 import PropTypes from 'prop-types';
 import { get, isFunction } from 'lodash';
@@ -12,7 +11,7 @@ export interface TablePaginationProps {
     prefixCls?: string;
     pagination?: PaginationProps;
     info?: React.ReactNode;
-    renderPagination?: RenderPagination;
+    renderPagination?: RenderPagination
 }
 
 export default class TablePagination extends PureComponent<TablePaginationProps> {

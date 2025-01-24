@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -7,7 +6,7 @@ import { noop, get } from 'lodash';
 import ConfigContext from '../configProvider/context';
 import BaseComponent, { ValidateStatus } from '../_base/baseComponent';
 import { strings, cssClasses } from '@douyinfe/semi-foundation/timePicker/constants';
-import Popover from '../popover';
+import Popover, { PopoverProps } from '../popover';
 import { numbers as popoverNumbers } from '@douyinfe/semi-foundation/popover/constants';
 import TimePickerFoundation, { TimePickerAdapter } from '@douyinfe/semi-foundation/timePicker/foundation';
 import isNullOrUndefined from '@douyinfe/semi-foundation/utils/isNullOrUndefined';
@@ -24,14 +23,13 @@ import { InputSize } from '../input';
 import { Position } from '../tooltip';
 import { ScrollItemProps } from '../scrollList/scrollItem';
 import { Locale } from '../locale/interface';
-import { Motion } from '../_base/base';
 
 export interface Panel {
-    panelHeader?: React.ReactNode;
-    panelFooter?: React.ReactNode;
+    panelHeader?: React.ReactNode | React.ReactNode[];
+    panelFooter?: React.ReactNode | React.ReactNode[]
 }
 
-export type BaseValueType = string | number | Date;
+export type BaseValueType = string | number | Date | undefined;
 
 export type Type = 'time' | 'timeRange';
 
@@ -43,8 +41,10 @@ export type TimePickerProps = {
     'aria-required'?: React.AriaAttributes['aria-required'];
     autoAdjustOverflow?: boolean;
     autoFocus?: boolean; // TODO: autoFocus did not take effect
+    borderless?: boolean;
     className?: string;
     clearText?: string;
+    clearIcon?: React.ReactNode;
     dateFnsLocale?: Locale['dateFnsLocale'];
     defaultOpen?: boolean;
     defaultValue?: BaseValueType | BaseValueType[];
@@ -52,6 +52,7 @@ export type TimePickerProps = {
     disabledHours?: () => number[];
     disabledMinutes?: (selectedHour: number) => number[];
     disabledSeconds?: (selectedHour: number, selectedMinute: number) => number[];
+    dropdownMargin?: PopoverProps['margin'];
     focusOnOpen?: boolean;
     format?: string;
     getPopupContainer?: () => HTMLElement;
@@ -65,10 +66,10 @@ export type TimePickerProps = {
     locale?: Locale['TimePicker'];
     localeCode?: string;
     minuteStep?: number;
-    motion?: Motion;
+    motion?: boolean;
     open?: boolean;
-    panelFooter?: React.ReactNode;
-    panelHeader?: React.ReactNode;
+    panelFooter?: React.ReactNode | React.ReactNode[];
+    panelHeader?: React.ReactNode | React.ReactNode[];
     panels?: Panel[]; // FIXME:
     placeholder?: string;
     popupClassName?: string;
@@ -81,6 +82,7 @@ export type TimePickerProps = {
     secondStep?: number;
     showClear?: boolean;
     size?: InputSize;
+    stopPropagation?: boolean;
     style?: React.CSSProperties;
     timeZone?: string | number;
     triggerRender?: (props?: any) => React.ReactNode;
@@ -93,7 +95,7 @@ export type TimePickerProps = {
     onChange?: TimePickerAdapter['notifyChange'];
     onChangeWithDateFirst?: boolean;
     onFocus?: React.FocusEventHandler<HTMLInputElement>;
-    onOpenChange?: (open: boolean) => void;
+    onOpenChange?: (open: boolean) => void
 };
 
 export interface TimePickerState {
@@ -105,7 +107,7 @@ export interface TimePickerState {
     showHour: boolean;
     showMinute: boolean;
     showSecond: boolean;
-    invalid: boolean;
+    invalid: boolean
 }
 
 export default class TimePicker extends BaseComponent<TimePickerProps, TimePickerState> {
@@ -117,7 +119,9 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
         'aria-describedby': PropTypes.string,
         'aria-required': PropTypes.bool,
         prefixCls: PropTypes.string,
+        borderless: PropTypes.bool,
         clearText: PropTypes.string,
+        clearIcon: PropTypes.node,
         value: TimeShape,
         inputReadOnly: PropTypes.bool,
         disabled: PropTypes.bool,
@@ -137,6 +141,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
         disabledHours: PropTypes.func,
         disabledMinutes: PropTypes.func,
         disabledSeconds: PropTypes.func,
+        dropdownMargin: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
         hideDisabledOptions: PropTypes.bool,
         onChange: PropTypes.func,
         use12Hours: PropTypes.bool,
@@ -146,6 +151,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
         focusOnOpen: PropTypes.bool,
         autoFocus: PropTypes.bool,
         size: PropTypes.oneOf(strings.SIZE),
+        stopPropagation: PropTypes.bool,
         panels: PropTypes.arrayOf(PropTypes.shape(PanelShape)),
         onFocus: PropTypes.func,
         onBlur: PropTypes.func,
@@ -170,6 +176,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
 
     static defaultProps = {
         autoAdjustOverflow: true,
+        borderless: false,
         getPopupContainer: () => document.body,
         showClear: true,
         zIndex: popoverNumbers.DEFAULT_Z_INDEX,
@@ -179,6 +186,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
         prefixCls: cssClasses.PREFIX,
         inputReadOnly: false,
         style: {},
+        stopPropagation: true,
         className: '',
         popupClassName: '',
         popupStyle: { left: '0px', top: '0px' },
@@ -196,6 +204,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
         onKeyDown: noop,
         size: 'default' as const,
         type: strings.DEFAULT_TYPE,
+        motion: true,
         ...PanelShapeDefaults,
         // format: strings.DEFAULT_FORMAT,
         // open and value controlled
@@ -204,6 +213,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
     foundation: TimePickerFoundation;
     timePickerRef: React.MutableRefObject<HTMLDivElement>;
     savePanelRef: React.RefObject<HTMLDivElement>;
+    useCustomTrigger: boolean;
 
     clickOutSideHandler: (e: MouseEvent) => void;
 
@@ -227,6 +237,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
         this.foundation = new TimePickerFoundation(this.adapter);
         this.timePickerRef = React.createRef();
         this.savePanelRef = React.createRef();
+        this.useCustomTrigger = typeof this.props.triggerRender === 'function';
     }
 
     get adapter(): TimePickerAdapter<TimePickerProps, TimePickerState> {
@@ -241,14 +252,15 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
                 }
                 this.clickOutSideHandler = e => {
                     const panel = this.savePanelRef && this.savePanelRef.current;
-                    const isInPanel = e.target && panel && panel.contains(e.target as Node);
-                    const isInTimepicker =
-                        this.timePickerRef &&
-                        this.timePickerRef.current &&
-                        this.timePickerRef.current.contains(e.target as Node);
-                    if (!isInTimepicker && !isInPanel) {
-                        const clickedOutside = true;
-                        this.foundation.handlePanelClose(clickedOutside, e);
+                    const trigger = this.timePickerRef && this.timePickerRef.current;
+                    const target = e.target as Element;
+                    const path = e.composedPath && e.composedPath() || [target];
+
+                    if (!(panel && panel.contains(target)) &&
+                        !(trigger && trigger.contains(target)) &&
+                        !(path.includes(trigger) || path.includes(panel))
+                    ) {
+                        this.foundation.handlePanelClose(true, e);
                     }
                 };
                 document.addEventListener('mousedown', this.clickOutSideHandler);
@@ -323,9 +335,9 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
             panelProps.panelHeader = get(
                 panels,
                 index,
-                isNullOrUndefined(panelHeader) ? get(defaultHeaderMap, index, null) : panelHeader
+                isNullOrUndefined(panelHeader) ? get(defaultHeaderMap, index, null) : Array.isArray(panelHeader) ? panelHeader[index] : panelHeader
             );
-            panelProps.panelFooter = get(panels, index, panelFooter) as React.ReactNode;
+            panelProps.panelFooter = get(panels, index, Array.isArray(panelFooter) ? panelFooter[index] : panelFooter) as React.ReactNode;
         }
 
         return panelProps;
@@ -436,6 +448,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
             placeholder,
             disabled,
             defaultValue,
+            dropdownMargin,
             className,
             popupStyle,
             size,
@@ -463,11 +476,11 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
             triggerRender,
             motion,
             autoAdjustOverflow,
+            stopPropagation,
             ...rest
         } = this.props;
         const format = this.foundation.getDefaultFormatIfNeed();
         const position = this.foundation.getPosition();
-        const useCustomTrigger = typeof triggerRender === 'function';
 
         const { open, inputValue, invalid, value } = this.state;
         const popupClassName = this.getPopupClassName();
@@ -503,7 +516,7 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
 
         const outerProps = {} as { onClick: () => void };
 
-        if (useCustomTrigger) {
+        if (this.useCustomTrigger) {
             outerProps.onClick = this.openPanel;
         }
 
@@ -525,9 +538,11 @@ export default class TimePicker extends BaseComponent<TimePickerProps, TimePicke
                     position={position}
                     visible={disabled ? false : Boolean(open)}
                     motion={motion}
+                    margin={dropdownMargin}
                     autoAdjustOverflow={autoAdjustOverflow}
+                    stopPropagation={stopPropagation}
                 >
-                    {useCustomTrigger ? (
+                    {this.useCustomTrigger ? (
                         <Trigger
                             triggerRender={triggerRender}
                             disabled={disabled}

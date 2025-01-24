@@ -3,14 +3,20 @@ category: 开始
 title:  Dark Mode 暗色模式
 icon: doc-darkmode
 localeCode: zh-CN
-order: 4
+order: 5
 ---
 
 
 ## 能力介绍
 
+大多数情况下，深色模式是浅色模式的补充。默认选用值，更多取决于用户的审美选择或业务场景，用户可以根据自己的需要选择使用哪一个模式。
+
 🤩 Semi 的默认主题或任意通过 [Semi DSM](/dsm) 配置的定制主题都自带了亮色模式与暗色模式，可以方便地进行切换。  
 🌒 Semi 也支持在页面的局部范围使用亮/暗色模式。
+
+<Compare dark='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/dsm/dark.png' light='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/dsm/light.png
+'>
+</Compare>
 
 ## 推荐设置
 Semi 会自动在 body 元素上挂载全局色盘，我们内置了一些常用的 CSS Token，详细的 Token 详情可查阅 [设计变量](/zh-CN/basic/tokens)  
@@ -19,8 +25,8 @@ Semi 会自动在 body 元素上挂载全局色盘，我们内置了一些常用
 ```css
 // css
 body {
-    color: 'var(--semi-color-text-0)';
-    background-color: 'var( --semi-color-bg-0)';
+    color: var(--semi-color-text-0);
+    background-color: var( --semi-color-bg-0);
 }
 ```
 
@@ -51,7 +57,7 @@ function Demo() {
             body.setAttribute('theme-mode', 'dark');
             window.setMode('dark');
         }
-    }
+    };
 
     return (
         <Button
@@ -99,8 +105,8 @@ Semi 2.0 原生支持局部暗色/亮色模式。使用时，在顶级元素上�
 
 ```jsx live=true dir="column" hideInDSM
 import React from 'react';
-import { Layout, Nav, Button, Breadcrumb, Avatar } from '@douyinfe/semi-ui';
-import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, IconLive, IconSetting } from '@douyinfe/semi-icons';
+import { Layout, Nav, Button, Breadcrumb, Avatar, Steps, Pagination, Row, Badge, Tag, Rating, Tooltip, Timeline, Popover } from '@douyinfe/semi-ui';
+import { IconSemiLogo, IconCamera, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, IconLive, IconSetting, IconEdit, IconList } from '@douyinfe/semi-icons';
 
 () => {
     const { Header, Footer, Sider, Content } = Layout;
@@ -214,8 +220,10 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                             }}
                         >
                             <Row style={rowStyle}>
+                                <div id='popup-layer'></div>
                                 <Nav
                                     mode={'horizontal'}
+                                    getPopupContainer={() => document.querySelector('#popup-layer')}
                                     items={[
                                         { itemKey: 'user', text: 'Option1', icon: <IconEdit /> },
                                         { itemKey: 'union', text: 'Option2', icon: <IconCamera /> },

@@ -1,6 +1,6 @@
 //@import '../theme/variables.scss';
-@import "./variables.scss";
 @import "./animation.scss";
+@import "./variables.scss";
 
 $module: #{$prefix}-page;
 
@@ -18,6 +18,14 @@ $module: #{$prefix}-page;
         font-weight: $font-pagination_small-fontWeight;
         color: $color-pagination-text-default;
         padding: $spacing-pagination_small-paddingY $spacing-pagination_small-paddingX;
+    }
+
+    &-disabled {
+        cursor: not-allowed;
+
+        .#{$module}-total {
+            color: $color-pagination_item-text-disabled;
+        }
     }
 
     &-item {
@@ -85,6 +93,27 @@ $module: #{$prefix}-page;
         &-small {
             min-width: $width-pagination_item_small-minWidth;
             margin: $spacing-pagination_item_small-margin;
+        }
+
+        &-all-disabled {
+            border-color: $color-pagination_item-border-disabled;
+            color: $color-pagination_item-text-disabled;
+            background-color: $color-pagination_item-bg-disabled;
+            cursor: not-allowed;
+    
+            &:hover {
+                background-color: transparent;
+                color: $color-pagination_item-text-disabled;
+            }
+
+            &-active {
+                background-color: $color-pagination_item-bg-selected-disabled;
+                font-weight: $font-pagination_item_active-fontWeight;
+
+                &:hover {
+                    background-color: $color-pagination_item-bg-selected-disabled;
+                }
+            }
         }
     }
 

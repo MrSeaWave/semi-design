@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isString } from 'lodash';
@@ -12,16 +11,18 @@ import { useFormState } from './hooks/index';
 import InputGroup, { InputGroupProps as BacisInputGroupProps } from '../input/inputGroup';
 import { BaseFormProps, FormState } from './interface';
 import { FormUpdaterContextType } from '@douyinfe/semi-foundation/form/interface';
-
+import { Col, Row } from '../grid/index';
 interface GroupErrorProps {
     showValidateIcon?: boolean;
     isInInputGroup?: boolean;
     error?: ReactFieldError;
-    fieldSet?: string[];
+    fieldSet?: string[]
 }
 export interface InputGroupProps extends BacisInputGroupProps {
     label?: LabelProps;
     labelPosition?: 'left' | 'top';
+    extraText?: React.ReactNode;
+    extraTextPosition?: 'bottom' | 'middle'
 }
 
 const prefix = cssClasses.PREFIX;
@@ -58,9 +59,9 @@ class FormInputGroup extends Component<InputGroupProps> {
     }
 
     render() {
-        const { children, label, ...rest } = this.props;
+        const { children, label, extraText, extraTextPosition, ...rest } = this.props;
         const updater = this.context;
-        const formProps = updater.getFormProps(['labelPosition', 'labelWidth', 'labelAlign', 'showValidateIcon']);
+        const formProps = updater.getFormProps(['labelPosition', 'labelWidth', 'labelAlign', 'showValidateIcon', 'wrapperCol', 'labelCol', 'disabled']);
         const labelPosition = this.props.labelPosition || formProps.labelPosition;
         const groupFieldSet: Array<string> = [];
         const inner = React.Children.map(children, (child: any) => {
@@ -74,18 +75,90 @@ class FormInputGroup extends Component<InputGroupProps> {
             }
             return null;
         });
+
         const groupCls = classNames({
             [`${prefix}-field-group`]: true
         });
+
+        const labelCol = formProps.labelCol;
+        const wrapperCol = formProps.wrapperCol;
+        const labelAlign = formProps.labelAlign;
+        const appendCol = labelCol && wrapperCol;
+
+        const labelColCls = labelCol ? `${prefix}-col-${labelAlign}` : '';
+
+        const labelContent = this.renderLabel(label, formProps);
+        const inputGroupContent = (
+            <InputGroup disabled={formProps.disabled} {...rest}>
+                {inner}
+            </InputGroup>
+        );
+        const groupErrorContent = (<GroupError fieldSet={groupFieldSet} showValidateIcon={formProps.showValidateIcon} isInInputGroup />);
+
+        const extraCls = classNames(`${prefix}-field-extra`, {
+            [`${prefix}-field-extra-string`]: typeof extraText === 'string',
+            [`${prefix}-field-extra-middle`]: extraTextPosition === 'middle',
+            [`${prefix}-field-extra-bottom`]: extraTextPosition === 'bottom',
+        });
+
+        const extraContent = extraText ? <div className={extraCls} x-semi-prop="extraText">{extraText}</div> : null;
+
+        let content: any;
+
+        switch (true) {
+            case !appendCol:
+                content = (
+                    <>
+                        {labelContent}
+                        <div>
+                            {extraTextPosition === 'middle' ? extraContent : null}
+                            {inputGroupContent}
+                            {extraTextPosition === 'bottom' ? extraContent : null}
+                            {groupErrorContent}
+                        </div>
+                    </>
+                );
+                break;
+            case appendCol && labelPosition === 'top':
+                // When labelPosition is top, you need to add an overflow hidden div to the label, otherwise it will be arranged horizontally
+                content = (
+                    <>
+                        <div style={{ overflow: 'hidden' }}>
+                            <Col {...labelCol} className={labelColCls}>
+                                {labelContent}
+                            </Col>
+                        </div>
+                        <Col {...wrapperCol}>
+                            {extraTextPosition === 'middle' ? extraContent : null}
+                            {inputGroupContent}
+                            {extraTextPosition === 'bottom' ? extraContent : null}
+                            {groupErrorContent}
+                        </Col>
+                    </>
+                );
+                break;
+            case appendCol && labelPosition !== 'top':
+                content = (
+                    <>
+                        <Col {...labelCol} className={labelColCls}>
+                            {labelContent}
+                        </Col>
+                        <Col {...wrapperCol}>
+                            {extraTextPosition === 'middle' ? extraContent : null}
+                            {inputGroupContent}
+                            {extraTextPosition === 'bottom' ? extraContent : null}
+                            {groupErrorContent}
+                        </Col>
+                    </>
+                );
+                break;
+            default:
+                break;
+        }
+
         return (
             <div x-label-pos={labelPosition} className={groupCls}>
-                {this.renderLabel(label, formProps)}
-                <div>
-                    <InputGroup {...rest}>
-                        {inner}
-                    </InputGroup>
-                    <GroupError fieldSet={groupFieldSet} showValidateIcon={formProps.showValidateIcon} isInInputGroup />
-                </div>
+                {content}
             </div>
         );
     }

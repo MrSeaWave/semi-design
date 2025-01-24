@@ -1,15 +1,19 @@
-/* eslint-disable prefer-const, max-len */
 import BaseFoundation from '../base/foundation';
 import * as ObjectUtil from '../utils/object';
 import isPromise from '../utils/isPromise';
 import { isValid } from './utils';
 import { isUndefined, isFunction, toPath } from 'lodash';
-import scrollIntoView, { Options as scrollIntoViewOptions } from 'scroll-into-view-if-needed';
+import scrollIntoView, { Options as ScrollIntoViewOptions } from 'scroll-into-view-if-needed';
 
 import { BaseFormAdapter, FormState, CallOpts, FieldState, FieldStaff, ComponentProps, setValuesConfig, ArrayFieldStaff } from './interface';
 
-export { BaseFormAdapter };
+export type { BaseFormAdapter };
 
+type ScrollToErrorOpts = {
+    field?: string;
+    index?: number;
+    scrollOpts?: ScrollIntoViewOptions
+}
 export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
 
     data: FormState;
@@ -73,6 +77,7 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
         this.getFormProps = this.getFormProps.bind(this);
         this.getFieldExist = this.getFieldExist.bind(this);
         this.scrollToField = this.scrollToField.bind(this);
+        this.scrollToError = this.scrollToError.bind(this);
     }
 
     init() {
@@ -131,7 +136,7 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
         this._adapter.forceUpdate();
     }
 
-    // in order to slove byted-issue-289
+    // in order to solve bytedance internal issue-289
     registerArrayField(arrayFieldPath: string, val: any): void {
         this.updateArrayField(arrayFieldPath, {
             updateKey: new Date().valueOf(),
@@ -175,18 +180,21 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
                 maybePromisedErrors = errors;
             }
             if (!maybePromisedErrors) {
-                resolve(values);
+                const _values = this._adapter.cloneDeep(values);
+                resolve(_values);
                 this.injectErrorToField({});
             } else if (isPromise(maybePromisedErrors)) {
                 maybePromisedErrors.then(
                     (result: any) => {
                         // validate success，clear error
                         if (!result) {
-                            resolve(values);
+                            const _values = this._adapter.cloneDeep(values);
+                            resolve(_values);
                             this.injectErrorToField({});
                         } else {
                             this.data.errors = result;
                             this._adapter.notifyChange(this.data);
+
                             this.injectErrorToField(result);
                             this._adapter.forceUpdate();
                             this._autoScroll(100);
@@ -205,6 +213,7 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
                 this.data.errors = maybePromisedErrors;
                 this.injectErrorToField(maybePromisedErrors);
                 this._adapter.notifyChange(this.data);
+
                 this._adapter.forceUpdate();
                 this._autoScroll(100);
                 reject(maybePromisedErrors);
@@ -234,10 +243,12 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
             Promise.all(promiseSet).then(() => {
                 // After the centralized verification is completed, trigger notify and forceUpdate once.
                 this._adapter.notifyChange(this.data);
+
                 this._adapter.forceUpdate();
                 const errors = this.getError();
                 if (this._isValid(targetFields)) {
-                    resolve(values);
+                    const _values = this._adapter.cloneDeep(values);
+                    resolve(_values);
                 } else {
                     this._autoScroll();
                     reject(errors);
@@ -246,19 +257,19 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
         });
     }
 
-    submit(): void {
+    submit(e?: any): void {
         const { values } = this.data;
         // validate form
         this.validate()
             .then((resolveValues: any) => {
                 // if valid do submit
                 const _values = this._adapter.cloneDeep(resolveValues);
-                this._adapter.notifySubmit(_values);
+                this._adapter.notifySubmit(_values, e);
             })
             .catch(errors => {
                 const _errors = this._adapter.cloneDeep(errors);
                 const _values = this._adapter.cloneDeep(values);
-                this._adapter.notifySubmitFail(_errors, _values);
+                this._adapter.notifySubmitFail(_errors, _values, e);
             });
     }
 
@@ -485,12 +496,14 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
         const notNotify = opts && opts.notNotify;
         const notUpdate = opts && opts.notUpdate;
         ObjectUtil.set(this.data.errors, field, error);
+
+        
         // The setError caused by centralized validation does not need to trigger notify, otherwise it will be called too frequently, as many times as there are fields
-        // 集中validate时，引起的setError不需要触发notify，否则会过于频繁调用，有多少个field就调用了多少次
         if (!notNotify) {
             this._adapter.notifyChange(this.data);
         }
-
+        this._adapter.notifyErrorChange(this.data.errors, { [field]: error });
+        
         if (!notUpdate) {
             this._adapter.forceUpdate(callback);
         }
@@ -611,6 +624,7 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
             getValue: (field?: string) => this.getValue(field, { needClone: true }),
             getValues: () => this.getValue(undefined, { needClone: true }),
             getFormState: () => this.getFormState(true),
+            getFormProps: (props?: Array<string>) => this.getFormProps(props),
             getInitValue: (field: string) => this.getInitValue(field),
             getInitValues: () => this.getInitValues(),
             getTouched: (field?: string) => this.getTouched(field),
@@ -619,6 +633,7 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
             submitForm: () => this.submit(),
             getFieldExist: (field: string) => this.getFieldExist(field),
             scrollToField: (field: string, scrollOpts?: ScrollIntoViewOptions) => this.scrollToField(field, scrollOpts),
+            scrollToError: (opts?: ScrollToErrorOpts) => this.scrollToError(opts),
         };
     }
 
@@ -694,19 +709,49 @@ export default class FormFoundation extends BaseFoundation<BaseFormAdapter> {
         }
     }
 
-    _getErrorFieldAndScroll(scrollOpts?: scrollIntoViewOptions | boolean): void {
+    _getErrorFieldAndScroll(scrollOpts?: ScrollIntoViewOptions | boolean): void {
         const errorDOM = this._adapter.getAllErrorDOM();
         if (errorDOM && errorDOM.length) {
             try {
-                const fieldDom = errorDOM[0].parentNode.parentNode;
-                scrollIntoView(fieldDom as Element, scrollOpts);
+                const fieldDOM = errorDOM[0].parentNode.parentNode;
+                scrollIntoView(fieldDOM as Element, scrollOpts);
             } catch (error) {}
         }
     }
 
-    scrollToField(field: string, scrollOpts = { behavior: 'smooth', block: 'start' } as scrollIntoViewOptions): void {
+    scrollToField(field: string, scrollOpts = { behavior: 'smooth', block: 'start' } as ScrollIntoViewOptions): void {
         if (this.getFieldExist(field)) {
             const fieldDOM = this._adapter.getFieldDOM(field);
+            scrollIntoView(fieldDOM as Element, scrollOpts);
+        }
+    }
+
+    scrollToError(config?: ScrollToErrorOpts): void { 
+        let scrollOpts: ScrollIntoViewOptions = config && config.scrollOpts ? config.scrollOpts : { behavior: 'smooth', block: 'start' };
+        let field = config && config.field;
+        let index = config && config.index;
+        let fieldDOM, errorDOM;
+        if (typeof index === 'number') {
+            const allErrorDOM = this._adapter.getAllErrorDOM();
+            let errorDOM = allErrorDOM[index];
+            if (errorDOM) {
+                fieldDOM = errorDOM.parentNode.parentNode;
+            }
+        } else if (field) {
+            // If field is specified, find the error dom of the corresponding field
+            errorDOM = this._adapter.getFieldErrorDOM(field);
+            if (errorDOM) {
+                fieldDOM = errorDOM.parentNode.parentNode;
+            }
+        } else if (typeof field === 'undefined') {
+            // If field is not specified, find all error doms and scroll to the first one
+            let allErrorDOM = this._adapter.getAllErrorDOM();
+            if (allErrorDOM && allErrorDOM.length) {
+                fieldDOM = allErrorDOM[0].parentNode.parentNode;
+            }
+        }
+
+        if (fieldDOM) {
             scrollIntoView(fieldDOM as Element, scrollOpts);
         }
     }

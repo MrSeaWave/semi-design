@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 47
+order: 60
 category: 展示类
 title:  Card 卡片
 subTitle: 卡片
@@ -36,7 +36,7 @@ function Demo() {
                 </Text>
             }
         >
-            Semi Design 是由互娱社区前端团队与 UED 团队共同设计开发并维护的设计系统。设计系统包含设计语言以及一整套可复用的前端组件，帮助设计师与开发者更容易地打造高质量的、用户体验一致的、符合设计规范的 Web 应用。
+            Semi Design 是由抖音前端团队与 UED 团队共同设计开发并维护的设计系统。设计系统包含设计语言以及一整套可复用的前端组件，帮助设计师与开发者更容易地打造高质量的、用户体验一致的、符合设计规范的 Web 应用。
         </Card>
     );
 }
@@ -58,7 +58,7 @@ function Demo() {
     return (
         <>
             <Card style={{ maxWidth: 360 }} >
-                Semi Design 是由互娱社区前端团队与 UED 团队共同设计开发并维护的设计系统。
+                Semi Design 是由抖音前端团队与 UED 团队共同设计开发并维护的设计系统。
             </Card>
             <br />
             <Card 
@@ -88,7 +88,7 @@ function Demo() {
                         </article>
                     }
                 >
-                    <IconInfoCircle style={{color:'var(--semi-color-primary)'}}/>
+                    <IconInfoCircle style={{ color: 'var(--semi-color-primary)' }}/>
                 </Popover>
             </Card>
         </>
@@ -148,7 +148,7 @@ function Demo() {
                 headerLine={true}
                 title='Semi Design'
             >
-                Semi Design 是由互娱社区前端团队与 UED 团队共同设计开发并维护的设计系统。设计系统包含设计语言以及一整套可复用的前端组件，帮助设计师与开发者更容易地打造高质量的、用户体验一致的、符合设计规范的 Web 应用。
+                Semi Design 是由抖音前端团队与 UED 团队共同设计开发并维护的设计系统。设计系统包含设计语言以及一整套可复用的前端组件，帮助设计师与开发者更容易地打造高质量的、用户体验一致的、符合设计规范的 Web 应用。
             </Card>
         </div>
     );
@@ -199,7 +199,7 @@ function Demo() {
                         </article>
                     }
                 >
-                    <IconInfoCircle style={{color:'var(--semi-color-primary)'}}/>
+                    <IconInfoCircle style={{ color: 'var(--semi-color-primary)' }}/>
                 </Popover>
             </Card>
             <br/>
@@ -231,7 +231,7 @@ function Demo() {
                         </article>
                     }
                 >
-                    <IconInfoCircle style={{color:'var(--semi-color-primary)'}}/>
+                    <IconInfoCircle style={{ color: 'var(--semi-color-primary)' }}/>
                 </Popover>
             </Card>
         </div>
@@ -288,7 +288,7 @@ function Demo() {
                 </Space>
             }
         >
-            Semi Design 是由互娱社区前端团队与 UED 团队共同设计开发并维护的设计系统。
+            Semi Design 是由抖音前端团队与 UED 团队共同设计开发并维护的设计系统。
         </Card>
     );
 }
@@ -352,7 +352,7 @@ function Demo() {
                 padding: 20
             }}
         >
-            <Row gutter={[16,16]}>
+            <Row gutter={[16, 16]}>
                 <Col span={8}>
                     <Card title='Card Title' bordered={false} >
                         Card Content
@@ -369,7 +369,7 @@ function Demo() {
                     </Card>
                 </Col>
             </Row>
-            <Row gutter={[16,16]}>
+            <Row gutter={[16, 16]}>
                 <Col span={16}>
                     <Card title='Card Title' bordered={false} >
                         Card Content
@@ -443,7 +443,7 @@ function Demo() {
                     <Meta 
                         title={
                             <Skeleton
-                                style={{ width:80 }}
+                                style={{ width: 80 }}
                                 placeholder={<Title />}
                                 loading={loading}
                             >
@@ -454,7 +454,7 @@ function Demo() {
                         } 
                         description={
                             <Skeleton 
-                                style={{ width:150, marginTop: 12 }} 
+                                style={{ width: 150, marginTop: 12 }} 
                                 placeholder={<Paragraph rows={1} />} 
                                 loading={loading}
                             >
@@ -587,19 +587,19 @@ function Demo() {
                 defaultValue={12}
                 max={40}
                 min={10}
-                style={{ width:360 }}
+                style={{ width: 360 }}
                 onChange={v=> setSpacing(v)}
             />
             <br />
             <CardGroup spacing={spacing}>
                 {
-                    new Array(8).fill(null).map((v,idx)=>(
+                    new Array(8).fill(null).map((v, idx)=>(
                         <Card 
                             key={idx}
                             shadows='hover'
                             title='Card title'
                             headerLine={false}
-                            style={{ width:260 }}
+                            style={{ width: 260 }}
                             headerExtraContent={
                                 <Text link>
                                     More
@@ -631,13 +631,13 @@ function Demo() {
     return (
         <CardGroup type='grid'>
             {
-                new Array(7).fill(null).map((v,idx)=>(
+                new Array(7).fill(null).map((v, idx)=>(
                     <Card 
                         key={idx}
                         shadows='hover'
                         title='Card title'
                         headerLine={false}
-                        style={{ width:260 }}
+                        style={{ width: 260 }}
                         headerExtraContent={
                             <Text link>
                                 More
@@ -727,3 +727,5 @@ function Demo() {
 ```material
 41,55,64,74,219,73,84,99,179
 ``` -->
+## 相关物料
+<semi-material-list code="41, 179"></semi-material-list>

@@ -5,7 +5,7 @@ export interface SwitchAdapter<P = Record<string, any>, S = Record<string, any>>
     setNativeControlChecked: (nativeControlChecked: boolean | undefined) => void;
     setNativeControlDisabled: (nativeControlDisabled: boolean | undefined) => void;
     setFocusVisible: (focusVisible: boolean) => void;
-    notifyChange: (checked: boolean, e: any) => void;
+    notifyChange: (checked: boolean, e: any) => void
 }
 
 export default class SwitchFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<SwitchAdapter<P, S>, P, S> {
@@ -15,8 +15,7 @@ export default class SwitchFoundation<P = Record<string, any>, S = Record<string
     }
 
     init(): void {
-        const { defaultChecked, checked, disabled } = this.getProps();
-        this.setChecked(defaultChecked || checked);
+        const { disabled } = this.getProps();
         this.setDisabled(disabled);
     }
 
@@ -45,7 +44,7 @@ export default class SwitchFoundation<P = Record<string, any>, S = Record<string
             if (target.matches(':focus-visible')) {
                 this._adapter.setFocusVisible(true);
             }
-        } catch (error){
+        } catch (error) {
             warning(true, 'Warning: [Semi Switch] The current browser does not support the focus-visible');
         }
     }
@@ -54,6 +53,5 @@ export default class SwitchFoundation<P = Record<string, any>, S = Record<string
         this._adapter.setFocusVisible(false);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy(): void {}
 }

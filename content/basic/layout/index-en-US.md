@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 14
+order: 15
 category: Basic
 title:  Layout
 subTitle: Layout
@@ -38,11 +38,18 @@ import { Layout } from '@douyinfe/semi-ui';
 
 () => {
     const { Header, Footer, Content } = Layout;
+
+    const commonStyle = {
+        height: 64,
+        lineHeight: '64px',
+        background: 'var(--semi-color-fill-0)'
+    };
+
     return (
-        <Layout className='components-layout-demo'>
-            <Header>Header</Header>
-            <Content>Content</Content>
-            <Footer>Footer</Footer>
+        <Layout className="components-layout-demo">
+            <Header style={commonStyle}>Header</Header>
+            <Content style={{ height: 300, lineHeight: '300px' }}>Content</Content>
+            <Footer style={commonStyle}>Footer</Footer>
         </Layout>
     );
 };
@@ -56,14 +63,19 @@ import { Layout } from '@douyinfe/semi-ui';
 
 () => {
     const { Header, Footer, Sider, Content } = Layout;
+    const commonStyle = {
+        height: 64,
+        lineHeight: '64px',
+        background: 'var(--semi-color-fill-0)'
+    };
     return (
-        <Layout className='components-layout-demo'>
-            <Header>Header</Header>
-            <Layout >
-                <Sider>Sider</Sider>
-                <Content>Content</Content>
+        <Layout className="components-layout-demo">
+            <Header style={commonStyle}>Header</Header>
+            <Layout>
+                <Sider style={{ width: '120px', background: 'var(--semi-color-fill-2)' }}>Sider</Sider>
+                <Content style={{ height: 300, lineHeight: '300px' }}>Content</Content>
             </Layout>
-            <Footer>Footer</Footer>
+            <Footer style={commonStyle}>Footer</Footer>
         </Layout>
     );
 };
@@ -77,14 +89,19 @@ import { Layout } from '@douyinfe/semi-ui';
 
 () => {
     const { Header, Footer, Sider, Content } = Layout;
+    const commonStyle = {
+        height: 64,
+        lineHeight: '64px',
+        background: 'var(--semi-color-fill-0)'
+    };
     return (
-        <Layout className='components-layout-demo'>
-            <Header>Header</Header>
-            <Layout >
-                <Content>Content</Content>
-                <Sider>Sider</Sider>
+        <Layout className="components-layout-demo">
+            <Header style={commonStyle}>Header</Header>
+            <Layout>
+                <Content style={{ height: 300, lineHeight: '300px' }}>Content</Content>
+                <Sider style={{ width: '120px', background: 'var(--semi-color-fill-2)' }}>Sider</Sider>
             </Layout>
-            <Footer>Footer</Footer>
+            <Footer style={commonStyle}>Footer</Footer>
         </Layout>
     );
 };
@@ -98,13 +115,18 @@ import { Layout } from '@douyinfe/semi-ui';
 
 () => {
     const { Header, Footer, Sider, Content } = Layout;
+    const commonStyle = {
+        height: 64,
+        lineHeight: '64px',
+        background: 'var(--semi-color-fill-0)'
+    };
     return (
-        <Layout className='components-layout-demo' >
-            <Sider>Sider</Sider>
+        <Layout className="components-layout-demo">
+            <Sider style={{ width: '120px', background: 'var(--semi-color-fill-2)' }}>Sider</Sider>
             <Layout>
-                <Header>Header</Header>
-                <Content>Content</Content>
-                <Footer>Footer</Footer>
+                <Header style={commonStyle}>Header</Header>
+                <Content style={{ height: 300, lineHeight: '300px' }}>Content</Content>
+                <Footer style={commonStyle}>Footer</Footer>
             </Layout>
         </Layout>
     );
@@ -123,15 +145,26 @@ import { Layout } from '@douyinfe/semi-ui';
     const onbreakpoint = (screen, bool) => {
         console.log(screen, bool);
     };
+    const commonStyle = {
+        height: 64,
+        lineHeight: '64px',
+        background: 'var(--semi-color-fill-0)'
+    };
     const { Header, Footer, Sider, Content } = Layout;
     return (
-        <Layout className='components-layout-demo'>
-            <Header>Header</Header>
-            <Layout >
-                <Sider breakpoint={['md']} onBreakpoint={onbreakpoint}>Sider</Sider>
-                <Content>Content</Content>
+        <Layout className="components-layout-demo">
+            <Header style={commonStyle}>Header</Header>
+            <Layout>
+                <Sider
+                    style={{ width: '120px', background: 'var(--semi-color-fill-2)' }}
+                    breakpoint={['md']}
+                    onBreakpoint={onbreakpoint}
+                >
+                    Sider
+                </Sider>
+                <Content style={{ height: 300, lineHeight: '300px' }}>Content</Content>
             </Layout>
-            <Footer>Footer</Footer>
+            <Footer style={commonStyle}>Footer</Footer>
         </Layout>
     );
 };
@@ -149,8 +182,8 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
 () => {
     const { Header, Footer, Content } = Layout;
     return (
-        <Layout style={{border: '1px solid var(--semi-color-border)'}}>
-            <Header style={{backgroundColor: 'var(--semi-color-bg-1)'}}>
+        <Layout style={{ border: '1px solid var(--semi-color-border)' }}>
+            <Header style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
                 <div>
                     <Nav mode='horizontal' defaultSelectedKeys={['Home']}>
                         <Nav.Header>
@@ -164,7 +197,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                                 theme="borderless"
                                 icon = {<IconBell size="large"/>}
                                 style={{
-                                    color:'var(--semi-color-text-2)',
+                                    color: 'var(--semi-color-text-2)',
                                     marginRight: '12px',
                                 }}
                             />
@@ -172,7 +205,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                                 theme="borderless"
                                 icon = {<IconHelpCircle size="large"/>}
                                 style={{
-                                    color:'var(--semi-color-text-2)',
+                                    color: 'var(--semi-color-text-2)',
                                     marginRight: '12px',
                                 }}
                             />
@@ -221,11 +254,11 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                         alignItems: 'center',
                     }}
                 >
-                    <IconBytedanceLogo size='large' style={{marginRight: '8px'}}/>
+                    <IconBytedanceLogo size='large' style={{ marginRight: '8px' }}/>
                     <span>Copyright © 2019 ByteDance. All Rights Reserved. </span>
                 </span>
                 <span>
-                    <span style={{marginRight: '24px'}}>Customer Service</span>
+                    <span style={{ marginRight: '24px' }}>Customer Service</span>
                     <span>Feedback</span>
                 </span>
             </Footer>
@@ -244,12 +277,12 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
 () => {
     const { Header, Footer, Sider, Content } = Layout;
     return (
-        <Layout style={{border: '1px solid var(--semi-color-border)'}}>
-            <Header style={{backgroundColor: 'var(--semi-color-bg-1)'}}>
+        <Layout style={{ border: '1px solid var(--semi-color-border)' }}>
+            <Header style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
                 <div >
                     <Nav mode='horizontal' defaultSelectedKeys={['Home']}>
                         <Nav.Header>
-                            <IconSemiLogo style={{fontSize: 36}} />
+                            <IconSemiLogo style={{ fontSize: 36 }} />
                         </Nav.Header>
                         <span
                             style={{
@@ -262,7 +295,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                                     color: 'var(--semi-color-text-0)',
                                     fontWeight: '600',
                                 }}>Semi Design</span>
-                            <span style={{marginRight: '24px'}}>Semi Theme</span>
+                            <span style={{ marginRight: '24px' }}>Semi Theme</span>
                             <span>Semi Blocks</span>
                         </span>
                         <Nav.Footer>
@@ -270,7 +303,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                                 theme="borderless"
                                 icon = {<IconBell size="large"/>}
                                 style={{
-                                    color:'var(--semi-color-text-2)',
+                                    color: 'var(--semi-color-text-2)',
                                     marginRight: '12px',
                                 }}
                             />
@@ -278,7 +311,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                                 theme="borderless"
                                 icon = {<IconHelpCircle size="large"/>}
                                 style={{
-                                    color:'var(--semi-color-text-2)',
+                                    color: 'var(--semi-color-text-2)',
                                     marginRight: '12px',
                                 }}
                             />
@@ -288,7 +321,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                 </div>
             </Header>
             <Layout >
-                <Sider style={{backgroundColor: 'var(--semi-color-bg-1)'}}>
+                <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
                     <Nav
                         style={{ maxWidth: 220, height: '100%' }}
                         defaultSelectedKeys={['Home']}
@@ -348,7 +381,7 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
                     <span>Copyright © 2019 ByteDance. All Rights Reserved. </span>
                 </span>
                 <span>
-                    <span style={{marginRight: '24px'}}>Customer Service</span>
+                    <span style={{ marginRight: '24px' }}>Customer Service</span>
                     <span>Feedback</span>
                 </span>
             </Footer>
@@ -362,13 +395,13 @@ import { IconSemiLogo, IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, Ic
 ```jsx live=true dir="column" hideInDSM
 import React from 'react';
 import { Layout, Nav, Button, Breadcrumb, Skeleton, Avatar } from '@douyinfe/semi-ui';
-import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, IconLive, IconSetting } from '@douyinfe/semi-icons';
+import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, IconLive, IconSetting, IconSemiLogo } from '@douyinfe/semi-icons';
 
 () => {
     const { Header, Footer, Sider, Content } = Layout;
     return (
-        <Layout style={{border: '1px solid var(--semi-color-border)'}}>
-            <Sider style={{backgroundColor: 'var(--semi-color-bg-1)'}}>
+        <Layout style={{ border: '1px solid var(--semi-color-border)' }}>
+            <Sider style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
                 <Nav
                     defaultSelectedKeys={['Home']}
                     style={{ maxWidth: 220, height: '100%' }}
@@ -379,7 +412,7 @@ import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, I
                         { itemKey: 'Setting', text: 'Setting', icon: <IconSetting size="large" /> },
                     ]}
                     header={{
-                        logo: <img src="//lf1-cdn-tos.bytescm.com/obj/ttfe/ies/semi/webcast_logo.svg" />,
+                        logo:  <IconSemiLogo style={{ fontSize: 36 }} />,
                         text: 'Webcast'
                     }}
                     footer={{
@@ -388,7 +421,7 @@ import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, I
                 />
             </Sider>
             <Layout>
-                <Header style={{backgroundColor: 'var(--semi-color-bg-1)'}}>
+                <Header style={{ backgroundColor: 'var(--semi-color-bg-1)' }}>
                     <Nav
                         mode='horizontal'
                         footer={
@@ -397,7 +430,7 @@ import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, I
                                     theme="borderless"
                                     icon = {<IconBell size="large" />}
                                     style={{
-                                        color:'var(--semi-color-text-2)',
+                                        color: 'var(--semi-color-text-2)',
                                         marginRight: '12px',
                                     }}
                                 />
@@ -405,7 +438,7 @@ import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, I
                                     theme="borderless"
                                     icon = {<IconHelpCircle size="large" />}
                                     style={{
-                                        color:'var(--semi-color-text-2)',
+                                        color: 'var(--semi-color-text-2)',
                                         marginRight: '12px',
                                     }}
                                 />
@@ -459,7 +492,7 @@ import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, I
                         <span>Copyright © 2019 ByteDance. All Rights Reserved. </span>
                     </span>
                     <span>
-                        <span style={{marginRight: '24px'}}>Customer Service</span>
+                        <span style={{ marginRight: '24px' }}>Customer Service</span>
                         <span>Feedback</span>
                     </span>
                 </Footer>
@@ -519,3 +552,5 @@ import { IconBell, IconHelpCircle, IconBytedanceLogo, IconHome, IconHistogram, I
 ```material
 2, 43
 ``` -->
+## Related Material
+<semi-material-list code="2"></semi-material-list>

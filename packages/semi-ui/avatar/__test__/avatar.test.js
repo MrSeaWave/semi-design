@@ -314,6 +314,14 @@ describe('Avatar', () => {
         expect(wrapper.find('.test-avatar').at(0)).toHaveStyle('color', 'red');
     });
 
+    it('gap & scale', () => {
+        const gap = 10
+        const wrapper = mount(<Avatar gap={gap}>Semi</Avatar>);
+        expect(wrapper.find(`.${avartarPrefix}-content`).at(0)).toHaveStyle({
+            'transform': expect.stringMatching(/scale\((1|0\.\d+)\)/)
+        })
+    })
+
     it('onError', () => {
         const onError = () => {};
         const spyOnError = sinon.spy(onError); 
@@ -338,6 +346,14 @@ describe('Avatar', () => {
         expect(spyOnClick.calledOnce).toBe(true);
     })
 
+    it('onClick, topSlot', () => {
+        const onClick = () => {};
+        const spyOnClick = sinon.spy(onClick); 
+        const avatar = mount(<Avatar onClick={spyOnClick} topSlot={{ text: '直播' }}/>);
+        avatar.simulate('click');
+        expect(spyOnClick.calledOnce).toBe(true);
+    })
+
     it('onMouseEnter', () => {
         const onMouseEnter = () => {};
         const spyOnMouseEnter = sinon.spy(onMouseEnter); 
@@ -346,10 +362,26 @@ describe('Avatar', () => {
         expect(spyOnMouseEnter.calledOnce).toBe(true);
     })
 
+    it('onMouseEnter, topSlot', () => {
+        const onMouseEnter = () => {};
+        const spyOnMouseEnter = sinon.spy(onMouseEnter); 
+        const avatar = mount(<Avatar onMouseEnter={spyOnMouseEnter} topSlot={{ text: '直播' }} /> );
+        avatar.simulate('mouseEnter');
+        expect(spyOnMouseEnter.calledOnce).toBe(true);
+    })
+
     it('onMouseLeave', () => {
         const onMouseLeave = () => {};
         const spyOnMouseLeave = sinon.spy(onMouseLeave); 
         const avatar = mount(<Avatar onMouseLeave={spyOnMouseLeave} />);
+        avatar.simulate('mouseLeave');
+        expect(spyOnMouseLeave.calledOnce).toBe(true);
+    })
+
+    it('onMouseLeave, topSlot', () => {
+        const onMouseLeave = () => {};
+        const spyOnMouseLeave = sinon.spy(onMouseLeave); 
+        const avatar = mount(<Avatar onMouseLeave={spyOnMouseLeave} topSlot={{ text: '直播' }} />);
         avatar.simulate('mouseLeave');
         expect(spyOnMouseLeave.calledOnce).toBe(true);
     })

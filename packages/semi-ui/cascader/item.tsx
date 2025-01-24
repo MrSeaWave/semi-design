@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, ReactNode } from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
 import { cssClasses, strings } from '@douyinfe/semi-foundation/cascader/constants';
@@ -14,11 +14,14 @@ import {
     BasicCascaderData,
     BasicEntity,
     ShowNextType,
-    BasicData
+    BasicData,
+    Virtualize
 } from '@douyinfe/semi-foundation/cascader/foundation';
+import { FixedSizeList as List } from 'react-window';
+import VirtualRow from './virtualRow';
 
 export interface CascaderData extends BasicCascaderData {
-    label: React.ReactNode;
+    label: React.ReactNode
 }
 
 export interface Entity extends BasicEntity {
@@ -27,16 +30,30 @@ export interface Entity extends BasicEntity {
     /* treedata */
     data: CascaderData;
     /* parent data */
-    parent?: Entity;
+    parent?: Entity
 }
 
 export interface Entities {
-    [idx: string]: Entity;
+    [idx: string]: Entity
 }
 
 export interface Data extends BasicData {
     data: CascaderData;
-    searchText: React.ReactNode[];
+    searchText: React.ReactNode[]
+}
+
+export interface FilterRenderProps {
+    className: string;
+    inputValue: string;    
+    disabled: boolean;     
+    data: CascaderData[];   
+    checkStatus: {      
+        checked: boolean;
+        halfChecked: boolean
+    };  
+    selected: boolean; 
+    onClick: (e: React.MouseEvent) => void;
+    onCheck: (e: React.MouseEvent) => void
 }
 
 export interface CascaderItemProps {
@@ -59,6 +76,9 @@ export interface CascaderItemProps {
     multiple: boolean;
     checkedKeys: Set<string>;
     halfCheckedKeys: Set<string>;
+    filterRender?: (props: FilterRenderProps) => ReactNode;
+    virtualize?: Virtualize;
+    expandIcon?: ReactNode;
 }
 
 const prefixcls = cssClasses.PREFIX_OPTION;
@@ -78,7 +98,9 @@ export default class Item extends PureComponent<CascaderItemProps> {
         halfCheckedKeys: PropTypes.object,
         onItemCheckboxClick: PropTypes.func,
         separator: PropTypes.string,
-        keyword: PropTypes.string
+        keyword: PropTypes.string,
+        virtualize: PropTypes.object,
+        expandIcon: PropTypes.node,
     };
 
     static defaultProps = {
@@ -139,16 +161,23 @@ export default class Item extends PureComponent<CascaderItemProps> {
         return state;
     };
 
-    renderIcon = (type: string) => {
+    renderIcon = (type: string, haveMarginLeft = false) => {
+        const finalCls = (style: string) => {
+            return style + (haveMarginLeft ? ` ${prefixcls}-icon-left` : '');
+        };
         switch (type) {
             case 'child':
-                return (<IconChevronRight className={`${prefixcls}-icon ${prefixcls}-icon-expand`} />);
+                const { expandIcon } = this.props;
+                if (expandIcon) {
+                    return expandIcon;
+                }
+                return (<IconChevronRight className={finalCls(`${prefixcls}-icon ${prefixcls}-icon-expand`)} />);
             case 'tick':
-                return (<IconTick className={`${prefixcls}-icon ${prefixcls}-icon-active`} />);
+                return (<IconTick className={finalCls(`${prefixcls}-icon ${prefixcls}-icon-active`)} />);
             case 'loading':
-                return <Spin wrapperClassName={`${prefixcls}-spin-icon`} />;
+                return <Spin wrapperClassName={finalCls(`${prefixcls}-spin-icon`)} />;
             case 'empty':
-                return (<span aria-hidden={true} className={`${prefixcls}-icon ${prefixcls}-icon-empty`} />);
+                return (<span aria-hidden={true} className={finalCls(`${prefixcls}-icon ${prefixcls}-icon-empty`)} />);
             default:
                 return null;
         }
@@ -179,46 +208,96 @@ export default class Item extends PureComponent<CascaderItemProps> {
         return content;
     };
 
+    renderFlattenOptionItem = (data: Data, index?: number, style?: any) => {
+        const { multiple, selectedKeys, checkedKeys, halfCheckedKeys, keyword, filterRender, virtualize } = this.props;
+        const { searchText, key, disabled, pathData } = data;
+        const selected = selectedKeys.has(key);
+        const className = cls(prefixcls, {
+            [`${prefixcls}-flatten`]: true && !filterRender,
+            [`${prefixcls}-disabled`]: disabled,
+            [`${prefixcls}-select`]: selected && !multiple,
+        });
+        const onClick = e => {
+            this.onClick(e, data);
+        };
+        const onKeyPress = e => this.handleItemEnterPress(e, data);
+        const onCheck = (e: CheckboxEvent) => this.onCheckboxChange(e, data);
+        if (filterRender) {
+            const props = {
+                className,
+                inputValue: keyword,
+                disabled,
+                data: pathData,
+                checkStatus: {
+                    checked: checkedKeys.has(data.key),
+                    halfChecked: halfCheckedKeys.has(data.key),
+                },
+                selected,
+                onClick,
+                onCheck
+            };
+            const item = filterRender(props) as any;
+            const otherProps = virtualize ? { 
+                key, 
+                style: {
+                    ...(item.props.style ?? {}),
+                    ...style
+                },
+            } : { key };
+            return React.cloneElement(item, otherProps );
+        }
+        return (
+            <li
+                role='menuitem'
+                className={className}
+                style={style}
+                key={key}
+                onClick={onClick}
+                onKeyPress={onKeyPress}
+            >
+                <span className={`${prefixcls}-label`}>
+                    {!multiple && this.renderIcon('empty')}
+                    {multiple && (
+                        <Checkbox
+                            onChange={onCheck}
+                            disabled={disabled}
+                            indeterminate={halfCheckedKeys.has(data.key)}
+                            checked={checkedKeys.has(data.key)}
+                            className={`${prefixcls}-label-checkbox`}
+                        />
+                    )}
+                    {this.highlight(searchText)}
+                </span>
+            </li>
+        );
+    }
+
     renderFlattenOption = (data: Data[]) => {
-        const { multiple, checkedKeys, halfCheckedKeys } = this.props;
+        const { virtualize } = this.props;
         const content = (
             <ul className={`${prefixcls}-list`} key={'flatten-list'}>
-                {data.map(item => {
-                    const { searchText, key, disabled } = item;
-                    const className = cls(prefixcls, {
-                        [`${prefixcls}-flatten`]: true,
-                        [`${prefixcls}-disabled`]: disabled
-                    });
-                    return (
-                        <li
-                            role='menuitem'
-                            className={className}
-                            key={key}
-                            onClick={e => {
-                                this.onClick(e, item);
-                            }}
-                            onKeyPress={e => this.handleItemEnterPress(e, item)}
-                        >
-                            <span className={`${prefixcls}-label`}>
-                                {!multiple && this.renderIcon('empty')}
-                                {multiple && (
-                                    <Checkbox
-                                        onChange={(e: CheckboxEvent) => this.onCheckboxChange(e, item)}
-                                        disabled={disabled}
-                                        indeterminate={halfCheckedKeys.has(item.key)}
-                                        checked={checkedKeys.has(item.key)}
-                                        className={`${prefixcls}-label-checkbox`}
-                                    />
-                                )}
-                                {this.highlight(searchText)}
-                            </span>
-                        </li>
-                    );
-                })}
+                {virtualize ? this.renderVirtualizeList(data) : data.map(item => this.renderFlattenOptionItem(item))}
             </ul>
         );
         return content;
     };
+
+    renderVirtualizeList = (visibleOptions: any) => {
+        const { direction } = this.context;
+        const { virtualize } = this.props;
+        return (
+            <List
+                height={virtualize.height}
+                itemCount={visibleOptions.length}
+                itemSize={virtualize.itemSize}
+                itemData={{ visibleOptions, renderOption: this.renderFlattenOptionItem }}
+                width={virtualize.width ?? '100%'}
+                style={{ direction }}
+            >
+                {VirtualRow}
+            </List>
+        );
+    }
 
     renderItem(renderData: Array<Entity>, content: Array<React.ReactNode> = []) {
         const { multiple, checkedKeys, halfCheckedKeys } = this.props;
@@ -273,7 +352,7 @@ export default class Item extends PureComponent<CascaderItemProps> {
                                 )}
                                 <span>{label}</span>
                             </span>
-                            {showExpand ? this.renderIcon(loading ? 'loading' : 'child') : null}
+                            {showExpand ? this.renderIcon(loading ? 'loading' : 'child', true) : null}
                         </li>
                     );
                 })}
@@ -287,6 +366,9 @@ export default class Item extends PureComponent<CascaderItemProps> {
 
     renderEmpty() {
         const { emptyContent } = this.props;
+        if (emptyContent === null) {
+            return null;
+        }
         return (
             <LocaleConsumer componentName="Cascader">
                 {(locale: Locale['Cascader']) => (

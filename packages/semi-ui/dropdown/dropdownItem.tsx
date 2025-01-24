@@ -2,10 +2,13 @@ import React from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
 import { cssClasses as css, strings } from '@douyinfe/semi-foundation/dropdown/constants';
-import DropdownContext, { DropdownContextType } from './context';
-import BaseComponent, { BaseProps } from '../_base/baseComponent';
+import DropdownContext from './context';
+import BaseComponent from '../_base/baseComponent';
 import { IconTick } from '@douyinfe/semi-icons';
 import { noop } from 'lodash';
+
+import type { BaseProps } from '../_base/baseComponent';
+import type { DropdownContextType } from './context';
 
 export type Type = 'primary' | 'secondary' | 'tertiary' | 'warning' | 'danger';
 
@@ -20,6 +23,10 @@ export interface DropdownItemProps extends BaseProps {
     type?: Type;
     active?: boolean;
     icon?: React.ReactNode;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
+    showTick?: boolean;
+    /** internal prop, please do not use  */
+    hover?: boolean
 }
 
 const prefixCls = css.PREFIX;
@@ -40,10 +47,12 @@ class DropdownItem extends BaseComponent<DropdownItemProps> {
         forwardRef: PropTypes.func,
         type: PropTypes.oneOf(strings.ITEM_TYPE),
         active: PropTypes.bool,
-        icon: PropTypes.node
+        icon: PropTypes.node,
     };
 
     static contextType = DropdownContext;
+    static elementType: string;
+
     context: DropdownContextType;
 
     static defaultProps = {
@@ -57,12 +66,26 @@ class DropdownItem extends BaseComponent<DropdownItemProps> {
 
 
     render() {
-        const { children, disabled, className, forwardRef, style, type, active, icon } = this.props;
-        const { showTick } = this.context;
+        const {
+            children,
+            disabled,
+            className,
+            forwardRef,
+            style,
+            type,
+            active,
+            icon,
+            onKeyDown,
+            showTick,
+            hover
+        } = this.props;
+        const { showTick: contextShowTick } = this.context;
+        const realShowTick = contextShowTick ?? showTick;
         const itemclass = cls(className, {
             [`${prefixCls}-item`]: true,
             [`${prefixCls}-item-disabled`]: disabled,
-            [`${prefixCls}-item-withTick`]: showTick,
+            [`${prefixCls}-item-hover`]: hover,
+            [`${prefixCls}-item-withTick`]: realShowTick,
             [`${prefixCls}-item-${type}`]: type,
             [`${prefixCls}-item-active`]: active,
         });
@@ -70,16 +93,25 @@ class DropdownItem extends BaseComponent<DropdownItemProps> {
         const events = {};
         if (!disabled) {
             ['onClick', 'onMouseEnter', 'onMouseLeave', 'onContextMenu'].forEach(eventName => {
-                events[eventName] = this.props[eventName];
+                const isInAnotherDropdown = this.context.level !== 1;
+                if (isInAnotherDropdown && eventName === "onClick") {
+                    events["onMouseDown"] = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+                        if (e.button === 0) {
+                            this.props[eventName]?.(e);
+                        }
+                    };
+                } else {
+                    events[eventName] = this.props[eventName];
+                }
             });
         }
         let tick = null;
         switch (true) {
-            case showTick && active:
-                tick = <IconTick />;
+            case realShowTick && active:
+                tick = <IconTick/>;
                 break;
-            case showTick && !active:
-                tick = <IconTick style={{ color: 'transparent' }} />;
+            case realShowTick && !active:
+                tick = <IconTick style={{ color: 'transparent' }}/>;
                 break;
             default:
                 tick = null;
@@ -94,7 +126,8 @@ class DropdownItem extends BaseComponent<DropdownItemProps> {
             );
         }
         return (
-            <li role="menuitem" tabIndex={-1} aria-disabled={disabled} {...events} ref={ref => forwardRef(ref)} className={itemclass} style={style}>
+            <li role="menuitem" tabIndex={-1} aria-disabled={disabled} {...events} onKeyDown={onKeyDown}
+                ref={ref => forwardRef(ref)} className={itemclass} style={style} {...this.getDataAttr(this.props)}>
                 {tick}
                 {iconContent}
                 {children}
@@ -102,5 +135,7 @@ class DropdownItem extends BaseComponent<DropdownItemProps> {
         );
     }
 }
+
+DropdownItem.elementType = 'Dropdown.Item';
 
 export default DropdownItem;

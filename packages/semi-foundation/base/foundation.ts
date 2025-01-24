@@ -8,7 +8,6 @@ import log from '../utils/log';
 import { noop } from 'lodash';
 
 export type noopFunction = (...args: any) => any;
-// eslint-disable-next-line
 export interface DefaultAdapter<P = Record<string, any>, S = Record<string, any>> {
     getContext(key: string): any;
     getContexts(): any;
@@ -16,11 +15,12 @@ export interface DefaultAdapter<P = Record<string, any>, S = Record<string, any>
     getProps(): P;
     getState(key: string): any;
     getStates(): S;
-    setState(s: Pick<S, keyof S>, callback?: any): void;
+    setState<K extends keyof S>(s: Pick<S, K>, callback?: any): void;
     getCache(c: string): any;
     getCaches(): any;
     setCache(key: any, value: any): void;
     stopPropagation(e: any): void;
+    persistEvent: (event: any) => void
 }
 
 class BaseFoundation<T extends Partial<DefaultAdapter<P, S>>, P = Record<string, any>, S = Record<string, any>> {
@@ -61,6 +61,7 @@ class BaseFoundation<T extends Partial<DefaultAdapter<P, S>>, P = Record<string,
             setCache: noop,
             getCaches: noop,
             stopPropagation: noop,
+            persistEvent: noop,
         };
     }
 
@@ -86,7 +87,7 @@ class BaseFoundation<T extends Partial<DefaultAdapter<P, S>>, P = Record<string,
         return this._adapter.getStates();
     }
 
-    setState(states: S, cb?: (...args: any) => void) {
+    setState<K extends keyof S>(states: Pick<S, K>, cb?: (...args: any) => void) {
         return this._adapter.setState({ ...states }, cb);
     }
 
@@ -140,6 +141,11 @@ class BaseFoundation<T extends Partial<DefaultAdapter<P, S>>, P = Record<string,
     /* istanbul ignore next */
     log(text: string, ...rest: any) {
         log(text, ...rest);
+    }
+
+    _persistEvent(e: any) {
+        // only work for react adapter for now
+        this._adapter.persistEvent(e);
     }
 }
 export default BaseFoundation;

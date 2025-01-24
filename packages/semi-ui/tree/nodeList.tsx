@@ -1,13 +1,11 @@
 import React, { PureComponent } from 'react';
 import { isEqual } from 'lodash';
 import TreeContext from './treeContext';
-import Collapse from './collapse';
 import { FlattenNode, NodeListProps, NodeListState, TransitionNodes } from './interface';
+import NodeCollapsible from './nodeCollapsible';
 
 const getTreeNodeKey = (treeNode: FlattenNode) => {
-    const { data } = treeNode;
-    const { key } = data;
-    return key;
+    return treeNode.key;
 };
 
 export default class NodeList extends PureComponent<NodeListProps, NodeListState> {
@@ -71,14 +69,15 @@ export default class NodeList extends PureComponent<NodeListProps, NodeListState
             if (isMotionNode && (treeNode as FlattenNode[]).length) {
                 const nodeKey = getTreeNodeKey(treeNode[0]);
                 return (
-                    <Collapse
-                        motionType={motionType === 'show' ? 'enter' : 'leave'}
+                    <NodeCollapsible
+                        open={motionType === 'hide'}
+                        duration={200}
+                        motion={Boolean(motionType)}
                         key={`motion-${nodeKey}`}
                         onMotionEnd={this.onMotionEnd}
-                        motion={Boolean(motionType)}
                     >
                         {treeNode.map(node => renderTreeNode(node))}
-                    </Collapse>
+                    </NodeCollapsible>
                 );
             }
             return renderTreeNode(treeNode as FlattenNode);

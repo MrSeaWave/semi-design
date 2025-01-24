@@ -12,7 +12,7 @@ describe('Toast - 2', () => {
         clear();
         const tw = document.querySelector(`.${BASE_CLASS_PREFIX}-toast-wrapper`);
         if (tw) {
-            tw.innerHTML = '';
+            tw.childNodes[0].innerHTML = '';
         }
     });
 
@@ -22,6 +22,7 @@ describe('Toast - 2', () => {
         let opts = {
             content: 'close by manual',
             duration: 0,
+            motion:false
         };
         let id = Toast.info(opts);
         let toast = document.getElementsByClassName(`${BASE_CLASS_PREFIX}-toast-info`);
@@ -59,5 +60,28 @@ describe('Toast - 2', () => {
         expect(style.left).toEqual('20px');
         expect(style.bottom).toEqual('30px');
         expect(style.right).toEqual('40px');
+    });
+
+    it('set global config', () => {
+        Toast.destroyAll();
+        Toast.config({
+            theme: 'light',
+            duration: 0,
+            top: 40,
+            left: 30,
+            bottom: 20,
+            right: 10,
+            zIndex: 30,
+        })
+        Toast.info('Hi, Bytedance dance');
+        let toastWrapper = document.getElementsByClassName(`${BASE_CLASS_PREFIX}-toast-wrapper`)[0];
+        let style = toastWrapper.style;
+        expect(style.top).toEqual('40px');
+        expect(style.left).toEqual('30px');
+        expect(style.bottom).toEqual('20px');
+        expect(style.right).toEqual('10px');
+        expect(style.zIndex).toEqual('30');
+        let toast = document.querySelector(`.${BASE_CLASS_PREFIX}-toast-info`);
+        expect(toast.classList.contains(`${BASE_CLASS_PREFIX}-toast-light`)).toEqual(true);
     });
 });

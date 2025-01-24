@@ -4,7 +4,7 @@ import { RadioChangeEvent } from './radioInnerFoundation';
 export interface RadioGroupAdapter extends DefaultAdapter {
     isInProps?: (name: string) => boolean;
     notifyChange?: (e: RadioChangeEvent) => void;
-    setValue?: (value: any) => void;
+    setValue?: (value: any) => void
 }
 
 export default class RadioGroupFoundation extends BaseFoundation<RadioGroupAdapter> {
@@ -69,6 +69,5 @@ export default class RadioGroupFoundation extends BaseFoundation<RadioGroupAdapt
         this._adapter.setValue(value);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy() {}
 }

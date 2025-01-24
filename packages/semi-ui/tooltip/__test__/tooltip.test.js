@@ -57,6 +57,7 @@ describe(`Tooltip`, () => {
         expect(document.querySelectorAll(`.${BASE_CLASS_PREFIX}-tooltip-wrapper`).length).toBe(1);
 
         // scroll
+        await sleep(100);
         const deltaY = 50;
         const scrollContainer = demo.find(`#${scrollContainerId}`);
         const oldTop = window.getComputedStyle(tooltipOuter).top;
@@ -294,14 +295,14 @@ describe(`Tooltip`, () => {
     });
 
   it(`test click outside handler`, async () => {
-    const containerId = `container`;
-
+    const containerId = `container`
     const demo = mount(
       <div style={{ height: 480, width: 320 }}>
         <div id={containerId}>Hello Semi</div>
         <Tooltip
           content='Content'
           trigger='click'
+          motion={false}
         >
           <Button >Click here</Button>
         </Tooltip>

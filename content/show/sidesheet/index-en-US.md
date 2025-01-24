@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 59
+order: 75
 category: Show
 title: SideSheet
 subTitle: SideSheet
@@ -118,7 +118,7 @@ import { SideSheet, RadioGroup, Radio, Button } from '@douyinfe/semi-ui';
 After `v0.29.0`, you could set `mask={false}` to continue working on the area outside SideSheet.
 
 <Notice title='Tips'>
-  By default, if you are not setting `getPopupContainer`, SideSheet is rendered inside `body`. If you want `body` element to be able to scroll, you could set `disableScroll={false}` and the component will not add `overflow: hidden` to it.
+  By default, if you are not setting `getPopupContainer`, SideSheet is rendered inside body. If you want body element to be able to scroll, you could set disableScroll to false and the component will not add `overflow: hidden` to it.
 </Notice>
 
 ```jsx live=true
@@ -131,10 +131,8 @@ import { SideSheet, Button, TextArea } from '@douyinfe/semi-ui';
     return (
         <>
             <Button onClick={() => setVisible(true)}>Open SideSheet</Button>
-            <br />
-            <br />
-            <TextArea placeholder="Please enter something" onChange={value => setValue(value)} />
-            <SideSheet title="SideSheet" visible={visible} onCancel={() => setVisible(false)} mask={false}>
+            <TextArea placeholder="Please enter something" onChange={value => setValue(value)} style={{ marginTop: 12 }}/>
+            <SideSheet title="SideSheet" visible={visible} onCancel={() => setVisible(false)} mask={false} disableScroll={false}>
                 <p>Here is what you entered: </p>
                 <p>{value}</p>
             </SideSheet>
@@ -145,7 +143,7 @@ import { SideSheet, Button, TextArea } from '@douyinfe/semi-ui';
 
 ### Rendered Inside Container
 
-After `v0.29.0`, you could use `getPopupContainer` to render SideSheet in targeted DOM.
+After `v0.29.0`, you could use `getPopupContainer` to render SideSheet in targeted DOM. 
 
 <Notice title='Tips'>
   The container must have `overflow: hidden` to avoid animated SideSheet overflows.
@@ -256,7 +254,7 @@ class Demo extends React.Component {
                             initValue={'all'}
                         >
                             <Radio value="all">All</Radio>
-                            <Radio value="ios">IOS</Radio>
+                            <Radio value="ios">iOS</Radio>
                             <Radio value="android">Android</Radio>
                             <Radio value="web">Web</Radio>
                         </RadioGroup>
@@ -299,31 +297,32 @@ class Demo extends React.Component {
 
 ## API Reference
 
-| Properties | Instructions | type | Default | Version |
-| --- | --- | --- | --- | --- |
-| afterVisibleChange | Callback function when animation of SideSheet ends | (isVisble: boolean) => void | - | 1.0.0 |
-| bodyStyle | Content style | CSSProperties | - | - |
-| className | Class name | string | - | - |
-| closable | Toggle whether to show close button | boolean | true | - |
-| closeOnEsc | oggle whether to allow close modal by keyboard event Esc | boolean | false | 1.0.0 |
-| disableScroll | Toggle whether to add `overflow: hidden` to document.body element. Only works when not setting `getPopupContainer` | boolean | true | - |
-| footer | Footer | ReactNode | null | 1.3.0 |
-| getPopupContainer | Container where to render SideSheet inside, you need to set 'position: relative` | () => HTMLElement | - | 0.29.0 |
-| headerStyle | Header style | CSSProperties | - | 1.0.0 |
-| height | Height, takes effect when `placement` is set to `top` or `bottom` | number \| string | 400 | - |
-| keepDOM | Keep components inside when closing sideSheet<br/>**v1.18.0 provided** | boolean | false |
-| mask | Toggle whether to show mask. After `v0.29.0`, when `mask={false}`, you could continue operations outside SideSheet | boolean | true | - |
-| maskClosable | Toggle whether to allow closing when clicking mask | boolean | true | - |
-| maskStyle | Mask style | CSSProperties | - | - |
-| motion | Toggle whether to turn on animation | object \| boolean | true | - |
-| placement | Sliding position, one of `top`, `bottom`, `left`, `right` | string | `right` | - |
+| Properties | Instructions                                                                                                               | type | Default | Version |
+| --- |----------------------------------------------------------------------------------------------------------------------------| --- | --- | --- |
+| afterVisibleChange | Callback function when animation of SideSheet ends                                                                         | (isVisible: boolean) => void | - | 1.0.0 |
+| bodyStyle | Content style                                                                                                              | CSSProperties | - | - |
+| className | Class name                                                                                                                 | string | - | - |
+| closable | Toggle whether to show close button                                                                                        | boolean | true | - |
+| closeIcon         | Icon for close button                                                                                              | ReactNode | <IconClose /\>    | - |
+| closeOnEsc | oggle whether to allow close modal by keyboard event Esc                                                                   | boolean | false | 1.0.0 |
+| disableScroll | Toggle whether to add `overflow: hidden` to document.body element. Only works when not setting `getPopupContainer`         | boolean | true | - |
+| footer | Footer                                                                                                                     | ReactNode | null | 1.3.0 |
+| getPopupContainer | Container where to render SideSheet inside, you need to set 'position: relative`  This will change the DOM tree position, but not the view's rendering position.                                           | () => HTMLElement | - | 0.29.0 |
+| headerStyle | Header style                                                                                                               | CSSProperties | - | 1.0.0 |
+| height | Height, takes effect when `placement` is set to `top` or `bottom`                                                          | number \| string | 400 | - |
+| keepDOM | Keep components inside when closing sideSheet<br/>**v1.18.0 provided**                                                     | boolean | false |
+| mask | Toggle whether to show mask. After `v0.29.0`, when `mask={false}`, you could continue operations outside SideSheet         | boolean | true | - |
+| maskClosable | Toggle whether to allow closing when clicking mask                                                                         | boolean | true | - |
+| maskStyle | Mask style                                                                                                                 | CSSProperties | - | - |
+| motion | Toggle whether to turn on animation                                                                                        | boolean | true | - |
+| placement | Sliding position, one of `top`, `bottom`, `left`, `right`                                                                  | string | `right` | - |
 | size | Size, one of `small`(400px)， `medium`(684px), `large`(920px), only take effects when placement is set to `left` or `right` | string | `small` | 0.29.0 |
-| style | Inline style | CSSProperties | - | - |
-| title | Title | ReactNode | - | - |
-| visible | Toggle visibility of the SideSheet | boolean | false | - |
-| width | Width, takes effect when `placement` is set to `left` or `right` | number \| string | 448 | - |
-| zIndex | Z-index value for SideSheet | number | 1000 | 0.29.0 |
-| onCancel | Callback function when clicking cancel button | (e: MouseEvent) => void | - | - |
+| style | Inline style                                                                                                               | CSSProperties | - | - |
+| title | Title                                                                                                                      | ReactNode | - | - |
+| visible | Toggle visibility of the SideSheet                                                                                         | boolean | false | - |
+| width | Width, takes effect when `placement` is set to `left` or `right`                                                           | number \| string | 448 | - |
+| zIndex | Z-index value for SideSheet                                                                                                | number | 1000 | 0.29.0 |
+| onCancel | Callback function when clicking cancel button                                                                              | (e: MouseEvent) => void | - | - |
 
 ## Accessibility
 

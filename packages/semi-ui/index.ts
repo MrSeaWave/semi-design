@@ -1,7 +1,9 @@
 import './_base/base.scss';
+export { default as BaseFoundation } from "@douyinfe/semi-foundation/base/foundation";
+export { default as BaseComponent } from "./_base/baseComponent";
 export { default as Anchor } from './anchor';
 export { default as AutoComplete } from './autoComplete';
-export { default as Avatar } from './avatar';
+export { default as Avatar } from './avatar'; 
 export { default as AvatarGroup } from './avatar/avatarGroup';
 export { default as BackTop } from './backtop';
 export { default as Badge } from './badge';
@@ -19,6 +21,7 @@ export { default as CheckboxGroup } from './checkbox/checkboxGroup';
 export { default as Collapse } from './collapse';
 export { default as Collapsible } from './collapsible';
 export { default as ConfigProvider } from './configProvider';
+export { ConfigConsumer } from "./configProvider";
 export { default as DatePicker } from './datePicker';
 export { default as Descriptions } from './descriptions';
 export { default as Divider } from './divider';
@@ -79,9 +82,10 @@ export { default as TreeSelect } from './treeSelect';
 export { default as Upload } from './upload';
 export { default as Typography } from './typography';
 export { default as Transfer } from './transfer';
-
+export { default as Highlight } from './highlight';
 
 export { default as LocaleProvider } from './locale/localeProvider';
+export { default as LocaleConsumer } from './locale/localeConsumer';
 
 /** Form */
 export {
@@ -95,3 +99,31 @@ export {
     withField,
     ArrayField,
 } from './form';
+
+export { default as Image } from './image';
+export { Preview as ImagePreview } from './image';
+
+export { default as semiGlobal } from "./_utils/semi-global";
+export { default as ColorPicker } from "./colorPicker";
+
+export { default as PinCode } from "./pincode";
+
+export { default as MarkdownRender } from "./markdownRender";
+export { default as CodeHighlight } from "./codeHighlight";
+export { default as Lottie } from "./lottie";
+
+export { default as Chat } from './chat';
+
+export { default as HotKeys } from './hotKeys'; 
+
+export {
+    Resizable,
+    ResizeItem,
+    ResizeHandler,
+    ResizeGroup
+} from './resizable';
+
+export { default as JsonViewer } from './jsonViewer';
+export { default as DragMove } from './dragMove';
+export { default as Cropper } from './cropper';
+export { default as AudioPlayer } from './audioPlayer';

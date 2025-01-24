@@ -20,7 +20,7 @@ export interface FillStepProps {
     onClick?: React.MouseEventHandler<HTMLDivElement>;
     onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
     "role"?: React.AriaRole;
-    "aria-label"?: React.AriaAttributes["aria-label"];
+    "aria-label"?: React.AriaAttributes["aria-label"]
 }
 
 const FillStep = (props: FillStepProps) => {
@@ -58,22 +58,19 @@ const FillStep = (props: FillStepProps) => {
             [`${prefixCls}-icon`]: 'icon' in props,
             [`${prefixCls}-plain`]: !('icon' in props),
             [`${prefixCls}-icon-process`]: progress,
+            [`${prefixCls}-hover`]: onChange || onClick,
         });
 
         return inner ? <div className={cls}>{inner}</div> : null;
     };
-    const handleClick = (e: React.MouseEvent) => {
-        if (isFunction(onClick)) {
-            onClick(e);
-        }
-        onChange();
+    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        onClick?.(e);
+        onChange?.();
     };
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
-            if (isFunction(onKeyDown)) {
-                onKeyDown(e);
-            }
-            onChange();
+            onKeyDown?.(e);
+            onChange?.();
         }
     };
     return (
@@ -85,7 +82,9 @@ const FillStep = (props: FillStepProps) => {
             className={classnames({
                 [prefixCls]: true,
                 [`${prefixCls}-${status}`]: Boolean(status),
-                [`${prefixCls}-clickable`]: onClick,
+                [`${prefixCls}-${status}-hover`]: Boolean(status) && (onChange || onClick),
+                [`${prefixCls}-${status}-active`]: Boolean(status) && (onChange || onClick),
+                [`${prefixCls}-clickable`]: (onChange || onClick),
             }, className)}
             style={style}
             onClick={e => {

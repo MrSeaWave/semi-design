@@ -18,7 +18,7 @@ const prefixCls = `${cssClasses.PREFIX}-day`;
 export interface DayCalendarState {
     scrollHeight: number;
     parsedEvents: ParsedEventsWithArray;
-    cachedKeys: Array<string>;
+    cachedKeys: Array<string>
 }
 
 export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCalendarState> {
@@ -31,12 +31,14 @@ export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCale
         mode: PropTypes.string,
         renderTimeDisplay: PropTypes.func,
         markWeekend: PropTypes.bool,
+        minEventHeight: PropTypes.number,
         scrollTop: PropTypes.number,
         width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         style: PropTypes.object,
         className: PropTypes.string,
         dateGridRender: PropTypes.func,
+        allDayEventsRender: PropTypes.func,
     };
 
     static defaultProps = {
@@ -97,7 +99,7 @@ export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCale
     componentDidUpdate(prevProps: DayCalendarProps, prevState: DayCalendarState) {
         const prevEventKeys = prevState.cachedKeys;
         const nowEventKeys = this.props.events.map(event => event.key);
-        if (!isEqual(prevEventKeys, nowEventKeys)) {
+        if (!isEqual(prevEventKeys, nowEventKeys) || !isEqual(prevProps.displayValue, this.props.displayValue)) {
             this.foundation.parseDailyEvents();
         }
     }
@@ -109,10 +111,12 @@ export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCale
     checkWeekend = (val: Date) => this.foundation.checkWeekend(val);
 
     renderAllDayEvents = (events: ParsedEventsWithArray['allDay']) => {
+        if (this.props.allDayEventsRender) {
+            return this.props.allDayEventsRender(this.props.events);
+        }
         const list = events.map((event, ind) => {
             const { children, key } = event;
             return (
-                // eslint-disable-next-line max-len
                 <li className={`${cssClasses.PREFIX}-event-item ${cssClasses.PREFIX}-event-allday`} key={key || `allDay-${ind}`}>
                     {children}
                 </li>
@@ -151,8 +155,7 @@ export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCale
     };
 
     render() {
-        // eslint-disable-next-line max-len
-        const { dateGridRender, displayValue, showCurrTime, renderTimeDisplay, markWeekend, className, height, width, style, header } = this.props;
+        const { dateGridRender, displayValue, showCurrTime, renderTimeDisplay, markWeekend, className, height, width, style, header, minEventHeight } = this.props;
         const dayCls = cls(prefixCls, className);
         const dayStyle = {
             height,
@@ -162,7 +165,7 @@ export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCale
         const { parsedEvents, scrollHeight } = this.state;
         this.isWeekend = markWeekend && this.checkWeekend(displayValue);
         return (
-            <div className={dayCls} style={dayStyle} ref={this.dom}>
+            <div className={dayCls} style={dayStyle} ref={this.dom} {...this.getDataAttr(this.props)}>
                 <div className={`${prefixCls}-sticky-top`}>
                     {header}
                     {this.renderAllDay(parsedEvents.allDay)}
@@ -180,6 +183,7 @@ export default class DayCalendar extends BaseComponent<DayCalendarProps, DayCale
                             handleClick={this.handleClick}
                             showCurrTime={showCurrTime}
                             isWeekend={this.isWeekend}
+                            minEventHeight={minEventHeight}
                             dateGridRender={dateGridRender}
                         />
                     </div>

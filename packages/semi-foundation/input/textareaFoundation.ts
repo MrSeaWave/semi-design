@@ -7,7 +7,7 @@ import {
 } from 'lodash';
 import calculateNodeHeight from './util/calculateNodeHeight';
 import getSizingData from './util/getSizingData';
-import isEnterPress from '../utils/isEnterPress';
+import truncateValue from './util/truncateValue';
 
 export interface TextAreaDefaultAdapter {
     notifyChange: noopFunction;
@@ -18,14 +18,14 @@ export interface TextAreaDefaultAdapter {
     notifyKeyDown: noopFunction;
     notifyEnterPress: noopFunction;
     toggleHovering(hovering: boolean): void;
-    notifyClear(e: any): void;
+    notifyClear(e: any): void
 }
 
 export interface TextAreaAdapter extends Partial<DefaultAdapter>, Partial<TextAreaDefaultAdapter> {
     setMinLength(length: number): void;
     notifyPressEnter(e: any): void;
-    getRef(): any;
-    notifyHeightUpdate(e: any): void;
+    getRef(): HTMLInputElement;
+    notifyHeightUpdate(e: any): void
 }
 
 export default class TextAreaFoundation extends BaseFoundation<TextAreaAdapter> {
@@ -49,24 +49,7 @@ export default class TextAreaFoundation extends BaseFoundation<TextAreaAdapter> 
         });
     }
 
-    init() {
-        this.setInitValue();
-    }
-
-    // eslint-disable-next-line
     destroy() { }
-
-    setInitValue() {
-        const {
-            defaultValue,
-            value
-        } = this.getProps();
-        let v = defaultValue;
-        if (this._isControlledComponent()) {
-            v = value;
-        }
-        this._adapter.setValue(v);
-    }
 
     handleValueChange(v: string) {
         this._adapter.setValue(v);
@@ -115,16 +98,21 @@ export default class TextAreaFoundation extends BaseFoundation<TextAreaAdapter> 
      */
     handleVisibleMaxLength(value: string) {
         const { maxLength, getValueLength } = this._adapter.getProps();
-        if (isNumber(maxLength) && maxLength >= 0 && isFunction(getValueLength) && isString(value)) {
-            const valueLength = getValueLength(value);
-            if (valueLength > maxLength) {
-                // eslint-disable-next-line max-len
-                console.warn('[Semi TextArea] The input character is truncated because the input length exceeds the maximum length limit');
-                const truncatedValue = this.handleTruncateValue(value, maxLength);
-                return truncatedValue;
+        if (isNumber(maxLength) && maxLength >= 0 && isString(value)) {
+            if (isFunction(getValueLength)) {
+                const valueLength = getValueLength(value);
+                if (valueLength > maxLength) {
+                    console.warn('[Semi TextArea] The input character is truncated because the input length exceeds the maximum length limit');
+                    const truncatedValue = this.handleTruncateValue(value, maxLength);
+                    return truncatedValue;
+                }
             } else {
-                return value;
+                if (value.length > maxLength) {
+                    console.warn('[Semi TextArea] The input character is truncated because the input length exceeds the maximum length limit');
+                    return value.slice(0, maxLength);
+                }
             }
+            return value;
         }
         return undefined;
     }
@@ -137,20 +125,7 @@ export default class TextAreaFoundation extends BaseFoundation<TextAreaAdapter> 
      */
     handleTruncateValue(value: string, maxLength: number) {
         const { getValueLength } = this._adapter.getProps();
-        if (isFunction(getValueLength)) {
-            let truncatedValue = '';
-            for (let i = 1, len = value.length; i <= len; i++) {
-                const currentValue = value.slice(0, i);
-                if (getValueLength(currentValue) > maxLength) {
-                    return truncatedValue;
-                } else {
-                    truncatedValue = currentValue;
-                }
-            }
-            return truncatedValue;
-        } else {
-            return value.slice(0, maxLength);
-        }
+        return truncateValue({ value, maxLength, getValueLength });
     }
 
     handleFocus(e: any) {
@@ -161,33 +136,60 @@ export default class TextAreaFoundation extends BaseFoundation<TextAreaAdapter> 
 
     handleBlur(e: any) {
         const { value } = this.getStates();
+        const { maxLength } = this.getProps();
+        let realValue = value;
+        if (maxLength) {
+            // 如果设置了 maxLength，在中文输输入过程中，如果点击外部触发 blur，则拼音字符的所有内容会回显，
+            // 该表现不符合 maxLength 规定，因此需要在 blur 的时候二次确认
+            // 详情见 https://github.com/DouyinFE/semi-design/issues/2005
+            // If maxLength is set, during the Chinese input process, if you click outside to trigger blur, 
+            // all the contents of the Pinyin characters will be echoed.
+            // This behavior does not meet the maxLength requirement, so we need to confirm twice when blurring。
+            // For details, see https://github.com/DouyinFE/semi-design/issues/2005
+            realValue = this.handleVisibleMaxLength(value);
+            if (realValue !== value) {
+                if (!this._isControlledComponent()) {
+                    this._adapter.setValue(realValue);
+                }
+                this._adapter.notifyChange(realValue, e);
+            }
+        }
         this._adapter.toggleFocusing(false);
-        this._adapter.notifyBlur(value, e);
+        this._adapter.notifyBlur(realValue, e);
     }
 
     handleKeyDown(e: any) {
+        const { disabledEnterStartNewLine } = this.getProps();
+        if (disabledEnterStartNewLine && e.key === 'Enter' && !e.shiftKey) {
+            // Prevent default line wrapping behavior
+            e.preventDefault(); 
+        }
         this._adapter.notifyKeyDown(e);
         if (e.keyCode === 13) {
             this._adapter.notifyPressEnter(e);
         }
     }
 
-    resizeTextarea = (cb?: any) => {
+    resizeTextarea = () => {
         const { height } = this.getStates();
-        const { rows } = this.getProps();
-        const node = this._adapter.getRef().current;
+        const { rows, autosize } = this.getProps();
+        const node = this._adapter.getRef();
         const nodeSizingData = getSizingData(node);
 
         if (!nodeSizingData) {
-            cb && cb();
             return;
         }
+
+        const [minRows, maxRows] = autosize !== null && typeof autosize === 'object' ? [
+            autosize?.minRows ?? rows,
+            autosize?.maxRows
+        ] : [rows];
 
         const newHeight = calculateNodeHeight(
             nodeSizingData,
             node.value || node.placeholder || 'x',
-            rows
-            // maxRows,
+            minRows,
+            maxRows
         );
 
         if (height !== newHeight) {
@@ -195,15 +197,15 @@ export default class TextAreaFoundation extends BaseFoundation<TextAreaAdapter> 
             node.style.height = `${newHeight}px`;
             return;
         }
-
-        cb && cb();
     };
 
-    handleMouseEnter(e) {
+    // e: MouseEvent
+    handleMouseEnter(e: any) {
         this._adapter.toggleHovering(true);
     }
 
-    handleMouseLeave(e) {
+    // e: MouseEvent
+    handleMouseLeave(e: any) {
         this._adapter.toggleHovering(false);
     }
 

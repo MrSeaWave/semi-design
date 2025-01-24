@@ -11,7 +11,7 @@ const prefixCls = cssClasses.PREFIX;
 interface SVGNode {
     id?: string;
     viewBox?: string;
-    url?: string;
+    url?: string
 }
 
 export interface EmptyProps {
@@ -23,11 +23,11 @@ export interface EmptyProps {
     darkModeImage?: React.ReactNode | SVGNode;
     style?: React.CSSProperties;
     className?: string;
-    children?: React.ReactNode;
+    children?: React.ReactNode
 }
 
 interface EmptyState {
-    mode: any;
+    mode: any
 }
 
 export default class Empty extends BaseComponent<EmptyProps, EmptyState> {
@@ -76,7 +76,7 @@ export default class Empty extends BaseComponent<EmptyProps, EmptyState> {
     }
 
     render(): JSX.Element {
-        const { className, image, description, style, title, imageStyle, children, layout, darkModeImage } = this.props;
+        const { className, image, description, style, title, imageStyle, children, layout, darkModeImage, ...rest } = this.props;
 
         const alt = typeof description === 'string' ? description : 'empty';
         const imgSrc = ((this.state.mode === 'dark') && darkModeImage) ? darkModeImage : image;
@@ -108,7 +108,7 @@ export default class Empty extends BaseComponent<EmptyProps, EmptyState> {
                 style: { fontWeight: 400 },
             };
         return (
-            <div className={wrapperCls} style={style}>
+            <div className={wrapperCls} style={style} {...this.getDataAttr(rest)}>
                 <div className={`${prefixCls}-image`} style={imageStyle} x-semi-prop="image,darkModeImage">
                     {imageNode}
                 </div>

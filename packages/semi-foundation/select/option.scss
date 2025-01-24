@@ -1,5 +1,3 @@
-@import "./variables.scss";
-
 $module: #{$prefix}-select;
 $single: #{$module}-single;
 $filterable: #{$module}-filterable;
@@ -75,7 +73,7 @@ $multiple: #{$module}-multiple;
 
     &-selected {
         font-weight: $font-weight-bold;
-
+        background: $color-select-option-bg-selected;
         .#{$module}-option-icon {
             color: $color-select_option-icon-active;
         }
@@ -85,11 +83,11 @@ $multiple: #{$module}-multiple;
         background-color: $color-select_option-bg-hover;
     }
 
-    &:first-of-type {
-        margin-top: $spacing-select_option_first-marginTop;
-    }
+    // &:first-of-type {
+    // margin-top: $spacing-select_option_first-marginTop;
+    // }
 
-    &:last-of-type {
-        margin-bottom: $spacing-select_option_last-marginBottom;
-    }
+    // &:last-of-type {
+    // margin-bottom: $spacing-select_option_last-marginBottom;
+    // }
 }

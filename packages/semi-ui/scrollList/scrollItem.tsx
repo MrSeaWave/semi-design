@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { noop, debounce, throttle, find, map, findIndex, times } from 'lodash';
 
-import { cssClasses, numbers } from '@douyinfe/semi-foundation/scrollList/constants';
+import { cssClasses, numbers, strings } from '@douyinfe/semi-foundation/scrollList/constants';
 import ItemFoundation, { Item, ScrollItemAdapter } from '@douyinfe/semi-foundation/scrollList/itemFoundation';
 import animatedScrollTo from '@douyinfe/semi-foundation/scrollList/scrollTo';
 import isElement from '@douyinfe/semi-foundation/utils/isElement';
@@ -28,16 +28,16 @@ export interface ScrollItemProps<T extends Item> {
     motion?: Motion;
     style?: React.CSSProperties;
     type?: string | number; // used to identify the scrollItem, used internally by the semi component, and does not need to be exposed to the user
-    'aria-label'?: AriaAttributes['aria-label'];
+    'aria-label'?: AriaAttributes['aria-label']
 }
 
 export interface ScrollItemState {
     prependCount: number;
-    appendCount: number;
+    appendCount: number
 }
 export default class ScrollItem<T extends Item> extends BaseComponent<ScrollItemProps<T>, ScrollItemState> {
     static propTypes = {
-        mode: PropTypes.string,
+        mode: PropTypes.oneOf(strings.MODE),
         cycled: PropTypes.bool,
         list: PropTypes.array,
         selectedIndex: PropTypes.number,
@@ -98,13 +98,13 @@ export default class ScrollItem<T extends Item> extends BaseComponent<ScrollItem
         this.debouncedSelect = debounce((e, nearestNode) => {
             this._cacheSelectedNode(nearestNode);
             this.foundation.selectNode(nearestNode, this.list);
-        }, msPerFrame * 5);
+        }, msPerFrame * 2);
     }
 
     get adapter(): ScrollItemAdapter<ScrollItemProps<T>, ScrollItemState, T> {
         return {
             ...super.adapter,
-            setState: (states, callback) => this.setState({ ...states }, callback),
+            setState: (states, callback) => this.setState({ ...states } as ScrollItemState, callback),
             setPrependCount: prependCount => this.setState({ prependCount }),
             setAppendCount: appendCount => this.setState({ appendCount }),
             isDisabledIndex: this.isDisabledIndex,
@@ -113,7 +113,7 @@ export default class ScrollItem<T extends Item> extends BaseComponent<ScrollItem
             scrollToCenter: this.scrollToCenter,
         };
     }
-    componentWillUnmount(){
+    componentWillUnmount() {
         if (this.props.cycled) {
             this.throttledAdjustList.cancel();
             this.debouncedSelect.cancel();
@@ -318,7 +318,6 @@ export default class ScrollItem<T extends Item> extends BaseComponent<ScrollItem
     scrollToIndex = (selectedIndex: number, duration?: number) => {
         // move to selected item
         duration = typeof duration === 'number' ? duration : numbers.DEFAULT_SCROLL_DURATION;
-        // eslint-disable-next-line
         selectedIndex = selectedIndex == null ? this.props.selectedIndex : selectedIndex;
 
         // this.isWheelMode() && this.addClassToNode();
@@ -329,7 +328,7 @@ export default class ScrollItem<T extends Item> extends BaseComponent<ScrollItem
         const { wrapper } = this;
         const wrapperHeight = wrapper.offsetHeight;
         const itemHeight = this.getItmHeight(node);
-        const targetTop =  (node.offsetTop || this.list.children.length * itemHeight / 2 )  - (wrapperHeight - itemHeight) / 2;
+        const targetTop = (node.offsetTop || this.list.children.length * itemHeight / 2) - (wrapperHeight - itemHeight) / 2;
 
         this.scrollToPos(targetTop, duration);
     };
@@ -429,11 +428,9 @@ export default class ScrollItem<T extends Item> extends BaseComponent<ScrollItem
                 if (typeof transform === 'function') {
                     text = transform(item.value, item.text);
                 } else {
-                    // eslint-disable-next-line
                     text = item.text == null ? item.value : item.text;
                 }
             } else {
-                // eslint-disable-next-line
                 text = item.text == null ? item.value : item.text;
             }
 

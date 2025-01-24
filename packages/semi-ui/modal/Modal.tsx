@@ -1,26 +1,26 @@
-/* eslint-disable react/destructuring-assignment, prefer-const, @typescript-eslint/no-unused-vars */
-import React, { CSSProperties, LegacyRef, ReactNode } from 'react';
 import { cssClasses, strings } from '@douyinfe/semi-foundation/modal/constants';
-import Button from '../button';
-import ModalFoundation, { ModalAdapter, ModalProps, ModalState } from '@douyinfe/semi-foundation/modal/modalFoundation';
-import ModalContent from './ModalContent';
-import Portal from '../_portal';
-import LocaleConsumer from '../locale/localeConsumer';
-import cls from 'classnames';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import '@douyinfe/semi-foundation/modal/modal.scss';
+import ModalFoundation, { ModalAdapter, ModalProps, ModalState } from '@douyinfe/semi-foundation/modal/modalFoundation';
+import cls from 'classnames';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { CSSProperties, LegacyRef, ReactNode } from 'react';
 import BaseComponent from '../_base/baseComponent';
-import confirm, { withConfirm, withError, withInfo, withSuccess, withWarning } from './confirm';
-import { Locale } from '../locale/interface';
-import useModal from './useModal';
+import CSSAnimation from "../_cssAnimation";
+import Portal from '../_portal';
+import { getDefaultPropsFromGlobalConfig, getScrollbarWidth } from '../_utils';
+import Button from '../button';
 import { ButtonProps } from '../button/Button';
-import { MotionObject } from "@douyinfe/semi-foundation/utils/type";
+import { Locale } from '../locale/interface';
+import LocaleConsumer from '../locale/localeConsumer';
+import ModalContent from './ModalContent';
+import confirm, { withConfirm, withError, withInfo, withSuccess, withWarning } from './confirm';
+import useModal from './useModal';
 
-export const destroyFns: any[] = [];
+export let destroyFns: any[] = [];
 export type ConfirmType = 'leftTop' | 'leftBottom' | 'rightTop' | 'rightBottom';
 export type Directions = 'ltr' | 'rtl';
-
+export type { ModalState };
 export interface ModalReactProps extends ModalProps {
     cancelButtonProps?: ButtonProps;
     children?: React.ReactNode;
@@ -35,12 +35,10 @@ export interface ModalReactProps extends ModalProps {
     footer?: ReactNode;
     header?: ReactNode;
     onCancel?: (e: React.MouseEvent) => void | Promise<any>;
-    onOk?: (e: React.MouseEvent) => void | Promise<any>;
+    onOk?: (e: React.MouseEvent) => void | Promise<any>
 }
 
-export {
-    ModalState
-};
+
 
 class Modal extends BaseComponent<ModalReactProps, ModalState> {
 
@@ -72,30 +70,30 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         header: PropTypes.node,
         footer: PropTypes.node,
         hasCancel: PropTypes.bool,
-        motion: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.object]),
+        motion: PropTypes.bool,
         children: PropTypes.node,
         getPopupContainer: PropTypes.func,
         getContainerContext: PropTypes.func,
         maskFixed: PropTypes.bool,
-        closeIcon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+        closeIcon: PropTypes.node,
         closeOnEsc: PropTypes.bool,
         size: PropTypes.oneOf(strings.SIZE),
         keepDOM: PropTypes.bool,
         lazyRender: PropTypes.bool,
         direction: PropTypes.oneOf(strings.directions),
         fullScreen: PropTypes.bool,
+        footerFill: PropTypes.bool,
     };
 
+    static __SemiComponentName__ = "Modal";
 
-    static defaultProps = {
+    static defaultProps = getDefaultPropsFromGlobalConfig(Modal.__SemiComponentName__, {
         zIndex: 1000,
         motion: true,
         mask: true,
         centered: false,
         closable: true,
         visible: false,
-        confirmLoading: false,
-        cancelLoading: false,
         okType: 'primary',
         maskClosable: true,
         hasCancel: true,
@@ -108,27 +106,28 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         keepDOM: false,
         lazyRender: true,
         fullScreen: false,
-    };
+    });
     static useModal = useModal;
     foundation: ModalFoundation;
 
     private readonly modalRef: LegacyRef<ModalContent>;
-    private bodyOverflow: string;
+    private bodyOverflow: string|null = null;
     private scrollBarWidth: number;
-    private originBodyWith: string;
-    private _active: boolean;
+    private originBodyWidth: string;
+    private _haveRendered: boolean;
 
     constructor(props: ModalReactProps) {
         super(props);
         this.state = {
-            hidden: !props.visible,
+            displayNone: !props.visible,
             isFullScreen: props.fullScreen,
         };
         this.foundation = new ModalFoundation(this.adapter);
         this.modalRef = React.createRef();
-        this.bodyOverflow = '';
+
         this.scrollBarWidth = 0;
-        this.originBodyWith = '100%';
+        this.originBodyWidth = '100%';
+
     }
 
     get adapter(): ModalAdapter {
@@ -138,31 +137,30 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
             disabledBodyScroll: () => {
                 const { getPopupContainer } = this.props;
                 this.bodyOverflow = document.body.style.overflow || '';
-                if (!getPopupContainer && this.bodyOverflow !== 'hidden') {
+                if ((!getPopupContainer || getPopupContainer() === globalThis?.document?.body) && this.bodyOverflow !== 'hidden') {
                     document.body.style.overflow = 'hidden';
-                    document.body.style.width = `calc(${this.originBodyWith || '100%'} - ${this.scrollBarWidth}px)`;
+                    document.body.style.width = `calc(${this.originBodyWidth || '100%'} - ${this.scrollBarWidth}px)`;
                 }
             },
             enabledBodyScroll: () => {
                 const { getPopupContainer } = this.props;
-                if (!getPopupContainer && this.bodyOverflow !== 'hidden') {
+                if ((!getPopupContainer || getPopupContainer() === globalThis?.document?.body) && this.bodyOverflow !== null && this.bodyOverflow !== 'hidden') {
                     document.body.style.overflow = this.bodyOverflow;
-                    document.body.style.width = this.originBodyWith;
+                    document.body.style.width = this.originBodyWidth;
                 }
             },
             notifyCancel: (e: React.MouseEvent) => {
-                this.props.onCancel(e);
+                return this.props.onCancel(e);
             },
             notifyOk: (e: React.MouseEvent) => {
-                this.props.onOk(e);
+                return this.props.onOk(e);
             },
             notifyClose: () => {
-                (this.props.motion as MotionObject)?.didLeave?.();
                 this.props.afterClose();
             },
-            toggleHidden: (hidden: boolean, callback?: (hidden: boolean) => void) => {
-                if (hidden !== this.state.hidden) {
-                    this.setState({ hidden }, callback || noop);
+            toggleDisplayNone: (displayNone: boolean, callback?: (hidden: boolean) => void) => {
+                if (displayNone !== this.state.displayNone) {
+                    this.setState({ displayNone: displayNone }, callback || noop);
                 }
             },
             notifyFullScreen: (isFullScreen: boolean) => {
@@ -181,16 +179,17 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         }
 
 
+        if (props.visible && prevState.displayNone) {
+            newState.displayNone = false;
+        }
+        //
+        // if (!props.visible && !props.motion && !prevState.displayNone) {
+        //     newState.displayNone = true;
+        // }
+
+
         return newState;
     }
-
-    static getScrollbarWidth() {
-        if (globalThis && Object.prototype.toString.call(globalThis) === '[object Window]') {
-            return window.innerWidth - document.documentElement.clientWidth;
-        }
-        return 0;
-    }
-
 
     static info = function (props: ModalReactProps) {
         return confirm<ReturnType<typeof withInfo>>(withInfo(props));
@@ -213,22 +212,21 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
     };
 
     static destroyAll = function destroyAllFn() {
-        while (destroyFns.length) {
-            const close = destroyFns.pop();
+        for (let i = 0, len = destroyFns.length; i < len; i++) {
+            const close = destroyFns[i];
             if (close) {
                 close();
             }
         }
+        destroyFns = [];
     };
-
 
     componentDidMount() {
 
-        this.scrollBarWidth = Modal.getScrollbarWidth();
-        this.originBodyWith = document.body.style.width;
+        this.scrollBarWidth = getScrollbarWidth();
+        this.originBodyWidth = document.body.style.width;
         if (this.props.visible) {
             this.foundation.beforeShow();
-            this._active = this._active || this.props.visible;
         }
     }
 
@@ -237,19 +235,17 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         if (!prevProps.visible && this.props.visible) {
             this.foundation.beforeShow();
         }
-        // show => hide
-        if (prevProps.visible && !this.props.visible) {
-            this.foundation.afterHide();
-        }
 
-        if (!this.props.motion) {
-            this.updateHiddenState();
+        if (!prevState.displayNone && this.state.displayNone) {
+            this.foundation.afterHide();
         }
     }
 
     componentWillUnmount() {
         if (this.props.visible) {
             this.foundation.destroy();
+        } else {
+            this.foundation.enabledBodyScroll();
         }
     }
 
@@ -261,14 +257,9 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         this.foundation.handleOk(e);
     };
 
-    updateHiddenState = () => {
+    updateState = () => {
         const { visible } = this.props;
-        const { hidden } = this.state;
-        if (!visible && !hidden) {
-            this.foundation.toggleHidden(true, () => this.foundation.afterClose());
-        } else if (visible && this.state.hidden) {
-            this.foundation.toggleHidden(false);
-        }
+        this.foundation.toggleDisplayNone(!visible);
     };
 
     renderFooter = (): ReactNode => {
@@ -279,6 +270,7 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
             confirmLoading,
             cancelLoading,
             hasCancel,
+            footerFill,
         } = this.props;
         const getCancelButton = (locale: Locale['Modal']) => {
             if (!hasCancel) {
@@ -288,10 +280,15 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
                     <Button
                         aria-label="cancel"
                         onClick={this.handleCancel}
-                        loading={cancelLoading}
+                        loading={cancelLoading === undefined ? this.state.onCancelReturnPromiseStatus === "pending" : cancelLoading}
                         type="tertiary"
+                        block={footerFill}
                         autoFocus={true}
                         {...this.props.cancelButtonProps}
+                        style={{
+                            ...footerFill ? { marginLeft: "unset" }:{},
+                            ...this.props.cancelButtonProps?.style
+                        }}
                         x-semi-children-alias="cancelText"
                     >
                         {cancelText || locale.cancel}
@@ -303,13 +300,16 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         return (
             <LocaleConsumer componentName="Modal">
                 {(locale: Locale['Modal'], localeCode: Locale['code']) => (
-                    <div>
+                    <div className={cls({
+                        [`${cssClasses.DIALOG}-footerfill`]: footerFill
+                    })}>
                         {getCancelButton(locale)}
                         <Button
                             aria-label="confirm"
                             type={okType}
                             theme="solid"
-                            loading={confirmLoading}
+                            block={footerFill}
+                            loading={confirmLoading === undefined ? this.state.onOKReturnPromiseStatus === "pending" : confirmLoading}
                             onClick={this.handleOk}
                             {...this.props.okButtonProps}
                             x-semi-children-alias="okText"
@@ -342,6 +342,7 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
             zIndex,
             getPopupContainer,
             visible,
+            modalContentClass,
             ...restProps
         } = this.props;
         let style = styleFromProps;
@@ -349,11 +350,11 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         const renderFooter = 'footer' in this.props ? footer : this.renderFooter();
         let wrapperStyle: {
             zIndex?: CSSProperties['zIndex'];
-            position?: CSSProperties['position'];
+            position?: CSSProperties['position']
         } = {
             zIndex,
         };
-        if (getPopupContainer) {
+        if (getPopupContainer && getPopupContainer() !== globalThis?.document?.body) {
             wrapperStyle = {
                 zIndex,
                 position: 'static',
@@ -361,37 +362,56 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         }
 
         const classList = cls(className, {
-            [`${cssClasses.DIALOG}-displayNone`]: keepDOM && this.state.hidden && !visible,
+            [`${cssClasses.DIALOG}-displayNone`]: keepDOM && this.state.displayNone,
         });
-        const contentClassName = motion ? cls({
-            [`${cssClasses.DIALOG}-content-animate-hide`]: !visible,
-            [`${cssClasses.DIALOG}-content-animate-show`]: visible
-        }) : null;
-        const maskClassName = motion ? cls({
-            [`${cssClasses.DIALOG}-mask-animate-hide`]: !visible,
-            [`${cssClasses.DIALOG}-mask-animate-show`]: visible
-        }) : null;
+
+        const shouldRender = this.props.visible || (this.props.keepDOM && (!this.props.lazyRender || this._haveRendered)) || (this.props.motion && !this.state.displayNone /* When there is animation, we use displayNone to judge whether animation is ended and judge whether to unmount content */);
+
+        if (shouldRender) {
+            this._haveRendered = true;
+        }
 
         return (
-            <Portal style={wrapperStyle} getPopupContainer={getPopupContainer}>
-                <ModalContent
-                    {...restProps}
-                    isFullScreen={this.state.isFullScreen}
-                    contentClassName={contentClassName}
-                    maskClassName={maskClassName}
-                    className={classList}
-                    getPopupContainer={getPopupContainer}
-                    maskStyle={maskStyle}
-                    style={style}
-                    ref={this.modalRef}
-                    onAnimationEnd={() => {
-                        this.updateHiddenState();
-                    }}
-                    footer={renderFooter}
-                    onClose={this.handleCancel}
+            <CSSAnimation
+                motion={this.props.motion}
+                animationState={visible ? 'enter' : 'leave'}
+                startClassName={visible ? `${cssClasses.DIALOG}-content-animate-show` : `${cssClasses.DIALOG}-content-animate-hide`}
+                onAnimationEnd={() => {
+                    this.updateState();
+                }}
+            >
+                {
+                    ({ animationClassName, animationEventsNeedBind }) => {
+                        return <CSSAnimation motion={this.props.motion} animationState={visible ? 'enter' : 'leave'}
+                            startClassName={visible ? `${cssClasses.DIALOG}-mask-animate-show` : `${cssClasses.DIALOG}-mask-animate-hide`}
+                            onAnimationEnd={() => {
+                                this.updateState();
+                            }}
+                        >
+                            {
+                                ({ animationClassName: maskAnimationClassName, animationEventsNeedBind: maskAnimationEventsNeedBind }) => {
+                                    return shouldRender ? <Portal style={wrapperStyle} getPopupContainer={getPopupContainer}> <ModalContent
+                                        {...restProps}
+                                        contentExtraProps={animationEventsNeedBind}
+                                        maskExtraProps={maskAnimationEventsNeedBind}
+                                        isFullScreen={this.state.isFullScreen}
+                                        contentClassName={`${animationClassName} ${modalContentClass}`}
+                                        maskClassName={maskAnimationClassName}
+                                        className={classList}
+                                        getPopupContainer={getPopupContainer}
+                                        maskStyle={maskStyle}
+                                        style={style}
+                                        ref={this.modalRef}
+                                        footer={renderFooter}
+                                        onClose={this.handleCancel}
 
-                />
-            </Portal>
+                                    /></Portal> : <></>;
+                                }
+                            }
+                        </CSSAnimation>;
+                    }
+                }
+            </CSSAnimation>
         );
     };
 
@@ -401,13 +421,7 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
             keepDOM,
             lazyRender,
         } = this.props;
-        this._active = this._active || visible;
-        const shouldRender = ((visible || keepDOM) && (!lazyRender || this._active)) || !this.state.hidden;
-        if (shouldRender) {
-            return this.renderDialog();
-        }
-
-        return null;
+        return this.renderDialog();
     }
 
 

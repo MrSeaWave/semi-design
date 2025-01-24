@@ -109,6 +109,7 @@ $module: #{$prefix}-upload;
         &-title {
             @include font-size-small;
             color: $color-upload_assist-text;
+            margin-bottom: $spacing-upload_title-marginBottom;
 
             &-choosen {
                 margin-right: $spacing-upload_title_choosen-marginRight;
@@ -118,8 +119,6 @@ $module: #{$prefix}-upload;
                 cursor: pointer;
                 color: $color-upload_clear-text;
             }
-
-            margin-bottom: $spacing-upload_title-marginBottom;
         }
     }
 
@@ -247,7 +246,7 @@ $module: #{$prefix}-upload;
 
         &-icon {
             &-loading,
-            &-error {
+            &-error.#{$prefix}-icon {
                 font-size: $width-upload_file_card-icon;
                 margin-right: $spacing-upload_file_card_icon-marginRight;
             }
@@ -258,6 +257,7 @@ $module: #{$prefix}-upload;
             }
 
             &-loading {
+                line-height: 0; // make the spin icon in the center
                 .#{$prefix}-spin-wrapper svg {
                     height: $width-upload_file_card-icon;
                     width: $width-upload_file_card-icon;
@@ -347,6 +347,7 @@ $module: #{$prefix}-upload;
             height: $height-upload_file_pic_card;
             width: $width-upload_file_pic_card;
             border-radius: $radius-upload_picture_file_card_img;
+            box-sizing: border-box;
             position: relative;
             overflow: hidden;
 
@@ -355,6 +356,15 @@ $module: #{$prefix}-upload;
                 width: $width-upload_picture_file_card_img;
                 object-fit: cover;
                 border-radius: $radius-upload_picture_file_card_img;
+            }
+
+            &-custom-thumbnail {
+                .#{$prefix}-image {
+                    img {
+                        width: inherit;
+                        height: inherit;
+                    }
+                }
             }
 
             &-close {
@@ -424,6 +434,13 @@ $module: #{$prefix}-upload;
                 transform: translate3D(-50%, -50%, 0);
             }
 
+            &-preview-fallback {
+                background-color: $color-upload_pic_add-bg;
+                border: $width-upload_picture_add-border $color-upload-border;
+                color: $color-upload-icon;
+                border-radius: $radius-upload_picture_add;
+            }
+
             &-pic-info {
                 display: inline-flex;
                 box-sizing: border-box;
@@ -458,6 +475,7 @@ $module: #{$prefix}-upload;
             }
 
             &-error {
+                border: 1px solid $color-upload_picture_file_card_error-border;
                 outline: 1px solid $color-upload_picture_file_card_error-border;
             }
 

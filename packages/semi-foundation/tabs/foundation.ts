@@ -8,7 +8,7 @@ export interface TabsAdapter<P = Record<string, any>, S = Record<string, any>> e
     notifyChange: (activeKey: string) => void;
     setNewActiveKey: (activeKey: string) => void;
     getDefaultActiveKeyFromChildren: () => string;
-    notifyTabDelete: (tabKey: string) => void;
+    notifyTabDelete: (tabKey: string) => void
 }
 
 class TabsFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<TabsAdapter<P, S>, P, S> {
@@ -116,26 +116,26 @@ class TabsFoundation<P = Record<string, any>, S = Record<string, any>> extends B
         const isVertical = tabPosition === 'left';
 
         if (isVertical) {
-            if (event.key ===  "ArrowUp" || event.key ===  "ArrowDown") {
+            if (event.key === "ArrowUp" || event.key === "ArrowDown") {
                 this.switchTabOnArrowPress(event, tabs);
                 this.handlePrevent(event);
             }
         } else {
-            if (event.key ===  "ArrowLeft" || event.key === "ArrowRight") {
+            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
                 this.switchTabOnArrowPress(event, tabs);
                 this.handlePrevent(event);
             }
         }
     }
 
-    handleDeleteKeyDown(event:any, tabs: HTMLElement[], itemKey: string, closable: boolean): void {
+    handleDeleteKeyDown(event: any, tabs: HTMLElement[], itemKey: string, closable: boolean): void {
         const { preventScroll } = this.getProps();
         if (closable) {
             this.handleTabDelete(itemKey);
             const index = tabs.indexOf(event.target);
             // Move focus to next element after deletion
             // If the element is the last removable tab, focus to its previous tab
-            if (tabs.length !== 1 ){
+            if (tabs.length !== 1 ) {
                 tabs[index + 1 >= tabs.length ? index - 1 : index + 1].focus({ preventScroll });
             }
         }
@@ -158,7 +158,7 @@ class TabsFoundation<P = Record<string, any>, S = Record<string, any>> extends B
                     tabs[index+ direction[event.key]].focus({ preventScroll });
                 } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
                     tabs[tabs.length - 1].focus({ preventScroll }); // focus last tab
-                } else if (event.key ===  "ArrowRight" || event.key == "ArrowDown") {
+                } else if (event.key === "ArrowRight" || event.key == "ArrowDown") {
                     tabs[0].focus({ preventScroll }); // focus first tab
                 }
             }

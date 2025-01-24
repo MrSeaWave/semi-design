@@ -18,7 +18,7 @@ const {
 export interface XhrError extends Error{
     status: XMLHttpRequest['status'];
     method: string;
-    url: string;
+    url: string
 }
 
 export type FileItemStatus = 'success' | 'uploadFail' | 'validateFail' | 'validating' | 'uploading' | 'wait';
@@ -39,13 +39,13 @@ export interface BaseFileItem {
     preview?: boolean;
     validateMessage?: any;
     shouldUpload?: boolean;
-    [key: string]: any;
+    [key: string]: any
 }
 
 export interface CustomFile extends File {
     uid?: string;
     _sizeInvalid?: boolean;
-    status?: string;
+    status?: string
 }
 
 export interface BeforeUploadObjectResult {
@@ -53,7 +53,7 @@ export interface BeforeUploadObjectResult {
     status?: string;
     autoRemove?: boolean;
     validateMessage?: unknown;
-    fileInstance?: CustomFile;
+    fileInstance?: CustomFile
 }
 
 export interface AfterUploadResult {
@@ -61,6 +61,7 @@ export interface AfterUploadResult {
     status?: string;
     validateMessage?: unknown;
     name?: string;
+    url?: string
 }
 
 export interface UploadAdapter<P = Record<string, any>, S = Record<string, any>> extends DefaultAdapter<P, S> {
@@ -85,15 +86,35 @@ export interface UploadAdapter<P = Record<string, any>, S = Record<string, any>>
     notifyPreviewClick: (file: any) => void;
     notifyDrop: (e: any, files: Array<File>, fileList: Array<BaseFileItem>) => void;
     notifyAcceptInvalid: (invalidFiles: Array<File>) => void;
+    registerPastingHandler: (cb?: (params?: any) => void) => void;
+    unRegisterPastingHandler: () => void;
+    isMac: () => boolean;
+    notifyPastingError: (error: Error | PermissionStatus) => void
+    // notifyPasting: () => void; 
 }
 
 class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<UploadAdapter<P, S>, P, S> {
+    destroyState: boolean = false;
     constructor(adapter: UploadAdapter<P, S>) {
         super({ ...adapter });
     }
 
+    init(): void {
+        // make sure state reset, otherwise may cause upload abort in React StrictMode, like https://github.com/DouyinFE/semi-design/pull/843
+        this.destroyState = false;
+        const { disabled, addOnPasting } = this.getProps();
+        if (addOnPasting && !disabled) {
+            this.bindPastingHandler();
+        }
+    }
+
     destroy() {
+        const { disabled, addOnPasting } = this.getProps();
         this.releaseMemory();
+        if (!disabled) {
+            this.unbindPastingHandler();
+        }
+        this.destroyState = true;
     }
 
     getError({ action, xhr, message, fileName }: { action: string;xhr: XMLHttpRequest;message?: string;fileName: string }): XhrError {
@@ -255,7 +276,9 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         this._adapter.notifyChange({ currentFile: newFileItem, fileList: newFileList });
         this._adapter.updateFileList(newFileList, () => {
             this._adapter.resetReplaceInput();
-            this.upload(newFileItem);
+            if (!newFileItem._sizeInvalid) {
+                this.upload(newFileItem);
+            }
         });
     }
 
@@ -322,7 +345,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
 
     // 插入多个文件到指定位置
     // Insert files to the specified location
-    insertFileToList(files: Array<CustomFile>, index:number): void {
+    insertFileToList(files: Array<CustomFile>, index: number): void {
         const { limit, transformFile, accept, uploadTrigger } = this.getProps();
         const { fileList } = this.getStates();
 
@@ -487,6 +510,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
                 newFileList[index].fileInstance = fileInstance;
                 newFileList[index].size = getFileSize(fileInstance.size);
                 newFileList[index].name = fileInstance.name;
+                newFileList[index].url = this._createURL(fileInstance);
             }
             newFileList[index].shouldUpload = shouldUpload;
         }
@@ -533,9 +557,9 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
                 data,
                 file,
                 fileInstance,
-                onProgress: (e: ProgressEvent) => this.handleProgress({ e, fileInstance }),
-                onError: (userXhr: XMLHttpRequest, e: ProgressEvent) => this.handleError({ e, xhr: userXhr, fileInstance }),
-                onSuccess: (response: any, e: ProgressEvent) => this.handleSuccess({ response, fileInstance, e, isCustomRequest: true }),
+                onProgress: (e?: ProgressEvent) => this.handleProgress({ e, fileInstance }),
+                onError: (userXhr: XMLHttpRequest, e?: ProgressEvent) => this.handleError({ e, xhr: userXhr, fileInstance }),
+                onSuccess: (response: any, e?: ProgressEvent) => this.handleSuccess({ response, fileInstance, e, isCustomRequest: true }),
                 withCredentials: option.withCredentials,
                 action: option.action,
             });
@@ -549,13 +573,27 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         }
 
         if (xhr.upload) {
-            xhr.upload.onprogress = (e: ProgressEvent): void => this.handleProgress({ e, fileInstance });
+            xhr.upload.onprogress = (e: ProgressEvent): void => {
+                if (!this.destroyState) {
+                    this.handleProgress({ e, fileInstance });
+                } else {
+                    xhr.abort();
+                }
+            };
         }
 
         // Callback function after upload is completed
-        xhr.onload = (e: ProgressEvent): void => this.handleOnLoad({ e, xhr, fileInstance });
+        xhr.onload = (e: ProgressEvent): void => {
+            if (!this.destroyState) {
+                this.handleOnLoad({ e, xhr, fileInstance });
+            }
+        };
 
-        xhr.onerror = (e: ProgressEvent): void => this.handleError({ e, xhr, fileInstance });
+        xhr.onerror = (e: ProgressEvent): void => {
+            if (!this.destroyState) {
+                this.handleError({ e, xhr, fileInstance });
+            }
+        };
 
         // add headers
         let headers = option.headers || {};
@@ -572,7 +610,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         xhr.send(formData);
     }
 
-    handleProgress({ e, fileInstance }: { e: ProgressEvent; fileInstance: File }): void {
+    handleProgress({ e, fileInstance }: { e?: ProgressEvent; fileInstance: File }): void {
         const { fileList } = this.getStates();
         const newFileList = fileList.slice();
         let percent = 0;
@@ -591,7 +629,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         this._adapter.notifyChange({ fileList: newFileList, currentFile: newFileList[index] });
     }
 
-    handleOnLoad({ e, xhr, fileInstance }: { e: ProgressEvent; xhr: XMLHttpRequest; fileInstance: File }): void {
+    handleOnLoad({ e, xhr, fileInstance }: { e?: ProgressEvent; xhr: XMLHttpRequest; fileInstance: File }): void {
         const { fileList } = this.getStates();
         const index = this._getFileIndex(fileInstance, fileList);
         if (index < 0) {
@@ -604,7 +642,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         }
     }
 
-    handleSuccess({ e, fileInstance, isCustomRequest = false, xhr, response }: { e: ProgressEvent; fileInstance: CustomFile; isCustomRequest?: boolean; xhr?: XMLHttpRequest; response?: any }): void {
+    handleSuccess({ e, fileInstance, isCustomRequest = false, xhr, response }: { e?: ProgressEvent; fileInstance: CustomFile; isCustomRequest?: boolean; xhr?: XMLHttpRequest; response?: any }): void {
         const { fileList } = this.getStates();
         let body: any = null;
         const index = this._getFileIndex(fileInstance, fileList);
@@ -627,7 +665,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         e ? (newFileList[index].event = e) : null;
 
         if (afterUpload && typeof afterUpload === 'function') {
-            const { autoRemove, status, validateMessage, name } =
+            const { autoRemove, status, validateMessage, name, url } =
                 this._adapter.notifyAfterUpload({
                     response: body,
                     file: newFileList[index],
@@ -636,6 +674,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
             status ? (newFileList[index].status = status) : null;
             validateMessage ? (newFileList[index].validateMessage = validateMessage) : null;
             name ? (newFileList[index].name = name) : null;
+            url ? (newFileList[index].url = url) : null;
             autoRemove ? newFileList.splice(index, 1) : null;
         }
         this._adapter.notifySuccess(body, fileInstance, newFileList);
@@ -673,7 +712,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
         });
     }
 
-    handleError({ e, xhr, fileInstance }: { e: ProgressEvent;xhr: XMLHttpRequest;fileInstance: CustomFile }): void {
+    handleError({ e, xhr, fileInstance }: { e?: ProgressEvent;xhr: XMLHttpRequest;fileInstance: CustomFile }): void {
         const { fileList } = this.getStates();
         const index = this._getFileIndex(fileInstance, fileList);
         if (index < 0) {
@@ -706,6 +745,8 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
             this._adapter.updateFileList([]);
             this._adapter.notifyClear();
             this._adapter.notifyChange({ fileList: [] } as any);
+        }).catch(error => {
+            // if user pass reject promise, no need to do anything
         });
     }
 
@@ -841,6 +882,61 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
 
     handlePreviewClick(fileItem: BaseFileItem): void {
         this._adapter.notifyPreviewClick(fileItem);
+    }
+
+    readFileFromClipboard(clipboardItems) {
+        for (const clipboardItem of clipboardItems) {
+            for (const type of clipboardItem.types) {
+                // types maybe: text/plain, image/png, text/html
+                if (type.startsWith('image')) {
+                    clipboardItem.getType(type).then(blob => {
+                        return blob.arrayBuffer();
+                    }).then((buffer) => {
+                        const format = type.split('/')[1];
+                        const file = new File([buffer], `upload.${format}`, { type });
+                        this.handleChange([file]);
+                    });
+                }
+            }
+        }
+    }
+
+    handlePasting(e: any) {
+        const isMac = this._adapter.isMac();
+        const isCombineKeydown = isMac ? e.metaKey : e.ctrlKey;
+        const { addOnPasting } = this.getProps();
+        if (addOnPasting) {
+            if (isCombineKeydown && e.code === 'KeyV') {
+                // https://github.com/microsoft/TypeScript/issues/33923
+                const permissionName = 'clipboard-read' as PermissionName;
+                // The main thread should not be blocked by clipboard, so callback writing is required here. No await here
+                navigator.permissions
+                    .query({ name: permissionName })
+                    .then(result => {
+                        if (result.state === 'granted' || result.state === 'prompt') {
+                            // user has authorized or will authorize
+                            navigator.clipboard.read().then(clipboardItems => {
+                                // Process the data read from the pasteboard
+                                // Check the returned data type to determine if it is image data, and process accordingly
+                                this.readFileFromClipboard(clipboardItems);
+                            });
+                        } else {
+                            this._adapter.notifyPastingError(result);
+                        }
+                    })
+                    .catch(error => {
+                        this._adapter.notifyPastingError(error);
+                    });
+            }
+        }
+    }
+
+    bindPastingHandler(): void {
+        this._adapter.registerPastingHandler((event) => this.handlePasting(event));
+    }
+
+    unbindPastingHandler() {
+        this._adapter.unRegisterPastingHandler();
     }
 }
 

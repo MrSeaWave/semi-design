@@ -7,26 +7,27 @@ export interface CollapseProps{
     activeKey?: string | string[];
     defaultActiveKey?: string | string[];
     accordion?: boolean;
+    clickHeaderToExpand?: boolean;
     onChange?: (activeKey: CollapseProps['activeKey'], e: any) => void;
     expandIcon?: any;
     collapseIcon?: any;
     style?: any;
     className?: string;
     keepDOM?: boolean;
-    motion?: Motion;
-    expandIconPosition?: 'left' | 'right';
+    motion?: boolean;
+    expandIconPosition?: 'left' | 'right'
 
 }
 
 export interface CollapseState{
-    activeSet: Set<string>;
+    activeSet: Set<string>
 }
 
 export interface CollapseAdapter extends DefaultAdapter<CollapseProps, CollapseState>{
     handleChange: (activeKey: CollapseProps['activeKey'], e: any) => void;
     // getStates: () => CollapseState;
     // getProps: () => CollapseProps;
-    addActiveKey: (newSet: CollapseState['activeSet']) => void;
+    addActiveKey: (newSet: CollapseState['activeSet']) => void
 }
 
 export default class CollapseFoundation extends BaseFoundation<CollapseAdapter> {

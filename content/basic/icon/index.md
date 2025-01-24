@@ -1,6 +1,6 @@
 ---
 localeCode: zh-CN
-order: 13
+order: 21
 category: 基础
 title:  Icon 图标
 icon: doc-icons
@@ -8,6 +8,11 @@ brief: 语义化的矢量图形。
 ---
 
 ## 图标列表
+
+默认的图标集 `@douyinfe/semi-icons` 包含面性、线性两套图标，默认不带颜色，可通过 css color属性更改颜色。
+
+`@douyinfe/semi-icons-lab` 为彩色图标集，需单独安装，不可改色, lab 图标集于 v2.48 后提供
+
 ```icon
 ```
 
@@ -17,6 +22,7 @@ brief: 语义化的矢量图形。
 
 ```jsx import
 import Icon, { IconHome } from '@douyinfe/semi-icons';
+import { IconAvatar, IconCard } from '@douyinfe/semi-icons-lab';
 ```
 
 ### 基础使用
@@ -65,7 +71,7 @@ import { IconSearch, IconHelpCircle, IconAlertCircle, IconMinusCircle, IconPlusC
     const types = [<IconSearch />, <IconHelpCircle />, <IconAlertCircle />, <IconMinusCircle />, <IconPlusCircle />, <IconPlus />, <IconRefresh />];
     const sizes = ['extra-small', 'small', 'default', 'large', 'extra-large'];
     let icons = types.map((type, i) => {
-        return <div key={i} style={{ marginBottom: 4 }}>{sizes.map(size => React.cloneElement(type, {size, key:size}))}</div>;
+        return <div key={i} style={{ marginBottom: 4 }}>{sizes.map(size => React.cloneElement(type, { size, key: size }))}</div>;
     });
     return icons;
 };
@@ -81,14 +87,14 @@ import { IconLikeHeart, IconFlag, IconLock, IconUnlock } from '@douyinfe/semi-ic
 
 () => (
     <div>
-        <div style={{color:'#E91E63'}} >
+        <div style={{ color: '#E91E63' }} >
             <IconLikeHeart size="extra-large"/>
             <IconFlag size="extra-large"/>
         </div>
         <br/>
         <div>
-            <IconLock style={{color:'#6A3AC7'}} size="extra-large" />
-            <IconUnlock style={{color:'#9C27B0'}} size="extra-large"/>
+            <IconLock style={{ color: '#6A3AC7' }} size="extra-large" />
+            <IconUnlock style={{ color: '#9C27B0' }} size="extra-large"/>
         </div>
     </div>
 );
@@ -103,7 +109,7 @@ import React from 'react';
 import { Icon } from '@douyinfe/semi-ui';
 
 () => {
-    function CustomIcon(){
+    function CustomIcon() {
         return <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="11" fill="#FBCD2C"/>
             <mask id="mask0" maskType="alpha" maskUnits="userSpaceOnUse" x="1" y="1" width="22" height="22">

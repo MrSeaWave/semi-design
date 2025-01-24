@@ -5,7 +5,7 @@ import HookNotice from './HookNotice';
 import '@douyinfe/semi-foundation/notification/notification.scss';
 import getUuid from '@douyinfe/semi-foundation/utils/uuid';
 import { NoticeInstance, NoticePosition, NoticeProps } from '@douyinfe/semi-foundation/notification/notificationFoundation';
-import { NoticesInPosition } from '@douyinfe/semi-ui/notification/index';
+import { NoticesInPosition } from '../';
 // TODO: Automatic folding + unfolding function when there are more than N
 
 const defaultConfig = {
@@ -45,6 +45,7 @@ function usePatchElement(): [ReactNode[], typeof patchElement] {
             const pos = obj[0];
             const notices = obj[1];
             // @ts-ignore
+            // eslint-disable-next-line react/no-unknown-property
             return Array.isArray(notices) && notices.length ? <div key={pos} className={cls(cssClasses.LIST)} placement={pos}>{notices}</div> : null;
         });
     }
@@ -65,7 +66,6 @@ export default function useNotification() {
             ...config,
             id,
         };
-        // eslint-disable-next-line prefer-const
         let closeFunc: ReturnType<typeof patchElement>;
         const ref = (ele: { close: () => void } & ReactElement) => {
             noticeRef.set(id, ele);

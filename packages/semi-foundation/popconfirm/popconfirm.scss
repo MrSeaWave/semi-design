@@ -12,20 +12,11 @@ $module: #{$prefix}-popconfirm;
         flex-direction: column;
         padding: $spacing-popconfirm-top $spacing-popconfirm-top $spacing-popconfirm-top $spacing-popconfirm-bottom;
         position: relative;
-
-        .#{$module}-btn-close {
-            position: absolute;
-            right: $spacing-popconfirm_inner_close_btn-right;
-            top: $spacing-popconfirm_inner_close_btn-top;
-            margin-top: $spacing-popconfirm_btn_close-margin;
-            margin-right: $spacing-popconfirm_btn_close-margin;
-        }
     }
 
     &-header {
         display: flex;
         justify-content: flex-start;
-        margin-right: $spacing-popconfirm_header-marginRight;
 
         &-title {
             @include font-size-header-6;
@@ -49,14 +40,17 @@ $module: #{$prefix}-popconfirm;
 
         &-body {
             display: inline-flex;
+            flex-grow: 1;
             flex-direction: column;
         }
     }
 
     &-body {
-        margin-left: $width-popconfirm-icon + $spacing-popconfirm_header_icon-marginRight;
-
         color: $color-popconfirm_body-text;
+
+        &-withIcon {
+            margin-left: $width-popconfirm-icon + $spacing-popconfirm_header_icon-marginRight;
+        }
 
         & > p {
             margin: $spacing-popconfirm_body_p-margin;
@@ -84,11 +78,6 @@ $module: #{$prefix}-popconfirm;
 .#{$prefix}-popover-with-arrow {
     .#{$module}-inner {
         padding: $spacing-popconfirm_popover_with_arrow_inner-padding;
-
-        .#{$module}-btn-close {
-            margin-top: $spacing-popconfirm_popover_with_arrow_inner_btn_close-marginTop;
-            margin-right: $spacing-popconfirm_popover_with_arrow_inner_btn_close-marginRight;
-        }
     }
 }
 

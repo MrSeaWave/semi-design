@@ -1,4 +1,5 @@
 //@import '../theme/variables.scss';
+@import "./animation.scss";
 @import './variables.scss';
 
 $module: #{$prefix}-tooltip;
@@ -48,6 +49,8 @@ $module-icon: #{$module}-icon-arrow;
     }
 }
 
+
+
 .#{$module} {
     &-wrapper {
         position: relative;
@@ -62,14 +65,21 @@ $module-icon: #{$module}-icon-arrow;
         font-size: $font-tooltip-fontSize;
         left: 0;
         top: 0;
+        // word-wrap is an alias of overflow-wrap, word-wrap can take effect on more browsers, in order to prevent future changes, use both  
+        word-wrap: break-word;
+        overflow-wrap: break-word;
 
         @include font-size-regular;
-        visibility: hidden;
+        opacity: 0;
         max-width: $width-tooltip;
 
         &-show {
-            visibility: visible;
+            opacity: 1;
         }
+    }
+
+    &-content {
+        min-width: 0;
     }
 
     &-trigger {
@@ -85,6 +95,17 @@ $module-icon: #{$module}-icon-arrow;
         justify-content: center;
         box-sizing: border-box;
     }
+
+    &-animation-show{
+        animation: #{$module}-zoomIn $animation_duration-tooltip_in $animation_function-tooltip_in;
+        animation-fill-mode: forwards;
+    }
+
+    &-animation-hide{
+        animation: #{$module}-zoomOut $animation_duration-tooltip_out $animation_function-tooltip_out;
+        animation-fill-mode: forwards;
+    }
+
 }
 
 @import './arrow.scss';

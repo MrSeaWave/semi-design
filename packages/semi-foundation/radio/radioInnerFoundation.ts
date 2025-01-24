@@ -4,15 +4,15 @@ export interface RadioChangeEvent {
     target: {
         [x: string]: any;
         checked: boolean;
-        value: any;
+        value: any
     };
     stopPropagation: () => void;
-    preventDefault: () => void;
+    preventDefault: () => void
 }
 
 export interface RadioInnerAdapter extends DefaultAdapter {
     notifyChange?: (e: RadioChangeEvent) => void;
-    setNativeControlChecked?: (checked: boolean) => void;
+    setNativeControlChecked?: (checked: boolean) => void
 }
 
 export default class RadioInnerFoundation extends BaseFoundation<RadioInnerAdapter> {
@@ -60,6 +60,5 @@ export default class RadioInnerFoundation extends BaseFoundation<RadioInnerAdapt
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy() {}
 }

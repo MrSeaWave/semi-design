@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 13
+order: 21
 category: Basic
 title: Icon
 subTitle: Icon
@@ -66,7 +66,7 @@ import { IconSearch, IconHelpCircle, IconAlertCircle, IconMinusCircle, IconPlusC
     const types = [<IconSearch />, <IconHelpCircle />, <IconAlertCircle />, <IconMinusCircle />, <IconPlusCircle />, <IconPlus />, <IconRefresh />];
     const sizes = ['extra-small', 'small', 'default', 'large', 'extra-large'];
     let icons = types.map((type, i) => {
-        return <div key={i} style={{ marginBottom: 4 }}>{sizes.map(size => React.cloneElement(type, {size, key:size}))}</div>;
+        return <div key={i} style={{ marginBottom: 4 }}>{sizes.map(size => React.cloneElement(type, { size, key: size }))}</div>;
     });
     return icons;
 };
@@ -82,14 +82,14 @@ import { IconLikeHeart, IconFlag, IconLock, IconUnlock } from '@douyinfe/semi-ic
 
 () => (
     <div>
-        <div style={{color:'#E91E63'}} >
+        <div style={{ color: '#E91E63' }} >
             <IconLikeHeart size="extra-large"/>
             <IconFlag size="extra-large"/>
         </div>
         <br/>
         <div>
-            <IconLock style={{color:'#6A3AC7'}} size="extra-large" />
-            <IconUnlock style={{color:'#9C27B0'}} size="extra-large"/>
+            <IconLock style={{ color: '#6A3AC7' }} size="extra-large" />
+            <IconUnlock style={{ color: '#9C27B0' }} size="extra-large"/>
         </div>
     </div>
 );
@@ -104,10 +104,10 @@ import React from 'react';
 import { Icon } from '@douyinfe/semi-ui';
 
 () => {
-    function CustomIcon(){
+    function CustomIcon() {
         return <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="11" fill="#FBCD2C"/>
-            <mask id="mask0" maskType="alpha" maskUnits="userSpaceOnUse" x="1" y="1" width="22" height="22">
+            <mask id="mask0" masktype="alpha" maskUnits="userSpaceOnUse" x="1" y="1" width="22" height="22">
                 <circle cx="12" cy="12" r="11" fill="#A2845E"/>
             </mask>
             <g mask="url(#mask0)">

@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 24
+order: 36
 category: Input
 title:  Input
 subTitle: Input
@@ -296,6 +296,47 @@ import { TextArea } from '@douyinfe/semi-ui';
 );
 ```
 
+### Line break by Shift + Enter
+By default, in a TextArea, both `Enter` and `Shift` + `Enter` can achieve line breaks.
+Through appropriate event listening and disabling the default behavior, you can achieve disabling line breaks with Enter and only allowing line breaks with Shift + Enter.
+
+```jsx live=true
+import React from 'react';
+import { TextArea, HotKeys } from '@douyinfe/semi-ui';
+
+() => {
+    const [text, setText] = useState('');
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+        }
+    };
+
+    const handleChange = (value, event) => {
+        setText(event.target.value);
+    };
+
+    return (
+        <>  
+            <p style={{ display: 'flex' }}>
+                Use
+                <HotKeys
+                    hotKeys={['shift', 'enter']}
+                    style={{ marginBottom: 12, marginLeft: 4, marginRight: 4 }}
+                />
+                break line
+            </p>
+            <TextArea
+                value={text}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+            />
+        </>
+    );
+};
+```
+
 ### Autosize TextArea
 
 You can set `autosize` to allow TextArea resizing height with content.
@@ -387,40 +428,41 @@ Answers to some questions:
 
 > Other attributes are same with html `<input>`
 
-| Property          | Instructions                                                                                  | type                            | Default   |
-|-------------------|-----------------------------------------------------------------------------------------------|---------------------------------|-----------|
-| aria-describedby  | Set the aria-describedby property                                                             | string                          | -         |
-| aria-errormessage | Set the aria-errormessage property                                                            | string                          | -         |
-| aria-invalid      | Set aria-invalid property                                                                     | string                          | -         |
-| aria-label        | Set aria-label properties                                                                     | string                          | -         |
-| aria-labelledby   | Set aria-labelledby properties                                                                | string                          | -         |
-| aria-required     | Set aria-required properties                                                                  | string                          | -         |
-| addonAfter        | Addon after input box                                                                         | ReactNode                       |           |
-| addonBefore       | Addon before input box                                                                        | ReactNode                       |           |
-| className         | Class name                                                                                    | string                          |           |
-| defaultValue      | Default value                                                                                 | ReactText                       |           |
-| disabled          | Toggle whether to disable input                                                               | boolean                         | false     |
-| getValueLength    | Custom calculated character string length                                                     | (value: string) => number       |           |
-| hideSuffix        | Toggle whether to hide suffix if clear icon is shown，by default the two icon are side by side | boolean                         | false     |
-| mode              | The mode of the input box. The optional value is `password`                                   | string                          |           |
-| mode              | mode of input，optional: `password` **>= v1.3.0**                                              | string                          |           |
-| prefix            | Prefix                                                                                        | ReactNode                       |           |
+| Property          | Instructions                                                                                                                                                                                  | type                            | Default   |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|-----------|
+| aria-describedby  | Set the aria-describedby property                                                                                                                                                             | string                          | -         |
+| aria-errormessage | Set the aria-errormessage property                                                                                                                                                            | string                          | -         |
+| aria-invalid      | Set aria-invalid property                                                                                                                                                                     | string                          | -         |
+| aria-label        | Set aria-label properties                                                                                                                                                                     | string                          | -         |
+| aria-labelledby   | Set aria-labelledby properties                                                                                                                                                                | string                          | -         |
+| aria-required     | Set aria-required properties                                                                                                                                                                  | string                          | -         |
+| addonAfter        | Addon after input box                                                                                                                                                                         | ReactNode                       |           |
+| addonBefore       | Addon before input box                                                                                                                                                                        | ReactNode                       |           |
+| borderless        | borderless mode  >=2.33.0                                                                                                                                                                     | boolean                         |           |
+| className         | Class name                                                                                                                                                                                    | string                          |           |
+| clearIcon         | Can be used to customize the clear button, valid when showClear is true  **>=2.25**                                                                                                           | ReactNode                       |           |
+| defaultValue      | Default value                                                                                                                                                                                 | ReactText                       |           |
+| disabled          | Toggle whether to disable input                                                                                                                                                               | boolean                         | false     |
+| getValueLength    | Custom calculated character string length                                                                                                                                                     | (value: string) => number       |           |
+| hideSuffix        | Toggle whether to hide suffix if clear icon is shown，by default the two icon are side by side                                                                                                 | boolean                         | false     |
+| mode              | mode of input，optional: `password` **>= v1.3.0**                                                                                                                                              | string                          |           |
+| prefix            | Prefix                                                                                                                                                                                        | ReactNode                       |           |
 | preventScroll | Indicates whether the browser should scroll the document to display the newly focused element, acting on the focus method inside the component, excluding the component passed in by the user | boolean |  |  |
-| showClear         | Show clear button **>=1.0.0**                                                                 | boolean                         | false     |
-| size              | Size, one of `large`, `default`, `small`                                                      | string                          | `default` |
-| style             | Inline style                                                                                  | CSSProperties                   |           |
-| suffix            | Suffix                                                                                        | ReactNode                       |           |
-| type              | Input type attribute, same with html `<input>`                                                | string                          | text      |
-| validateStatus    | Validate status for styling only, one of `default`, `error`, `warning`                        | string                          | `default` |
-| value             | Current value of input box                                                                    | ReactText                       |           |
-| onBlur            | Callback invoked when input loses focus                                                       | function(e:event)               |           |
-| onChange          | Callback invoked when input value changes                                                     | function(value:string, e:event) |           |
-| onClear           | Callback invoked when clicking clear icon                                                     | function(e:event)               |           |
-| onEnterPress      | Callback invoked when pressing enter（keypress）                                                | function(e:event)               |           |
-| onFocus           | Callback invoked when input gets focus                                                        | function(e:event)               |           |
-| onKeyDown         | Callback invoked when keydown                                                                 | function(e:event)               |           |
-| onKeyPress        | Callback invoked when keypress                                                                | function(e:event)               |           |
-| onKeyUp           | Callback invoked when keyup                                                                   | function(e:event)               |           |
+| showClear         | Show clear button **>=1.0.0**                                                                                                                                                                 | boolean                         | false     |
+| size              | Size, one of `large`, `default`, `small`                                                                                                                                                      | string                          | `default` |
+| style             | Inline style                                                                                                                                                                                  | CSSProperties                   |           |
+| suffix            | Suffix                                                                                                                                                                                        | ReactNode                       |           |
+| type              | Input type attribute, same with html `<input>`                                                                                                                                                | string                          | text      |
+| validateStatus    | Validate status for styling only, one of `default`, `error`, `warning`                                                                                                                        | string                          | `default` |
+| value             | Current value of input box                                                                                                                                                                    | ReactText                       |           |
+| onBlur            | Callback invoked when input loses focus                                                                                                                                                       | function(e:event)               |           |
+| onChange          | Callback invoked when input value changes                                                                                                                                                     | function(value:string, e:event) |           |
+| onClear           | Callback invoked when clicking clear icon                                                                                                                                                     | function(e:event)               |           |
+| onEnterPress      | Callback invoked when pressing enter（keypress）                                                                                                                                                | function(e:event)               |           |
+| onFocus           | Callback invoked when input gets focus                                                                                                                                                        | function(e:event)               |           |
+| onKeyDown         | Callback invoked when keydown                                                                                                                                                                 | function(e:event)               |           |
+| onKeyPress        | Callback invoked when keypress                                                                                                                                                                | function(e:event)               |           |
+| onKeyUp           | Callback invoked when keyup                                                                                                                                                                   | function(e:event)               |           |
 ### TextArea
 
 > Other attributes are same with html `<textarea>`
@@ -433,7 +475,8 @@ Answers to some questions:
 | aria-label        | Set aria-label properties                                                                                              | string                          | -       |
 | aria-labelledby   | Set aria-labelledby properties                                                                                         | string                          | -       |
 | aria-required     | Set aria-required properties                                                                                           | string                          | -       |
-| autosize          | Toggle whether to allow autosize when content height changes                                                           | boolean                         | false   |
+| autosize          | Toggle whether to allow autosize when content height changes, can config max and min rows by object value`{minRows?: number, maxRows?: number}`<br />**object param support from v2.45.0**                                                           | boolean                         | false   |
+| borderless        | borderless mode  >=2.33.0                                                                                                                                                                     | boolean                         |           |
 | className         | Class name                                                                                                             | string                          | -       |
 | cols              | The visible width of the text control, in average character widths. If it is specified, it must be a positive integer. | number                          | -       |
 | disabled          | Disabled                                                                                                               | boolean                         | false   |
@@ -473,6 +516,8 @@ Common attributes will be set to the child elements of InputGroup, such as disab
 
 ## Methods
 
+Some internal methods provided by Input can be accessed through ref:
+
 | Name    | Description  |
 |---------|--------------|
 | blur()  | Remove focus |
@@ -497,3 +542,6 @@ Common attributes will be set to the child elements of InputGroup, such as disab
 ```material
 44, 46
 ``` -->
+
+## Related Material
+<semi-material-list code="46"></semi-material-list>

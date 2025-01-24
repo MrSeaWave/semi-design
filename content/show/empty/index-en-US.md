@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 53
+order: 66
 category: Show
 title: Empty
 subTitle: Empty
@@ -30,8 +30,8 @@ import { IllustrationConstruction, IllustrationConstructionDark } from '@douyinf
 
 () => (
     <Empty
-        image={<IllustrationConstruction style={{width: 150, height: 150}} />}
-        darkModeImage={<IllustrationConstructionDark style={{width: 150, height: 150}} />}
+        image={<IllustrationConstruction style={{ width: 150, height: 150 }} />}
+        darkModeImage={<IllustrationConstructionDark style={{ width: 150, height: 150 }} />}
         title={'Function under construction'}
         description="The current function is not yet open, so stay tuned."
     />
@@ -49,8 +49,8 @@ import { IllustrationNoContent, IllustrationNoContentDark } from '@douyinfe/semi
 
 () => (
     <Empty
-        image={<IllustrationNoContent style={{width: 150, height: 150}} />}
-        darkModeImage={<IllustrationNoContentDark style={{width: 150, height: 150}} />}
+        image={<IllustrationNoContent style={{ width: 150, height: 150 }} />}
+        darkModeImage={<IllustrationNoContentDark style={{ width: 150, height: 150 }} />}
         title="Empty status header"
         description="Start creating your first dashboard!"
     >
@@ -97,8 +97,8 @@ import { IllustrationSuccess, IllustrationSuccessDark } from '@douyinfe/semi-ill
 () => (
     <Empty
         title={'Created successfully'}
-        image={<IllustrationSuccess style={{width: 150, height: 150}} />}
-        darkModeImage={<IllustrationSuccessDark style={{width: 150, height: 150}} />}
+        image={<IllustrationSuccess style={{ width: 150, height: 150 }} />}
+        darkModeImage={<IllustrationSuccessDark style={{ width: 150, height: 150 }} />}
         layout="horizontal"
         description="This is a very long description text. This layout is recommended when the text is too long. This is a very long description text. This layout is recommended when the text is too long. This is a very long description text. This layout is recommended when the text is too long."
         style={{ width: 800, margin: '0 auto' }}
@@ -113,8 +113,6 @@ import { IllustrationSuccess, IllustrationSuccessDark } from '@douyinfe/semi-ill
 ### Placeholder illustration (under construction)
 
 Currently the following illustrations are supported in `@douyinfe/semi-illustrations`.
-
-> As the illustration library is still under construction, please keep an eye on possible changes in the future.
 
 ```jsx live=true dir="column"
 import React from 'react';
@@ -184,13 +182,13 @@ import { IllustrationIdle, IllustrationIdleDark, IllustrationConstructionDark, I
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
 | className | class name | string |-|
-| darkModeImage | The placeholder image after the dark mode is turned on, in response to the change of the theme-mode property of document.body **v>=1.13.0** | ReactNode |-|
+| darkModeImage | The placeholder image after the dark mode is turned on, in response to the change of the theme-mode property of document.body | ReactNode |-|
 | description | Content description | ReactNode |-|
 | image | Placeholder image | ReactNode \| { id?: string; viewBox?: string; url?: string;} |-|
 | imageStyle | Placeholder image style | CSSProperties |-|
 | layout | Layout mode, support `vertical`, `horizontal` | string | `vertical` |
 | style | Style name | CSSProperties |-|
-| title | Title **v>=1.0.0** | ReactNode |-|
+| title | Title | ReactNode |-|
 
 ## Accessibility
 

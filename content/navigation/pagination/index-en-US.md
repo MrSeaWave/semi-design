@@ -1,6 +1,6 @@
 ---
 localeCode: en-US
-order: 40
+order: 53
 category: Navigation
 title:  Pagination
 subTitle: Pagination
@@ -18,7 +18,7 @@ import { Pagination } from '@douyinfe/semi-ui';
 ```
 ### Basic Usage
 
-Set the total number of pages via `Total`, Set capacity per page via `pageSize`.
+Set the total number via `Total`, Set capacity per page via `pageSize`.
 
 ```jsx live=true width=55%
 import React from 'react';
@@ -31,6 +31,19 @@ import { Pagination } from '@douyinfe/semi-ui';
         <Pagination total={200} style={{ marginBottom: 12 }}></Pagination>
         <Pagination total={80} pageSize={30} style={{ marginBottom: 12 }}></Pagination>
     </div>
+);
+```
+
+### disabled
+
+Disabled via the `disabled` setting
+
+```jsx live=true width=60%
+import React from 'react';
+import { Pagination } from '@douyinfe/semi-ui';
+
+() => (
+    <Pagination total={30} disabled style={{ marginBottom: 12 }}></Pagination>
 );
 ```
 
@@ -184,6 +197,7 @@ import { Pagination } from '@douyinfe/semi-ui';
 | currentPage        | Current page number                                                                                         | number                                          |                     |              |
 | defaultCurrentPage | Default current page number                                                                                 | number                                          |                     |              |
 | hideOnSinglePage   | Whether to hide the page divider automatically when the total number of pages is less than 2. When showSizeChanger is true, this switch no longer takes effect                | boolean                                         | false               |              |
+| disabled           | disabled                                                                             | boolean                                         |false                  | 2.37.0
 | hoverShowPageSelect  | Whether to show the page select when hover page (only work when size='small')                             | boolean                                         | false               |   1.27.0     |
 | nextText           | Text displayed by the next Page button                                                                      | string\| React Node                             |                     |              |
 | pageSize           | Number of entries per page                                                                                  | number                                          | 10                  |              |
@@ -196,7 +210,7 @@ import { Pagination } from '@douyinfe/semi-ui';
 | showSizeChanger    | Whether to show a selector to switch the capacity of each page                                              | boolean                                         | false               |              |
 | showQuickJumper    | Whether to show a input to type the page number, supported after v1.31                                      | boolean                                         | false               |   1.31.0     |
 | showTotal          | Whether to show total page number                                                                           | boolean                                         | 3                   |              |
-| total              | Total number of entries                                                                                     | number                                          | 1                   |              |
+| total              | Total number                                                                                     | number                                          | 1                   |              |
 | onChange           | The callback function when page number or capacity per page changes                                         | function(currentPage: number, pageSize: number) |                     |              |
 | onPageChange       | A callback function for page number changes                                                                 | function(currentPage: number)                   |                     |              |
 | onPageSize Change  | Callback function when capacity changes per page                                                            | function(pageSize: number)                      |                     |              |

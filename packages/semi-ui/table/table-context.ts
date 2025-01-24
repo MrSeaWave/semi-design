@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React from 'react';
 import { noop } from 'lodash';
 import { ColumnProps, GetVirtualizedListRef, RowKey } from './interface';
@@ -6,6 +5,7 @@ import {
     BaseRowKeyType,
     BaseHeadWidth,
 } from '@douyinfe/semi-foundation/table/foundation';
+import type { ContextValue } from '../configProvider/context';
 
 export interface TableContextProps {
     children?: React.ReactNode;
@@ -21,6 +21,7 @@ export interface TableContextProps {
     renderSelection?: (record?: Record<string, any>, isHeader?: boolean) => React.ReactNode;
     getVirtualizedListRef?: GetVirtualizedListRef;
     setBodyHasScrollbar?: (bodyHasScrollBar: boolean) => void;
+    direction?: ContextValue['direction']
 }
 
 const TableContext = React.createContext<TableContextProps>({

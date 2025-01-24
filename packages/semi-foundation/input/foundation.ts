@@ -3,10 +3,11 @@ import { strings } from './constants';
 import { noop, set, isNumber, isString, isFunction } from 'lodash';
 
 import { ENTER_KEY } from './../utils/keyCode';
+import truncateValue from './util/truncateValue';
 
 export interface InputDefaultAdapter {
     notifyChange: noopFunction;
-    setValue: noopFunction;
+    setValue: noopFunction
 }
 
 export interface InputAdapter extends Partial<DefaultAdapter>, Partial<InputDefaultAdapter> {
@@ -15,14 +16,14 @@ export interface InputAdapter extends Partial<DefaultAdapter>, Partial<InputDefa
     notifyBlur(value: any, e: any): void;
     setEyeClosed(eyeClosed: boolean): void;
     toggleFocusing(focused: boolean): void;
+    focusInput(): void;
     notifyFocus(value: any, e: any): void;
     notifyInput(e: any): void;
     notifyKeyDown(e: any): void;
     notifyKeyUp(e: any): void;
     notifyKeyPress(e: any): void;
     notifyEnterPress(e: any): void;
-    setPaddingLeft(paddingLeft: string): void;
-    isEventTarget(e: any): boolean;
+    isEventTarget(e: any): boolean
 }
 
 class InputFoundation extends BaseFoundation<InputAdapter> {
@@ -40,10 +41,6 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
         super({ ...InputFoundation.inputDefaultAdapter, ...adapter });
     }
 
-    init() {
-        this._setInitValue();
-    }
-
     destroy() {
         if (this._timer) {
             clearTimeout(this._timer);
@@ -51,18 +48,7 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
         }
     }
 
-    // eslint-disable-next-line
     setDisable() {}
-
-    _setInitValue() {
-        const { defaultValue, value } = this.getProps();
-        let v = defaultValue;
-        if (this._isControlledComponent()) {
-            v = value;
-        }
-        this._adapter.setValue(v);
-    // this.checkAllowClear(v);
-    }
 
     setValue(value: any) {
         this._adapter.setValue(value);
@@ -120,7 +106,6 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
         if (isNumber(maxLength) && maxLength >= 0 && isFunction(getValueLength) && isString(value)) {
             const valueLength = getValueLength(value);
             if (valueLength > maxLength) {
-                // eslint-disable-next-line max-len
                 console.warn('[Semi Input] The input character is truncated because the input length exceeds the maximum length limit');
                 const truncatedValue = this.handleTruncateValue(value, maxLength);
                 return truncatedValue;
@@ -128,6 +113,7 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
                 return value;
             }
         }
+        return value;
     }
 
     /**
@@ -138,20 +124,7 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
      */
     handleTruncateValue(value: any, maxLength: number) {
         const { getValueLength } = this._adapter.getProps();
-        if (isFunction(getValueLength)) {
-            let truncatedValue = '';
-            for (let i = 1, len = value.length; i <= len; i++) {
-                const currentValue = value.slice(0, i);
-                if (getValueLength(currentValue) > maxLength) {
-                    return truncatedValue;
-                } else {
-                    truncatedValue = currentValue;
-                }
-            }
-            return truncatedValue;
-        } else {
-            return value.slice(0, maxLength);
-        }
+        return truncateValue({ value, maxLength, getValueLength });
     }
 
     handleClear(e: any) {
@@ -199,6 +172,7 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
         }
         // do not handle bubbling up events
         if (this._adapter.isEventTarget(e)) {
+            this._adapter.focusInput();
             this._adapter.toggleFocusing(true);
         }
     }
@@ -213,6 +187,7 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
 
     handleClickEye(e: any) {
         const eyeClosed = this._adapter.getState('eyeClosed');
+        this._adapter.focusInput();
         this._adapter.toggleFocusing(true);
         this._adapter.setEyeClosed(!eyeClosed);
     }
@@ -266,14 +241,10 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
         }
     }
 
-    setPaddingLeft(paddingLeft: string) {
-        this._adapter.setPaddingLeft(paddingLeft);
-    }
-
     isAllowClear() {
         const { value, isFocus, isHovering } = this._adapter.getStates();
-        const { showClear, disabled } = this._adapter.getProps();
-        const allowClear = value && showClear && !disabled && (isFocus || isHovering);
+        const { showClear, disabled, showClearIgnoreDisabled } = this._adapter.getProps();
+        const allowClear = value && showClear && (!disabled || showClearIgnoreDisabled) && (isFocus || isHovering);
         return allowClear;
     }
 
@@ -281,6 +252,7 @@ class InputFoundation extends BaseFoundation<InputAdapter> {
         const { disabled } = this._adapter.getProps();
         const { isFocus } = this._adapter.getStates();
         if (!disabled && !isFocus) {
+            this._adapter.focusInput();
             this._adapter.toggleFocusing(true);
         }
     }

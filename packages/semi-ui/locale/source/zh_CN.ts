@@ -5,15 +5,17 @@ const local: Locale = {
     code: 'zh-CN',
     dateFnsLocale: zhCN, // locale code to dateFns locale
     Pagination: {
-        item: '条',
+        pageSize: '每页条数：${pageSize}',
+        total: '总页数：${total}',
+        jumpTo: '跳至',
         page: '页',
-        pageSize: '条/页',
-        total: '共',
-        jumpTo: '跳至'
     },
     Modal: {
         confirm: '确定',
         cancel: '取消',
+    },
+    Tabs: {
+        more: "更多",
     },
     TimePicker: {
         placeholder: {
@@ -34,7 +36,9 @@ const local: Locale = {
             dateTime: '请选择日期及时间',
             dateRange: ['开始日期', '结束日期'],
             dateTimeRange: ['开始日期', '结束日期'],
+            monthRange: ['开始月份', '结束月份'],
         },
+        presets: '快捷选择',
         footer: {
             confirm: '确定',
             cancel: '取消',
@@ -98,6 +102,9 @@ const local: Locale = {
     Table: {
         emptyText: '暂无数据',
         pageText: '显示第 ${currentStart} 条-第 ${currentEnd} 条，共 ${total} 条',
+        descend: '点击降序',
+        ascend: '点击升序',
+        cancelSort: '取消排序',
     },
     Select: {
         emptyText: '暂无数据',
@@ -148,11 +155,33 @@ const local: Locale = {
         clear: '清空',
         selectAll: '全选',
         clearSelectAll: '取消全选',
-        total: '共 ${total} 项',
-        selected: '已选 ${total} 项',
+        total: '总个数：${total}',
+        selected: '已选个数：${total}',
     },
     Form: {
         optional: '（可选）',
+    },
+    Image: {
+        preview: '预览',
+        loading: '加载中',
+        loadError: '加载失败',
+        prevTip: '上一张',
+        nextTip: '下一张',
+        zoomInTip: '放大',
+        zoomOutTip: '缩小',
+        rotateTip: '旋转',
+        downloadTip: '下载',
+        adaptiveTip: '适应页面',
+        originTip: '原始尺寸',
+    },
+    Chat: {
+        deleteConfirm: '确认删除该会话吗？',
+        clearContext: '上下文已清除',
+        copySuccess: '复制成功',
+        stop: '停止',
+        copy: '复制',
+        copied: '复制成功',
+        dropAreaText: '将文件放到这里',
     },
 };
 

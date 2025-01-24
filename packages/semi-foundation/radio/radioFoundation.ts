@@ -6,7 +6,7 @@ export interface RadioAdapter extends DefaultAdapter {
     setChecked: (checked: boolean) => void;
     setAddonId: () => void;
     setExtraId: () => void;
-    setFocusVisible: (focusVisible: boolean) => void;
+    setFocusVisible: (focusVisible: boolean) => void
 }
 export default class RadioFoundation extends BaseFoundation<RadioAdapter> {
     init() {
@@ -32,7 +32,7 @@ export default class RadioFoundation extends BaseFoundation<RadioAdapter> {
             if (target.matches(':focus-visible')) {
                 this._adapter.setFocusVisible(true);
             }
-        } catch (error){
+        } catch (error) {
             warning(true, 'Warning: [Semi Radio] The current browser does not support the focus-visible');
         }
     }

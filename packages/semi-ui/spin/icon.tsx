@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import isNullOrUndefined from '@douyinfe/semi-foundation/utils/isNullOrUndefined';
 
@@ -9,7 +8,7 @@ export interface IconProps {
     component?: React.ReactNode;
     size?: number;
     className?: string;
-    type?: string;
+    type?: string
 }
 
 function Icon(props: IconProps = {}) {

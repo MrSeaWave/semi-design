@@ -4,7 +4,7 @@ import { BasicCheckboxEvent } from './checkboxFoundation';
 
 export interface CheckboxGroupAdapter extends DefaultAdapter{
     updateGroupValue: (value: any[]) => void;
-    notifyChange: (value: any[]) => void;
+    notifyChange: (value: any[]) => void
 }
 class CheckboxGroupFoundation extends BaseFoundation<CheckboxGroupAdapter> {
     static get checkboxGroupDefaultAdapter() {
@@ -74,7 +74,6 @@ class CheckboxGroupFoundation extends BaseFoundation<CheckboxGroupAdapter> {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     destroy() {}
 }
 

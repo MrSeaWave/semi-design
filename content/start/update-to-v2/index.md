@@ -3,7 +3,7 @@ category: 开始
 title: Update 从 1.x 到 2.0
 icon: doc-updateV2
 localeCode: zh-CN
-order: 8
+order: 13
 ---
 
 ### 升级准备
@@ -174,6 +174,9 @@ import en_GB from '@douyinfe/semi-ui/lib/es/locale/source/en_GB';
         -   Nav.item 组件, Nav.Sub 组件 props.icon 不再支持通过 string 方式传入，需要传入 ReactNode
         -   Nav 组件 props.items 中的 icon 也不再支持通过 string 方式传入，需要传入 ReactNode
     -   Notification icon 不再支持通过 string 方式传入，请统一使用 ReactNode
+    -   Banner icon、closeIcon不再支持string，需要替换为对应的ReactNode
+    -   Typography.Text的icon不再支持string，需要替换为对应的ReactNode
+    -   Breadcrumb.Item的icon不再支持string，需要替换为对应的ReactNode
 -   AutoComplete 正式废弃 onChangeWithObject 属性
 -   Cascader triggerRender 的入参移除 onInputChange
 -   Form 不再从 `semi-ui/index.js` 导出 Label 组件，如需使用请用 Form.Label
@@ -186,13 +189,14 @@ import en_GB from '@douyinfe/semi-ui/lib/es/locale/source/en_GB';
         -   defaultExpandRowKeys，请用 expandRowKeys 替换
         -   defaultExpandAllGroupRows，请用 expandAllGroupRows 替换
 
+
 ### 🎨 样式上的不兼容
 
 -   CSS 变量添加 semi 前缀，例如 --color-primary => --semi-color-primary
     -   使用了 Semi CSS Variable 来实现暗色模式等特性的用户，需要将自定义 CSS 中的 variable 统一进行更新
     -   未在自定义组件或页面的中使用 Semi CSS Variable 的用户无需关注，不受影响
 -   在 2.x，统一将插画的宽高设置为 `200 * 200px`，如果想模拟 1.x 的宽高，可以给插画设置 `style={{ width: 300, height: 150 }}`。
-
+-   Icon 组件的共有className 由 `semi-icons` 变更为 `semi-icon`，对齐组件命名
 ### 插件调整
 
 如果你使用 Semi 插件，如 `@ies/semi-ui-plugin-webpack` 或 `@ies/semi-ui-plugin-eden` 等进行了高级配置，需要了解以下变更：

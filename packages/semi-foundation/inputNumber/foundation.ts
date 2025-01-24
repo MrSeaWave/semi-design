@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-param-reassign */
-/* eslint-disable eqeqeq */
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import keyCode from '../utils/keyCode';
 import { numbers } from './constants';
@@ -26,14 +23,14 @@ export interface InputNumberAdapter extends DefaultAdapter {
     restoreCursor: (str?: string) => boolean;
     fixCaret: (start: number, end: number) => void;
     setClickUpOrDown: (clicked: boolean) => void;
-    updateStates: (states: BaseInputNumberState, callback?: () => void) => void;
+    updateStates: (states: BaseInputNumberState, callback?: () => void) => void
 }
 
 export interface BaseInputNumberState {
     value?: number | string;
     number?: number | null;
     focusing?: boolean;
-    hovering?: boolean;
+    hovering?: boolean
 }
 
 class InputNumberFoundation extends BaseFoundation<InputNumberAdapter> {
@@ -177,7 +174,6 @@ class InputNumberFoundation extends BaseFoundation<InputNumberAdapter> {
                     const dotBeginStr = dotIndex > -1 ? valueAfterParser.slice(dotIndex) : '';
                     formattedNum += dotBeginStr;
                 } else if (precLength < lengthAfterDot) {
-                    // eslint-disable-next-line max-depth
                     for (let i = 0; i < lengthAfterDot - precLength; i++) {
                         formattedNum += '0';
                     }
@@ -261,7 +257,6 @@ class InputNumberFoundation extends BaseFoundation<InputNumberAdapter> {
                 }
 
                 if (willSetNum != null) {
-                    // eslint-disable-next-line max-depth
                     if (!this._isControlledComponent('value')) {
                         this._adapter.setNumber(willSetNum);
                     }
@@ -300,7 +295,7 @@ class InputNumberFoundation extends BaseFoundation<InputNumberAdapter> {
         }
         this._adapter.setClickUpOrDown(true);
         if (event) {
-            event.persist();
+            this._persistEvent(event);
             event.stopPropagation();
             // Prevent native blurring events
             this._preventDefault(event);
@@ -321,7 +316,7 @@ class InputNumberFoundation extends BaseFoundation<InputNumberAdapter> {
         }
         this._adapter.setClickUpOrDown(true);
         if (event) {
-            event.persist();
+            this._persistEvent(event);
             event.stopPropagation();
             this._preventDefault(event);
         }
@@ -343,7 +338,8 @@ class InputNumberFoundation extends BaseFoundation<InputNumberAdapter> {
 
     _preventDefault(event: any) {
         const keepFocus = this._adapter.getProp('keepFocus');
-        if (keepFocus) {
+        const innerButtons = this._adapter.getProp('innerButtons');
+        if (keepFocus || innerButtons) {
             event.preventDefault();
         }
     }

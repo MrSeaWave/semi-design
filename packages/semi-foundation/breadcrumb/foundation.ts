@@ -1,10 +1,9 @@
-/* eslint-disable prefer-const */
 import BaseFoundation, { DefaultAdapter } from '../base/foundation';
 import isEnterPress from '../utils/isEnterPress';
 import { BreadcrumbItemInfo, Route } from './itemFoundation';
 export interface BreadcrumbAdapter<P = Record<string, any>, S = Record<string, any>> extends DefaultAdapter<P, S> {
     notifyClick: (itemInfo: BreadcrumbItemInfo, event: any) => void;
-    expandCollapsed: (clickEvent?: any) => void;
+    expandCollapsed: (clickEvent?: any) => void
 }
 
 export default class BreadcrumbFoundation<P = Record<string, any>, S = Record<string, any>> extends BaseFoundation<BreadcrumbAdapter<P, S>, P, S> {

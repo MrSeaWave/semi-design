@@ -70,8 +70,10 @@ class ValidateFieldsDemo extends Component {
                     autoScrollToError
                     validateFields={this.syncValidate}
                     onReset={v => console.log('reset')}
-                    onChange={v => console.log(v)}
-                    onValueChange={v => console.log('onValueChange')}>
+                    // onChange={v => console.log(v)}
+                    onValueChange={(values, changedField) => console.log('onValueChange', values, changedField)}
+                    onErrorChange={(errors, changedField) => console.log('onErrorChange', errors, changedField)}    
+                >
                     <Form.InputGroup label="group" style={{ width: 600 }}>
                         <Input field="group.name" style={{ width: 280 }} />
                         <Input field="group.sort" style={{ width: 290 }} />
@@ -142,7 +144,10 @@ class CustomValidateDemo extends Component {
 
     render() {
         return (
-            <Form autoScrollToError>
+            <Form
+                autoScrollToError
+                onErrorChange={(errors, changedField) => console.log(errors, changedField)}
+            >
                 <Input field="name" validate={this.asyncValidate} trigger="blur" />
                 <Input field="familyName" validate={this.validateName} trigger="blur" name="familyName" />
                 <Input field="code" validate={this.asyncValidate} trigger={['change', 'mount']} />
@@ -203,7 +208,11 @@ class PartValidAndResetDemo extends Component {
     render() {
         let options = ['a', 'b', 'c', 'd', 'b.name'].map(item => ({ label: item, value: item }));
         return (
-            <Form getFormApi={this.getFormApi} autoScrollToError>
+            <Form
+                getFormApi={this.getFormApi}
+                autoScrollToError
+                onErrorChange={(errors, changedField) => console.log(errors, changedField)}
+            >
                 <Input field="a[1]" validate={this.validate} trigger="blur" />
                 <Input field="a[0]" validate={this.validate} trigger="blur" />
                 <Input field="ackk" validate={this.validate} trigger="blur" />
@@ -258,7 +267,9 @@ class RulesValidateDemo extends Component {
                     autoScrollToError
                     onReset={v => console.log('reset')}
                     onChange={v => console.log(v)}
-                    onValueChange={v => console.log('onValueChange')}>
+                    onValueChange={v => console.log('onValueChange')}
+                    onErrorChange={(errors, changedField) => console.log(errors, changedField)}
+                >
                     <Input field="panel[0].a" trigger="custom" rules={[{ required: true, message: '字段不能为空' }]} />
                     <Input field="panel[0].b" trigger="custom" rules={[{ required: true, message: '字段不能为空' }]} />
                     <Input field="panel[0].c" trigger="custom" rules={[{ required: true, message: '字段不能为空' }]} />
@@ -418,4 +429,74 @@ class RulesExample extends React.Component {
         );
     }
 }
-export { ValidateFieldsDemo, CustomValidateDemo, PartValidAndResetDemo, RulesValidateDemo, SetBugDemo, UnmountedLeafDemo, RulesExample };
+
+
+
+class RaceAsyncDemo extends React.Component {
+    constructor() {
+        super();
+        this.asyncValidate = this.asyncValidate.bind(this);
+    }
+
+    asyncValidate(val, values) {
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        let time = 1000; 
+        if (val === 'semi') {
+            time = 4000;
+        } 
+        return sleep(time).then(() => {
+            if (!val) {
+                return 'can\'t be empty';
+            } else if (val === 'semi') {
+                return 'sleep 4000';
+            } else if (val === 'sem') {
+                return 'sleep 1000';
+            } else {
+                return '';
+            }
+        });
+    }
+
+    render() {
+        return (
+            <Form>
+                <Form.Input
+                    field='name'
+                    label='props.rules ract async validate'
+                    // validate={this.asyncValidate}
+                    trigger='blur'
+                    rules={[
+                        {
+                            type: 'string',
+                            asyncValidator: (rule, value) => {
+                                const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+                                let time = 1000; 
+                                if (value === 'semi') {
+                                    time = 4000;
+                                }
+                                return sleep(time).then(() => {
+                                    if (value === 'semi') {
+                                        throw Error('sleep 4000');
+                                    } else if (value === 'sem') {
+                                        throw Error('sleep 1000');
+                                    } else {
+                                        return;
+                                    }
+                                });
+                            }
+                        }
+                    ]}
+                />
+                <Form.Input
+                    field='nick'
+                    label='props.validate race async validate'
+                    validate={this.asyncValidate}
+                    trigger='blur'
+                />
+                <Button htmlType="reset">reset</Button>
+            </Form>
+        );
+    }
+}
+
+export { ValidateFieldsDemo, CustomValidateDemo, PartValidAndResetDemo, RulesValidateDemo, SetBugDemo, UnmountedLeafDemo, RulesExample, RaceAsyncDemo };

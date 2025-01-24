@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable eqeqeq */
 import React, { createRef, ReactNode } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -63,49 +61,57 @@ export interface BaseRowProps {
     style?: React.CSSProperties;
     virtualized?: Virtualized;
     visible: boolean; // required
+    /** whether display none */
+    displayNone?: boolean
 }
 
+/**
+ * avoid affected by https://www.npmjs.com/package/babel-plugin-transform-react-remove-prop-types
+ */
+export const baseRowPropTypes = {
+    anyColumnFixed: PropTypes.bool,
+    cellWidths: PropTypes.array.isRequired,
+    className: PropTypes.string,
+    columns: PropTypes.array.isRequired,
+    components: PropTypes.object.isRequired,
+    disabled: PropTypes.bool,
+    expandIcon: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.node]),
+    expandableRow: PropTypes.bool,
+    expanded: PropTypes.bool,
+    displayNone: PropTypes.bool,
+    expandedRow: PropTypes.bool,
+    fixed: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    hideExpandedColumn: PropTypes.bool,
+    hovered: PropTypes.bool.isRequired,
+    indent: PropTypes.number,
+    indentSize: PropTypes.number,
+    index: PropTypes.number,
+    isSection: PropTypes.bool,
+    level: PropTypes.number,
+    onDidUpdate: PropTypes.func,
+    onHover: PropTypes.func,
+    onRow: PropTypes.func,
+    onRowClick: PropTypes.func,
+    onRowContextMenu: PropTypes.func,
+    onRowDoubleClick: PropTypes.func,
+    onRowMouseEnter: PropTypes.func,
+    onRowMouseLeave: PropTypes.func,
+    prefixCls: PropTypes.string,
+    record: PropTypes.object,
+    renderExpandIcon: PropTypes.func,
+    replaceClassName: PropTypes.string,
+    rowExpandable: PropTypes.func,
+    rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired, // real key of the row
+    selected: PropTypes.bool,
+    store: PropTypes.object,
+    style: PropTypes.object,
+    virtualized: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    visible: PropTypes.bool.isRequired,
+};
+
 export default class TableRow extends BaseComponent<BaseRowProps, Record<string, any>> {
-    static propTypes = {
-        anyColumnFixed: PropTypes.bool,
-        cellWidths: PropTypes.array.isRequired,
-        className: PropTypes.string,
-        columns: PropTypes.array.isRequired,
-        components: PropTypes.object.isRequired,
-        disabled: PropTypes.bool,
-        expandIcon: PropTypes.oneOfType([PropTypes.bool, PropTypes.func, PropTypes.node]),
-        expandableRow: PropTypes.bool,
-        expanded: PropTypes.bool,
-        expandedRow: PropTypes.bool,
-        fixed: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-        height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        hideExpandedColumn: PropTypes.bool,
-        hovered: PropTypes.bool.isRequired,
-        indent: PropTypes.number,
-        indentSize: PropTypes.number,
-        index: PropTypes.number,
-        isSection: PropTypes.bool,
-        level: PropTypes.number,
-        onDidUpdate: PropTypes.func,
-        onHover: PropTypes.func,
-        onRow: PropTypes.func,
-        onRowClick: PropTypes.func,
-        onRowContextMenu: PropTypes.func,
-        onRowDoubleClick: PropTypes.func,
-        onRowMouseEnter: PropTypes.func,
-        onRowMouseLeave: PropTypes.func,
-        prefixCls: PropTypes.string,
-        record: PropTypes.object,
-        renderExpandIcon: PropTypes.func,
-        replaceClassName: PropTypes.string,
-        rowExpandable: PropTypes.func,
-        rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired, // real key of the row
-        selected: PropTypes.bool,
-        store: PropTypes.object,
-        style: PropTypes.object,
-        virtualized: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-        visible: PropTypes.bool.isRequired,
-    };
+    static propTypes = baseRowPropTypes;
 
     static defaultProps = {
         columns: [] as [],
@@ -146,10 +152,8 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
         };
     }
 
-    ref: React.MutableRefObject<any>;
     constructor(props: BaseRowProps) {
         super(props);
-        this.ref = createRef();
         this.foundation = new TableRowFoundation(this.adapter);
     }
 
@@ -183,10 +187,6 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
         }
         return false;
     }
-
-    _cacheNode = (node: any) => {
-        this.ref.current = node;
-    };
 
     // Pass true to render the tree-shaped expand button
     renderExpandIcon = (record: Record<string, any>) => {
@@ -245,8 +245,11 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
                 // Only the first data row will be indented
                 if (level != null && columnIndex === firstIndex) {
                     expandableProps.indent = level;
+                    const isBool = typeof expandIcon === 'boolean';
+                    const hasExpandIcon = expandIcon !== false || !isBool && expandIcon !== null;
 
-                    if (!expandableRow) {
+                    // 如果 expandIcon 为空，不需要 indent
+                    if (!expandableRow && hideExpandedColumn && hasExpandIcon) {
                         expandableProps.indent = level + 1;
                     }
                 }
@@ -296,7 +299,7 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
 
         const customRowProps = this.adapter.getCache('customRowProps');
 
-        if (typeof customRowProps.onMouseEnter === 'function') {
+        if (typeof customRowProps?.onMouseEnter === 'function') {
             customRowProps.onMouseEnter(e);
         }
     };
@@ -306,7 +309,7 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
 
         const customRowProps = this.adapter.getCache('customRowProps');
 
-        if (typeof customRowProps.onMouseLeave === 'function') {
+        if (typeof customRowProps?.onMouseLeave === 'function') {
             customRowProps.onMouseLeave(e);
         }
     };
@@ -334,13 +337,15 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
             record,
             hovered,
             expanded,
+            displayNone,
             expandableRow,
             level,
             expandedRow,
-            isSection
+            isSection,
+            rowKey
         } = this.props;
 
-        const BodyRow: any = components.body.row;
+        const BodyRow = components.body.row;
 
         const { className: customClassName, style: customStyle, ...rowProps } = onRow(record, index) || {};
 
@@ -349,15 +354,16 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
         const baseRowStyle = { ...style, ...customStyle };
 
         const rowCls =
-            typeof replaceClassName === 'string' && replaceClassName.length ?
-                replaceClassName :
-                classnames(
+            typeof replaceClassName === 'string' && replaceClassName.length
+                ? classnames(replaceClassName, customClassName)
+                : classnames(
                     className,
                     `${prefixCls}-row`,
                     {
                         [`${prefixCls}-row-selected`]: selected,
                         [`${prefixCls}-row-expanded`]: expanded,
                         [`${prefixCls}-row-hovered`]: hovered,
+                        [`${prefixCls}-row-hidden`]: displayNone,
                     },
                     customClassName
                 );
@@ -386,7 +392,8 @@ export default class TableRow extends BaseComponent<BaseRowProps, Record<string,
                 {...rowProps}
                 style={baseRowStyle}
                 className={rowCls}
-                ref={this._cacheNode}
+                // used for dnd-kit sortable
+                data-row-key={rowKey}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
                 onClick={this.handleClick}

@@ -12,7 +12,7 @@ import Spin from '../spin';
 import ListContext, { Grid } from './list-context';
 import BaseComponent from '../_base/baseComponent';
 
-export { ListItemProps } from './item';
+export type { ListItemProps } from './item';
 
 export interface ListProps<T> {
     style?: React.CSSProperties;
@@ -31,7 +31,7 @@ export interface ListProps<T> {
     loading?: boolean;
     loadMore?: React.ReactNode;
     onClick?: React.MouseEventHandler<HTMLLIElement>;
-    onRightClick?: React.MouseEventHandler<HTMLLIElement>;
+    onRightClick?: React.MouseEventHandler<HTMLLIElement>
 }
 
 const prefixCls = cssClasses.PREFIX;
@@ -130,7 +130,8 @@ class List<T = any> extends BaseComponent<ListProps<T>> {
             bordered,
             dataSource,
             renderItem,
-            children
+            children,
+            ...rest
         } = this.props;
         const wrapperCls = cls(prefixCls, className, {
             [`${prefixCls}-flex`]: layout === 'horizontal',
@@ -155,7 +156,7 @@ class List<T = any> extends BaseComponent<ListProps<T>> {
             childrenList = this.renderEmpty();
         }
         return (
-            <div className={wrapperCls} style={style}>
+            <div className={wrapperCls} style={style} {...this.getDataAttr(rest)}>
                 {header ? (
                     <div className={`${cssClasses.PREFIX}-header`} x-semi-prop="header">
                         {header}
